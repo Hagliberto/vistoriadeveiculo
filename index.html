@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#004b93">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Vistoria">
+    <meta name="description" content="Checklist Digital de Vistoria Veicular - PWA Mobile-First">
+    <title>Vistoria Veicular | Checklist Digital</title>
+
+    <!-- Favicon Vetorial SVG Corporativo -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23004b93'/%3E%3Cstop offset='100%25' stop-color='%230072ce'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M16 36l4-12c1-3 3.5-5 6.5-5h11c3 0 5.5 2 6.5 5l4 12v10a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-2H23v2a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V36zm7.5-11l-2.5 8h22l-2.5-8c-.5-1.5-1.8-2.5-3.4-2.5h-10.2c-1.6 0-2.9 1-3.4 2.5z' fill='%23ffffff'/%3E%3Ccircle cx='22' cy='38' r='2.5' fill='%23004b93'/%3E%3Ccircle cx='42' cy='38' r='2.5' fill='%23004b93'/%3E%3Ccircle cx='48' cy='16' r='10' fill='%2310b981' stroke='%23ffffff' stroke-width='2.5'/%3E%3Cpath d='M43.5 16l3 3 5.5-5.5' fill='none' stroke='%23ffffff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23004b93'/%3E%3Cpath d='M16 36l4-12c1-3 3.5-5 6.5-5h11c3 0 5.5 2 6.5 5l4 12v10a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-2H23v2a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V36z' fill='%23ffffff'/%3E%3C/svg%3E">
+    <link id="pwa-manifest" rel="manifest" href="">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        corp: {
+                            dark: '#004b93',
+                            main: '#0072ce',
+                            light: '#e6f2fc',
+                            surface: '#f0f7ff'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f4f7fa;
+            color: #0f172a;
+            -webkit-tap-highlight-color: transparent;
+            overscroll-behavior-y: contain;
+        }
+
+        /* Estilo do Expander / Acordeão */
+        .expander-body {
+            display: none;
+        }
+        .expander-card.is-open .expander-body {
+            display: block;
+            animation: fadeSlideDown 0.2s ease-out;
+        }
+        .expander-chevron {
+            transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .expander-card.is-open .expander-chevron {
+            transform: rotate(180deg);
+        }
+
+        @keyframes fadeSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Alvos de toque confortáveis para mobile */
+        .touch-target-btn {
+            min-height: 42px;
+        }
+
+        /* Canvas de Assinatura */
+        canvas.signature-pad {
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+        /* Croqui Interativo */
+        #car-diagram-container {
+            position: relative;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .damage-pin {
+            transform: translate(-50%, -50%);
+            transition: transform 0.15s ease-out;
+        }
+        .damage-pin:hover, .damage-pin:active {
+            transform: translate(-50%, -50%) scale(1.18);
+            z-index: 20;
+        }
+
+        /* Estilos exclusivos de impressão ocultos na tela */
+        .print-only {
+            display: none;
+        }
+
+        /* Regras de Impressão / Laudo Técnico PDF Profissional e Clean */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm 11mm;
+            }
+            * {
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+            body {
+                background-color: #ffffff !important;
+                color: #0f172a !important;
+                font-size: 9.5pt !important;
+                line-height: 1.35 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            header {
+                display: none !important;
+            }
+            main {
+                max-width: 100% !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            main > * + * {
+                margin-top: 8px !important;
+            }
+
+            /* Cabeçalho Oficial do Laudo Técnico */
+            #print-official-header {
+                border: 1px solid #94a3b8 !important;
+                border-radius: 4px !important;
+                margin-bottom: 10px !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            /* Transforma Expanders em Blocos Corporativos Oficiais */
+            .expander-card {
+                border: 1px solid #cbd5e1 !important;
+                border-left: 3px solid #004b93 !important;
+                border-radius: 4px !important;
+                background-color: #ffffff !important;
+                margin-bottom: 8px !important;
+                overflow: visible !important;
+            }
+            .expander-header {
+                background-color: #f8fafc !important;
+                border-bottom: 1px solid #cbd5e1 !important;
+                padding: 5px 10px !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .expander-header h2 {
+                font-size: 10pt !important;
+                font-weight: 700 !important;
+                color: #0f172a !important;
+                text-transform: uppercase;
+                letter-spacing: 0.02em;
+            }
+            .expander-header p,
+            .expander-chevron,
+            .expander-header .w-9 {
+                display: none !important;
+            }
+            .expander-header span[id^="badge-"] {
+                background: #ffffff !important;
+                color: #334155 !important;
+                border: 1px solid #cbd5e1 !important;
+                font-size: 8pt !important;
+                padding: 1px 7px !important;
+            }
+            .expander-body {
+                display: block !important;
+                padding: 8px 10px !important;
+            }
+
+            /* Identificação do Veículo em Grade Limpa */
+            #exp-identificacao .expander-body > div {
+                display: grid !important;
+                grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+                gap: 6px 10px !important;
+            }
+            #exp-identificacao label {
+                font-size: 7.5pt !important;
+                text-transform: uppercase;
+                color: #475569 !important;
+                margin-bottom: 1px !important;
+            }
+            #exp-identificacao input,
+            #exp-identificacao select {
+                min-height: 0 !important;
+                height: auto !important;
+                padding: 2px 0 !important;
+                font-size: 9pt !important;
+                font-weight: 600 !important;
+                color: #0f172a !important;
+                border: none !important;
+                border-bottom: 1px solid #cbd5e1 !important;
+                border-radius: 0 !important;
+                background: transparent !important;
+                appearance: none !important;
+                -webkit-appearance: none !important;
+            }
+            #fuel-selector {
+                background: transparent !important;
+                border: 1px solid #cbd5e1 !important;
+                padding: 2px !important;
+                border-radius: 3px !important;
+            }
+            .fuel-btn {
+                min-height: 0 !important;
+                padding: 2px 4px !important;
+                font-size: 7.5pt !important;
+                color: #64748b !important;
+            }
+            .fuel-btn.bg-\[\#0072ce\] {
+                background-color: #004b93 !important;
+                color: #ffffff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            /* Itens do Checklist em Formato Tabular/Matricial Limpo */
+            #checklist-sections {
+                display: block !important;
+            }
+            #checklist-sections .expander-card {
+                margin-bottom: 8px !important;
+            }
+            #checklist-sections .expander-body {
+                padding: 0 !important;
+            }
+            #checklist-sections [id^="row-"] {
+                padding: 4px 10px !important;
+                border-bottom: 1px solid #e2e8f0 !important;
+                background-color: #ffffff !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            #checklist-sections [id^="row-"]:nth-child(even) {
+                background-color: #fafbfc !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            #checklist-sections [id^="row-"] > div:first-child {
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                gap: 8px !important;
+            }
+            #checklist-sections [id^="row-"] span.text-sm {
+                font-size: 8.8pt !important;
+                color: #1e293b !important;
+            }
+            #checklist-sections [id^="row-"] .grid {
+                display: flex !important;
+                width: auto !important;
+                gap: 0 !important;
+            }
+
+            /* Oculta botões não marcados e exibe selo limpo do status selecionado */
+            .status-btn {
+                display: none !important;
+            }
+            .status-btn.status-ok-active,
+            .status-btn.status-nok-active,
+            .status-btn.status-na-active {
+                display: inline-flex !important;
+                min-height: 0 !important;
+                padding: 1px 8px !important;
+                font-size: 7.5pt !important;
+                font-weight: 700 !important;
+                border-radius: 3px !important;
+                text-transform: uppercase;
+                letter-spacing: 0.03em;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .status-ok-active {
+                background-color: #ecfdf5 !important;
+                color: #065f46 !important;
+                border: 1px solid #6ee7b7 !important;
+            }
+            .status-nok-active {
+                background-color: #fef2f2 !important;
+                color: #991b1b !important;
+                border: 1px solid #fca5a5 !important;
+            }
+            .status-na-active {
+                background-color: #f1f5f9 !important;
+                color: #475569 !important;
+                border: 1px solid #cbd5e1 !important;
+            }
+            /* Caso nenhum status tenha sido marcado */
+            [id^="row-"]:not(:has(.status-ok-active)):not(:has(.status-nok-active)):not(:has(.status-na-active)) .grid::after {
+                content: "Não verificado";
+                font-size: 7.5pt;
+                color: #94a3b8;
+                font-style: italic;
+            }
+
+            .obs-container {
+                display: none !important;
+            }
+            .obs-container.has-content {
+                display: block !important;
+                margin-top: 2px !important;
+                padding-left: 14px !important;
+            }
+            .obs-container.has-content input {
+                min-height: 0 !important;
+                padding: 1px 0 !important;
+                font-size: 8pt !important;
+                font-style: italic;
+                color: #334155 !important;
+                border: none !important;
+                background: transparent !important;
+            }
+
+            /* Croqui e Assinaturas sem quebras de página */
+            #exp-croqui,
+            #exp-assinaturas {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            #exp-croqui .expander-body > div {
+                display: grid !important;
+                grid-template-columns: 55% 43% !important;
+                gap: 2% !important;
+                align-items: start !important;
+            }
+            #car-diagram-container {
+                border: 1px solid #cbd5e1 !important;
+                background-color: #ffffff !important;
+                padding: 4px !important;
+                max-width: 100% !important;
+            }
+            #damage-list {
+                max-height: none !important;
+                overflow: visible !important;
+            }
+            #damage-list > div {
+                padding: 3px 6px !important;
+                border-radius: 3px !important;
+                background: #ffffff !important;
+                border: 1px solid #cbd5e1 !important;
+            }
+            #damage-list input {
+                border: none !important;
+                padding: 0 !important;
+                font-size: 8pt !important;
+            }
+
+            #v-obs-gerais {
+                border: 1px solid #cbd5e1 !important;
+                border-radius: 3px !important;
+                padding: 5px 8px !important;
+                font-size: 8.5pt !important;
+                min-height: 42px !important;
+                background: #ffffff !important;
+            }
+            #exp-assinaturas .grid-cols-1.md\:grid-cols-2 {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 14px !important;
+            }
+            #exp-assinaturas .h-36 {
+                height: 82px !important;
+                border: 1px solid #cbd5e1 !important;
+                background: #ffffff !important;
+                border-radius: 3px !important;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased pb-24 sm:pb-14">
+
+    <!-- Notificação Toast Flutuante -->
+    <div id="toast" class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:top-20 sm:bottom-auto z-50 transform transition-all duration-300 translate-y-24 sm:translate-y-0 sm:translate-x-full opacity-0 pointer-events-none no-print">
+        <div class="bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-medium border border-slate-700">
+            <i id="toast-icon" class="ph-fill ph-check-circle text-emerald-400 text-xl shrink-0"></i>
+            <span id="toast-message">Ação realizada com sucesso!</span>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação Customizado -->
+    <div id="confirm-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200">
+            <div class="flex items-center gap-3 text-amber-600 mb-2.5">
+                <i class="ph-fill ph-warning-circle text-3xl"></i>
+                <h3 id="modal-title" class="text-lg font-bold text-slate-900">Confirmar Ação</h3>
+            </div>
+            <p id="modal-desc" class="text-slate-600 text-sm mb-6 leading-relaxed">Tem certeza que deseja continuar?</p>
+            <div class="grid grid-cols-2 sm:flex sm:justify-end gap-2.5">
+                <button id="modal-cancel" class="touch-target-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition">Cancelar</button>
+                <button id="modal-confirm" class="touch-target-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#0072ce] hover:bg-[#004b93] transition">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra Superior Fixa Compacta Mobile-First -->
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
+        <div class="max-w-4xl mx-auto px-3 sm:px-5 py-2.5 flex items-center justify-between gap-2">
+            <!-- Identidade Visual Corporativa -->
+            <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#004b93] to-[#0072ce] text-white flex items-center justify-center shadow-xs shrink-0">
+                    <i class="ph-bold ph-car-profile text-xl sm:text-2xl"></i>
+                </div>
+                <div class="min-w-0">
+                    <h1 class="text-sm sm:text-base font-bold text-slate-900 truncate leading-tight">Vistoria Veicular</h1>
+                    <p class="text-[11px] text-slate-500 flex items-center gap-1.5 truncate">
+                        <span id="save-status-dot" class="w-2 h-2 rounded-full bg-emerald-500 inline-block shrink-0"></span>
+                        <span id="save-status-text" class="truncate">Salvo offline</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Contadores Compactos + Botão Instalar PWA -->
+            <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+                <!-- Botão Discreto Instalar PWA (aparece quando beforeinstallprompt dispara) -->
+                <button type="button" id="btn-install-pwa" class="hidden no-print items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#004b93] text-white hover:bg-[#0072ce] shadow-xs transition active:scale-95">
+                    <i class="ph-bold ph-download-simple text-sm"></i>
+                    <span>Instalar App</span>
+                </button>
+
+                <!-- Resumo de Contadores -->
+                <div class="flex items-center gap-2 sm:gap-3 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200">
+                    <div class="text-center">
+                        <span class="block text-[9px] uppercase font-bold text-emerald-600">OK</span>
+                        <span id="stat-ok" class="text-xs sm:text-sm font-bold text-emerald-600 leading-none">0</span>
+                    </div>
+                    <div class="h-5 w-px bg-slate-200"></div>
+                    <div class="text-center">
+                        <span class="block text-[9px] uppercase font-bold text-rose-600">Avaria</span>
+                        <span id="stat-nok" class="text-xs sm:text-sm font-bold text-rose-600 leading-none">0</span>
+                    </div>
+                    <div class="h-5 w-px bg-slate-200"></div>
+                    <div class="text-center min-w-[36px]">
+                        <span class="block text-[9px] uppercase font-bold text-[#0072ce]">Geral</span>
+                        <span id="stat-progress" class="text-xs sm:text-sm font-bold text-[#0072ce] leading-none">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Barra de Progresso Contínua -->
+        <div class="w-full bg-slate-100 h-1.5 no-print">
+            <div id="progress-bar" class="bg-gradient-to-r from-[#004b93] to-[#0072ce] h-1.5 transition-all duration-300" style="width: 0%"></div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="max-w-4xl mx-auto px-3 sm:px-5 pt-4 space-y-3.5">
+
+        <!-- Cabeçalho Institucional Exclusivo para Impressão / PDF -->
+        <div id="print-official-header" class="print-only bg-white">
+            <div class="flex items-center justify-between px-3.5 py-2.5 border-b border-slate-300 bg-slate-50">
+                <div class="flex items-center gap-2.5">
+                    <svg class="w-7 h-7 shrink-0" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="64" height="64" rx="14" fill="#004b93"/>
+                        <path d="M16 36l4-12c1-3 3.5-5 6.5-5h11c3 0 5.5 2 6.5 5l4 12v10a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-2H23v2a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V36zm7.5-11l-2.5 8h22l-2.5-8c-.5-1.5-1.8-2.5-3.4-2.5h-10.2c-1.6 0-2.9 1-3.4 2.5z" fill="#ffffff"/>
+                    </svg>
+                    <div>
+                        <h1 class="text-sm font-bold text-slate-900 uppercase tracking-wide leading-tight">Laudo Técnico de Vistoria Veicular</h1>
+                        <p class="text-[8pt] text-slate-500">Relatório Oficial de Inspeção, Estado de Conservação e Avarias</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="block text-[7.5pt] uppercase font-bold text-slate-500">Emissão do Documento</span>
+                    <span id="print-emission-datetime" class="text-[8.5pt] font-semibold text-slate-800">--/--/---- --:--</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-5 divide-x divide-slate-300 text-center py-1.5 bg-white">
+                <div>
+                    <span class="block text-[7pt] uppercase font-bold text-slate-500">Total Itens</span>
+                    <span id="print-stat-total" class="text-[9.5pt] font-bold text-slate-900">47</span>
+                </div>
+                <div>
+                    <span class="block text-[7pt] uppercase font-bold text-emerald-700">Conformes</span>
+                    <span id="print-stat-ok" class="text-[9.5pt] font-bold text-emerald-700">0</span>
+                </div>
+                <div>
+                    <span class="block text-[7pt] uppercase font-bold text-rose-700">Avarias</span>
+                    <span id="print-stat-nok" class="text-[9.5pt] font-bold text-rose-700">0</span>
+                </div>
+                <div>
+                    <span class="block text-[7pt] uppercase font-bold text-slate-600">N/A</span>
+                    <span id="print-stat-na" class="text-[9.5pt] font-bold text-slate-600">0</span>
+                </div>
+                <div>
+                    <span class="block text-[7pt] uppercase font-bold text-[#004b93]">Pontos no Croqui</span>
+                    <span id="print-stat-pins" class="text-[9.5pt] font-bold text-[#004b93]">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barra de Controle Global Apenas com Ícones SVG -->
+        <div class="bg-white p-2.5 sm:px-3.5 sm:py-2.5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between gap-2 no-print">
+            <!-- Grupo Esquerdo: Expandir / Recolher Todas -->
+            <div class="flex items-center gap-1.5">
+                <button type="button" id="btn-expand-all" title="Expandir Todas as Seções" aria-label="Expandir Todas as Seções"
+                    class="w-10 h-10 rounded-xl inline-flex items-center justify-center bg-[#f0f7ff] text-[#004b93] hover:bg-[#e6f2fc] border border-blue-200 transition active:scale-95">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="7 8 12 3 17 8"></polyline>
+                        <polyline points="7 16 12 21 17 16"></polyline>
+                        <line x1="4" y1="12" x2="20" y2="12"></line>
+                    </svg>
+                </button>
+                <button type="button" id="btn-collapse-all" title="Recolher Todas as Seções" aria-label="Recolher Todas as Seções"
+                    class="w-10 h-10 rounded-xl inline-flex items-center justify-center bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200 transition active:scale-95">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="7 4 12 9 17 4"></polyline>
+                        <polyline points="7 20 12 15 17 20"></polyline>
+                        <line x1="4" y1="12" x2="20" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Grupo Direito: Marcar Todos OK, Limpar Formulário, Imprimir / Gerar PDF -->
+            <div class="flex items-center gap-2">
+                <button type="button" id="btn-mark-all-ok" title="Marcar Todos como Conforme" aria-label="Marcar Todos como Conforme"
+                    class="w-10 h-10 rounded-xl inline-flex items-center justify-center bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition active:scale-95">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 7 17l-5-5"></path>
+                        <path d="m22 10-7.5 7.5L13 16"></path>
+                    </svg>
+                </button>
+                <button type="button" id="btn-reset-form" title="Limpar Formulário" aria-label="Limpar Formulário"
+                    class="w-10 h-10 rounded-xl inline-flex items-center justify-center bg-slate-100 text-slate-700 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-slate-200 transition active:scale-95">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"></path>
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                    </svg>
+                </button>
+                <button type="button" onclick="prepareAndPrint()" title="Imprimir / Gerar PDF" aria-label="Imprimir / Gerar PDF"
+                    class="w-10 h-10 rounded-xl inline-flex items-center justify-center bg-[#0072ce] text-white hover:bg-[#004b93] shadow-xs transition active:scale-95">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- EXPANDER 1: IDENTIFICAÇÃO DO VEÍCULO E CONDUTOR (Azul Corporativo #0072ce / #f0f7ff) -->
+        <section id="exp-identificacao" class="expander-card bg-white rounded-2xl border border-slate-200 border-l-[5px] shadow-xs overflow-hidden" style="border-left-color: #0072ce;">
+            <button type="button" onclick="toggleExpander('exp-identificacao')" class="expander-header w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left transition" style="background-color: #f0f7ff;">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-white shadow-2xs" style="color: #0072ce;">
+                        <i class="ph-duotone ph-identification-card text-xl"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <h2 class="font-bold text-slate-900 text-sm sm:text-base truncate">Identificação do Veículo e Condutor</h2>
+                        <p class="text-[11px] text-slate-500 truncate">Dados da placa, modelo, KM, combustível e responsáveis</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <span id="badge-identificacao" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-white border" style="color: #0072ce; border-color: #bae0ff;">
+                        0/6 preenchidos
+                    </span>
+                    <i class="ph-bold ph-caret-down text-slate-500 text-base expander-chevron"></i>
+                </div>
+            </button>
+
+            <div class="expander-body p-4 sm:p-5 border-t border-slate-100">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                    <div>
+                        <label for="v-data" class="block text-xs font-semibold text-slate-600 mb-1">Data da Vistoria</label>
+                        <input type="date" id="v-data" class="touch-target-btn w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-[#0072ce] focus:ring-2 focus:ring-[#0072ce]/20 outline-none transition">
+                    </div>
+
+                    <div>
+                        <label for="v-tipo" class="block text-xs font-semibold text-slate-600 mb-1">Tipo de Vistoria</label>
+                        <select id="v-tipo" class="touch-target-btn w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 bg-white focus:border-[#0072ce] focus:ring-2 focus:ring-[#0072ce]/20 outline-none transition">
+                            <option value="Entrada">Entrada (Check-in)</option>
+                            <option value="Saída">Saída (Check-out)</option>
+                            <option value="Periódica">Periódica / Preventiva</option>
+                            <option value="Transferência">Transferência / Entrega</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="v-vistoriador" class="block text-xs font-semibold text-slate-600 mb-1">Vistoriador Responsável *</label>
+                        <input type="text" id="v-vistoriador" placeholder="Nome do vistoriador" class="touch-target-btn w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-[#0072ce] focus:ring-2 focus:ring-[#0072ce]/20 outline-none transition">
+                    </div>
+
+                    <div>
+                        <label for="v-motorista" class="block text-xs font-semibold text-slate-600 mb-1">Motorista / Condutor *</label>
+                        <input type="text" id="v-motorista" placeholder="Nome do condutor" class="touch-target-btn w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-[#0072ce] focus:ring-2 focus:ring-[#0072ce]/20 outline-none transition">
+                    </div>
+
+                    <div>
+                        <label for="v-placa" class="block text-xs font-semibold text-slate-600 mb-1">Placa *</label>
+                        <input type="text" id="v-placa" placeholder="ABC-1D23" maxlength="8" class="touch-target-btn w-full uppercase font-mono font-bold tracking-wider rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-[#0072ce] focus:ring-2 focus:ring-[#0072ce]/20 outline-none transition">
+                    </div>
+
+                    <div>
+                        <label for="v-modelo" class="block text-xs font-semibold text-slate-600 mb-1">Marca / Modelo *</label>
+                        <input type="text" id="v-modelo" placeholder="Ex: Fiat Strada 1.3" class="touch-target-btn w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-[#0072ce] focus:ring-2 focus:ring-[#0072ce]/20 outline-none transition">
+                    </div>
+
+                    <div>
+                        <label for="v-ano" class="block text-xs font-semibold text-slate-600 mb-1">Ano Fab./Mod.</label>
+                        <input type="text" id="v-ano" placeholder="Ex: 2025/2026" class="touch-target-btn w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-[#0072ce] focus:ring-2 focus:ring-[#0072ce]/20 outline-none transition">
+                    </div>
+
+                    <div>
+                        <label for="v-cor" class="block text-xs font-semibold text-slate-600 mb-1">Cor *</label>
+                        <input type="text" id="v-cor" placeholder="Ex: Branco" class="touch-target-btn w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-[#0072ce] focus:ring-2 focus:ring-[#0072ce]/20 outline-none transition">
+                    </div>
+
+                    <div class="sm:col-span-1 lg:col-span-2">
+                        <label for="v-km" class="block text-xs font-semibold text-slate-600 mb-1">Quilometragem Atual (KM) *</label>
+                        <div class="relative">
+                            <input type="number" inputmode="numeric" id="v-km" placeholder="Ex: 45230" class="touch-target-btn w-full rounded-xl border border-slate-300 pl-3 pr-12 py-2 text-sm font-semibold text-slate-800 focus:border-[#0072ce] focus:ring-2 focus:ring-[#0072ce]/20 outline-none transition">
+                            <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">KM</span>
+                        </div>
+                    </div>
+
+                    <div class="sm:col-span-1 lg:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nível de Combustível</label>
+                        <input type="hidden" id="v-combustivel" value="1/2">
+                        <div id="fuel-selector" class="grid grid-cols-5 gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+                            <button type="button" data-fuel="Reserva" class="fuel-btn min-h-[36px] px-1 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-white/60">Res.</button>
+                            <button type="button" data-fuel="1/4" class="fuel-btn min-h-[36px] px-1 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-white/60">1/4</button>
+                            <button type="button" data-fuel="1/2" class="fuel-btn min-h-[36px] px-1 rounded-lg text-xs font-semibold transition bg-[#0072ce] text-white shadow-xs">1/2</button>
+                            <button type="button" data-fuel="3/4" class="fuel-btn min-h-[36px] px-1 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-white/60">3/4</button>
+                            <button type="button" data-fuel="Cheio" class="fuel-btn min-h-[36px] px-1 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-white/60">Cheio</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXPANDERS 2 A 7: SEÇÕES CATEGORIZADAS DE INSPEÇÃO (Injetadas via JS) -->
+        <div id="checklist-sections" class="space-y-3.5"></div>
+
+        <!-- EXPANDER 8: CROQUI VISUAL DE AVARIAS (Laranja Queimado Clean #ea580c / #fff7ed) -->
+        <section id="exp-croqui" class="expander-card bg-white rounded-2xl border border-slate-200 border-l-[5px] shadow-xs overflow-hidden" style="border-left-color: #ea580c;">
+            <button type="button" onclick="toggleExpander('exp-croqui')" class="expander-header w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left transition" style="background-color: #fff7ed;">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-white shadow-2xs" style="color: #ea580c;">
+                        <i class="ph-duotone ph-car text-xl"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <h2 class="font-bold text-slate-900 text-sm sm:text-base truncate">Croqui Visual de Avarias</h2>
+                        <p class="text-[11px] text-slate-500 truncate">Marcação interativa de danos na lataria e vidros</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <span id="badge-croqui" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-white border" style="color: #ea580c; border-color: #fed7aa;">
+                        0 avarias
+                    </span>
+                    <i class="ph-bold ph-caret-down text-slate-500 text-base expander-chevron"></i>
+                </div>
+            </button>
+
+            <div class="expander-body p-4 sm:p-5 border-t border-slate-100">
+                <div class="flex items-center justify-between mb-3 no-print">
+                    <span class="text-xs text-slate-500">Selecione o tipo e toque no desenho do veículo:</span>
+                    <button type="button" id="btn-clear-pins" class="text-xs font-semibold text-rose-600 hover:bg-rose-50 px-2.5 py-1.5 rounded-lg border border-rose-200 transition">
+                        Limpar Pontos
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+                    <!-- Área do Diagrama SVG -->
+                    <div class="lg:col-span-7 flex flex-col items-center">
+                        <div class="w-full grid grid-cols-4 gap-1.5 mb-3 no-print">
+                            <button type="button" data-damage-type="Amassado" class="damage-type-btn touch-target-btn px-2 py-2 rounded-xl text-xs font-semibold bg-rose-600 text-white shadow-xs transition">Amassado</button>
+                            <button type="button" data-damage-type="Risco" class="damage-type-btn touch-target-btn px-2 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Risco</button>
+                            <button type="button" data-damage-type="Quebrado" class="damage-type-btn touch-target-btn px-2 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Quebrado</button>
+                            <button type="button" data-damage-type="Faltando" class="damage-type-btn touch-target-btn px-2 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Faltando</button>
+                        </div>
+
+                        <div id="car-diagram-container" class="w-full max-w-[440px] bg-slate-50 border-2 border-dashed border-slate-300 rounded-2xl p-3 cursor-crosshair relative overflow-hidden">
+                            <svg id="car-svg" viewBox="0 0 500 260" class="w-full h-auto block pointer-events-none">
+                                <text x="20" y="135" fill="#94a3b8" font-size="11" font-weight="bold" text-anchor="middle" transform="rotate(-90 20 135)">FRENTE</text>
+                                <text x="480" y="135" fill="#94a3b8" font-size="11" font-weight="bold" text-anchor="middle" transform="rotate(90 480 135)">TRASEIRA</text>
+                                <text x="250" y="18" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">LADO ESQUERDO (MOTORISTA)</text>
+                                <text x="250" y="250" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">LADO DIREITO (PASSAGEIRO)</text>
+
+                                <!-- Carroceria -->
+                                <path d="M 55,65 Q 40,65 40,95 L 40,165 Q 40,195 55,195 L 440,195 Q 460,195 460,165 L 460,95 Q 460,65 440,65 Z" fill="#ffffff" stroke="#334155" stroke-width="3"/>
+                                <path d="M 55,65 Q 38,68 38,95 L 38,165 Q 38,192 55,195" fill="none" stroke="#64748b" stroke-width="2"/>
+                                <!-- Faróis -->
+                                <path d="M 43,72 L 56,76 L 52,88 L 41,84 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
+                                <path d="M 43,188 L 56,184 L 52,172 L 41,176 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
+                                <!-- Lanternas -->
+                                <path d="M 457,72 L 444,76 L 448,88 L 459,84 Z" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+                                <path d="M 457,188 L 444,184 L 448,172 L 459,176 Z" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+                                <!-- Capô -->
+                                <path d="M 65,75 L 140,78 L 140,182 L 65,185 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+                                <!-- Para-brisa -->
+                                <path d="M 142,76 L 195,84 L 195,176 L 142,184 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+                                <!-- Teto -->
+                                <rect x="198" y="85" width="145" height="90" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+                                <!-- Vidro Traseiro -->
+                                <path d="M 346,84 L 392,77 L 392,183 L 346,176 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+                                <!-- Porta-malas -->
+                                <path d="M 395,77 L 442,75 L 442,185 L 395,183 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+                                <!-- Retrovisores -->
+                                <path d="M 155,65 L 165,48 L 176,50 L 170,65 Z" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+                                <path d="M 155,195 L 165,212 L 176,210 L 170,195 Z" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+                                <!-- Portas -->
+                                <line x1="185" y1="65" x2="185" y2="84" stroke="#64748b" stroke-width="1.5"/>
+                                <line x1="270" y1="65" x2="270" y2="85" stroke="#64748b" stroke-width="1.5"/>
+                                <line x1="350" y1="65" x2="350" y2="84" stroke="#64748b" stroke-width="1.5"/>
+                                <line x1="185" y1="195" x2="185" y2="176" stroke="#64748b" stroke-width="1.5"/>
+                                <line x1="270" y1="195" x2="270" y2="175" stroke="#64748b" stroke-width="1.5"/>
+                                <line x1="350" y1="195" x2="350" y2="176" stroke="#64748b" stroke-width="1.5"/>
+                                <!-- Rodas -->
+                                <rect x="85" y="57" width="46" height="8" rx="3" fill="#1e293b"/>
+                                <rect x="365" y="57" width="46" height="8" rx="3" fill="#1e293b"/>
+                                <rect x="85" y="195" width="46" height="8" rx="3" fill="#1e293b"/>
+                                <rect x="365" y="195" width="46" height="8" rx="3" fill="#1e293b"/>
+                            </svg>
+                            <div id="pins-layer" class="absolute inset-0 pointer-events-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Avarias -->
+                    <div class="lg:col-span-5 flex flex-col h-full">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                            Pontos Registrados
+                        </h3>
+                        <div id="damage-list" class="space-y-2 max-h-[250px] overflow-y-auto pr-1">
+                            <div class="text-center py-7 px-4 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-xs">
+                                Nenhuma avaria marcada no desenho.<br>Toque no croqui para registrar.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXPANDER 9: OBSERVAÇÕES GERAIS E ASSINATURAS (Verde Floresta Clean #059669 / #ecfdf5) -->
+        <section id="exp-assinaturas" class="expander-card bg-white rounded-2xl border border-slate-200 border-l-[5px] shadow-xs overflow-hidden" style="border-left-color: #059669;">
+            <button type="button" onclick="toggleExpander('exp-assinaturas')" class="expander-header w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left transition" style="background-color: #ecfdf5;">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-white shadow-2xs" style="color: #059669;">
+                        <i class="ph-duotone ph-signature text-xl"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <h2 class="font-bold text-slate-900 text-sm sm:text-base truncate">Observações Gerais e Assinaturas</h2>
+                        <p class="text-[11px] text-slate-500 truncate">Ressalvas finais e assinaturas digitais na tela</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <span id="badge-assinaturas" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-white border" style="color: #059669; border-color: #a7f3d0;">
+                        Pendente
+                    </span>
+                    <i class="ph-bold ph-caret-down text-slate-500 text-base expander-chevron"></i>
+                </div>
+            </button>
+
+            <div class="expander-body p-4 sm:p-5 border-t border-slate-100 space-y-5">
+                <div>
+                    <label for="v-obs-gerais" class="block text-xs font-semibold text-slate-600 mb-1.5">Observações Gerais / Ressalvas da Vistoria</label>
+                    <textarea id="v-obs-gerais" rows="3" placeholder="Descreva pertences no veículo, observações mecânicas ou ressalvas..." class="w-full rounded-xl border border-slate-300 p-3 text-sm text-slate-800 focus:border-[#059669] focus:ring-2 focus:ring-[#059669]/20 outline-none transition"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Assinatura Vistoriador -->
+                    <div class="flex flex-col">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-xs font-bold text-slate-700">Assinatura do Vistoriador</span>
+                            <button type="button" onclick="clearSignature('sig-vistoriador')" title="Limpar Assinatura" aria-label="Limpar Assinatura" class="text-xs font-semibold text-slate-500 hover:text-rose-600 flex items-center gap-1 py-1 px-2 rounded-lg transition no-print">
+                                <i class="ph-bold ph-eraser"></i> Limpar
+                            </button>
+                        </div>
+                        <div class="relative bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl overflow-hidden h-36">
+                            <canvas id="sig-vistoriador" class="signature-pad w-full h-full block"></canvas>
+                            <div class="pointer-events-none absolute bottom-2 inset-x-6 border-b border-slate-300 text-center">
+                                <span id="sig-label-vistoriador" class="text-[10px] text-slate-400 uppercase tracking-wider bg-slate-50 px-2">Assine acima</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assinatura Motorista -->
+                    <div class="flex flex-col">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-xs font-bold text-slate-700">Assinatura do Motorista / Responsável</span>
+                            <button type="button" onclick="clearSignature('sig-motorista')" title="Limpar Assinatura" aria-label="Limpar Assinatura" class="text-xs font-semibold text-slate-500 hover:text-rose-600 flex items-center gap-1 py-1 px-2 rounded-lg transition no-print">
+                                <i class="ph-bold ph-eraser"></i> Limpar
+                            </button>
+                        </div>
+                        <div class="relative bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl overflow-hidden h-36">
+                            <canvas id="sig-motorista" class="signature-pad w-full h-full block"></canvas>
+                            <div class="pointer-events-none absolute bottom-2 inset-x-6 border-b border-slate-300 text-center">
+                                <span id="sig-label-motorista" class="text-[10px] text-slate-400 uppercase tracking-wider bg-slate-50 px-2">Assine acima</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-[11px] text-slate-500 text-center pt-2 border-t border-slate-100">
+                    Declaro que as informações registradas neste checklist refletem fielmente as condições aparentes do veículo no ato da inspeção.
+                </p>
+            </div>
+        </section>
+
+        <!-- Botão de Finalização Inferior Apenas com Ícone -->
+        <div class="pt-1 flex justify-end no-print">
+            <button type="button" onclick="prepareAndPrint()" title="Finalizar e Gerar Relatório PDF" aria-label="Finalizar e Gerar Relatório PDF"
+                class="w-12 h-12 rounded-2xl inline-flex items-center justify-center bg-gradient-to-r from-[#004b93] to-[#0072ce] text-white hover:opacity-95 shadow-md transition active:scale-95">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                    <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+            </button>
+        </div>
+    </main>
+
+    <script>
+        /**
+         * 1. CONFIGURAÇÃO PWA (MANIFEST DINÂMICO, SERVICE WORKER EMBUTIDO E INSTALL PROMPT)
+         */
+        let deferredInstallPrompt = null;
+
+        function initPWA() {
+            // Gera ícone PNG/SVG em Data URI para o manifest
+            const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#004b93"/><stop offset="100%" stop-color="#0072ce"/></linearGradient></defs><rect width="512" height="512" rx="112" fill="url(#g)"/><path d="M128 288l32-96c8-24 28-40 52-40h88c24 0 44 16 52 40l32 96v80a16 16 0 0 1-16 16h-24a16 16 0 0 1-16-16v-16H184v16a16 16 0 0 1-16 16h-24a16 16 0 0 1-16-16v-80zm60-88l-20 64h176l-20-64c-4-12-14.4-20-27.2-20h-81.6c-12.8 0-23.2 8-27.2 20z" fill="#ffffff"/><circle cx="176" cy="304" r="20" fill="#004b93"/><circle cx="336" cy="304" r="20" fill="#004b93"/><circle cx="384" cy="128" r="76" fill="#10b981" stroke="#ffffff" stroke-width="18"/><path d="M350 128l22 22 44-44" fill="none" stroke="#ffffff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+            const iconDataUri = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgIcon)));
+
+            const manifestObj = {
+                name: 'Vistoria Veicular',
+                short_name: 'Vistoria',
+                description: 'Checklist Digital de Vistoria Veicular Offline',
+                start_url: window.location.href,
+                display: 'standalone',
+                background_color: '#f4f7fa',
+                theme_color: '#004b93',
+                orientation: 'portrait-primary',
+                icons: [
+                    {
+                        src: iconDataUri,
+                        sizes: '192x192',
+                        type: 'image/svg+xml',
+                        purpose: 'any maskable'
+                    },
+                    {
+                        src: iconDataUri,
+                        sizes: '512x512',
+                        type: 'image/svg+xml',
+                        purpose: 'any maskable'
+                    }
+                ]
+            };
+
+            try {
+                const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
+                const manifestURL = URL.createObjectURL(manifestBlob);
+                document.getElementById('pwa-manifest').setAttribute('href', manifestURL);
+            } catch (e) {
+                console.warn('Não foi possível criar manifest dinâmico:', e);
+            }
+
+            // Registra Service Worker embutido via Blob URL (com fallback gracioso)
+            if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
+                const swCode = `
+                    const CACHE_NAME = 'vistoria-veicular-pwa-v1';
+                    self.addEventListener('install', (event) => {
+                        self.skipWaiting();
+                    });
+                    self.addEventListener('activate', (event) => {
+                        event.waitUntil(self.clients.claim());
+                    });
+                    self.addEventListener('fetch', (event) => {
+                        if (event.request.method !== 'GET') return;
+                        event.respondWith(
+                            caches.open(CACHE_NAME).then((cache) => {
+                                return fetch(event.request)
+                                    .then((networkResponse) => {
+                                        if (networkResponse && networkResponse.status === 200) {
+                                            cache.put(event.request, networkResponse.clone());
+                                        }
+                                        return networkResponse;
+                                    })
+                                    .catch(() => cache.match(event.request));
+                            })
+                        );
+                    });
+                `;
+                try {
+                    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+                    const swUrl = URL.createObjectURL(swBlob);
+                    navigator.serviceWorker.register(swUrl).catch(() => {
+                        // Fallback silencioso caso o navegador/sandbox restrinja Blob SW
+                    });
+                } catch (err) {
+                    // Fallback silencioso
+                }
+            }
+
+            // Captura evento de instalação PWA
+            const installBtn = document.getElementById('btn-install-pwa');
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredInstallPrompt = e;
+                installBtn.classList.remove('hidden');
+                installBtn.classList.add('inline-flex');
+            });
+
+            installBtn.addEventListener('click', async () => {
+                if (!deferredInstallPrompt) return;
+                deferredInstallPrompt.prompt();
+                const { outcome } = await deferredInstallPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    installBtn.classList.add('hidden');
+                    showToast('Aplicativo instalado com sucesso!');
+                }
+                deferredInstallPrompt = null;
+            });
+
+            window.addEventListener('appinstalled', () => {
+                installBtn.classList.add('hidden');
+                deferredInstallPrompt = null;
+            });
+        }
+
+        /**
+         * 2. SCHEMA DAS 6 SEÇÕES DE CHECKLIST COM CORES CLEAN DE DESTAQUE
+         */
+        const CHECKLIST_SCHEMA = [
+            {
+                id: 'doc_obrigatorios',
+                title: '1. Documentação e Itens Obrigatórios',
+                subtitle: 'CRLV, CNH, estepe, macaco, triângulo e cintos',
+                icon: 'ph-shield-check',
+                accentColor: '#4f46e5',
+                bgColor: '#eef2ff',
+                borderColor: '#c7d2fe',
+                items: [
+                    'CRLV (Documento do Veículo)',
+                    'CNH do Condutor Regular',
+                    'Triângulo de Sinalização',
+                    'Macaco',
+                    'Chave de Roda',
+                    'Pneu Estepe (Estado e Calibragem)',
+                    'Extintor de Incêndio (se aplicável)',
+                    'Cintos de Segurança (Todos)'
+                ]
+            },
+            {
+                id: 'exterior_lataria',
+                title: '2. Exterior, Lataria e Vidros',
+                subtitle: 'Para-choques, portas, retrovisores, para-brisa e palhetas',
+                icon: 'ph-car-simple',
+                accentColor: '#0284c7',
+                bgColor: '#f0f9ff',
+                borderColor: '#bae6fd',
+                items: [
+                    'Para-choque Dianteiro',
+                    'Para-choque Traseiro',
+                    'Capô',
+                    'Teto',
+                    'Tampa do Porta-malas / Caçamba',
+                    'Portas Lado Esquerdo',
+                    'Portas Lado Direito',
+                    'Retrovisores (Externos e Interno)',
+                    'Para-brisa Dianteiro',
+                    'Vidros Laterais e Traseiro',
+                    'Palhetas / Limpadores de Para-brisa'
+                ]
+            },
+            {
+                id: 'pneus_rodas',
+                title: '3. Pneus, Rodas e Suspensão',
+                subtitle: 'Sulcos dos pneus, rodas/calotas e estabilidade visual',
+                icon: 'ph-tire',
+                accentColor: '#0d9488',
+                bgColor: '#f0fdfa',
+                borderColor: '#99f6e4',
+                items: [
+                    'Pneu Dianteiro Esquerdo (Sulcos/Desgaste)',
+                    'Pneu Dianteiro Direito (Sulcos/Desgaste)',
+                    'Pneu Traseiro Esquerdo (Sulcos/Desgaste)',
+                    'Pneu Traseiro Direito (Sulcos/Desgaste)',
+                    'Rodas / Calotas e Parafusos',
+                    'Alinhamento / Suspensão Visual'
+                ]
+            },
+            {
+                id: 'iluminacao',
+                title: '4. Iluminação e Sinalização',
+                subtitle: 'Faróis, lanternas, setas, luzes de freio, ré e placa',
+                icon: 'ph-lightbulb',
+                accentColor: '#d97706',
+                bgColor: '#fffbeb',
+                borderColor: '#fde68a',
+                items: [
+                    'Faróis (Baixo e Alto)',
+                    'Faróis de Neblina / Milha',
+                    'Lanternas Dianteiras e Traseiras',
+                    'Luzes de Freio (incluindo Brake-light)',
+                    'Setas e Pisca-alerta',
+                    'Luz de Ré',
+                    'Luz de Placa'
+                ]
+            },
+            {
+                id: 'interior_painel',
+                title: '5. Interior, Painel e Conforto',
+                subtitle: 'Painel, ar-condicionado, buzina, vidros, travas e bancos',
+                icon: 'ph-steering-wheel',
+                accentColor: '#7c3aed',
+                bgColor: '#f5f3ff',
+                borderColor: '#ddd6fe',
+                items: [
+                    'Painel de Instrumentos (Sem luzes de alerta)',
+                    'Ar-condicionado / Ventilação',
+                    'Buzina',
+                    'Vidros Elétricos',
+                    'Travas Elétricas e Chave/Alarme',
+                    'Estofamento e Bancos',
+                    'Tapetes e Forração Interna',
+                    'Sistema de Som / Multimídia'
+                ]
+            },
+            {
+                id: 'motor_fluidos',
+                title: '6. Motor, Fluidos e Mecânica',
+                subtitle: 'Óleo, radiador, fluido de freio, bateria e vazamentos',
+                icon: 'ph-engine',
+                accentColor: '#e11d48',
+                bgColor: '#fff1f2',
+                borderColor: '#fecdd3',
+                items: [
+                    'Nível de Óleo do Motor',
+                    'Água do Radiador / Líquido Arrefecimento',
+                    'Nível do Fluido de Freio',
+                    'Água do Limpador de Para-brisa',
+                    'Bateria e Terminais',
+                    'Correias e Mangueiras Visíveis',
+                    'Ausência de Vazamentos Sob o Veículo'
+                ]
+            }
+        ];
+
+        const STORAGE_KEY = 'vistoria_veicular_pwa_v2';
+
+        let appState = {
+            vehicle: {
+                data: '',
+                tipo: 'Entrada',
+                vistoriador: '',
+                motorista: '',
+                placa: '',
+                modelo: '',
+                ano: '',
+                cor: '',
+                km: '',
+                combustivel: '1/2',
+                obsGerais: ''
+            },
+            checklist: {},
+            pins: [],
+            signatures: {
+                'sig-vistoriador': null,
+                'sig-motorista': null
+            }
+        };
+
+        let selectedDamageType = 'Amassado';
+        const signaturePads = {};
+
+        /**
+         * INICIALIZAÇÃO GERAL
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            initPWA();
+            initDefaultDate();
+            renderChecklistSections();
+            loadFromLocalStorage();
+            setupVehicleInputs();
+            setupFuelSelector();
+            setupDiagramInteractions();
+            setupSignatureCanvases();
+            setupActionButtons();
+            updateAllBadgesAndStats();
+        });
+
+        function initDefaultDate() {
+            const today = new Date().toISOString().split('T')[0];
+            appState.vehicle.data = today;
+            document.getElementById('v-data').value = today;
+        }
+
+        /**
+         * 3. CONTROLE DOS EXPANDERS (FECHADOS POR PADRÃO)
+         */
+        function toggleExpander(cardId, forceOpen = null) {
+            const card = document.getElementById(cardId);
+            if (!card) return;
+
+            const willOpen = forceOpen !== null ? forceOpen : !card.classList.contains('is-open');
+            if (willOpen) {
+                card.classList.add('is-open');
+                // Se abrir o expander de assinaturas, recalcula tamanho dos canvases
+                if (cardId === 'exp-assinaturas') {
+                    setTimeout(() => {
+                        Object.values(signaturePads).forEach(pad => pad.resizeCanvas());
+                    }, 30);
+                }
+            } else {
+                card.classList.remove('is-open');
+            }
+        }
+
+        function setAllExpanders(openState) {
+            document.querySelectorAll('.expander-card').forEach(card => {
+                toggleExpander(card.id, openState);
+            });
+        }
+
+        /**
+         * 4. RENDERIZAÇÃO DAS SEÇÕES DE CHECKLIST EM EXPANDERS FECHADOS
+         */
+        function renderChecklistSections() {
+            const container = document.getElementById('checklist-sections');
+            container.innerHTML = '';
+
+            CHECKLIST_SCHEMA.forEach((section) => {
+                const expId = `exp-sec-${section.id}`;
+                const sectionEl = document.createElement('section');
+                sectionEl.id = expId;
+                sectionEl.className = 'expander-card bg-white rounded-2xl border border-slate-200 border-l-[5px] shadow-xs overflow-hidden';
+                sectionEl.style.borderLeftColor = section.accentColor;
+
+                let itemsHtml = '';
+                section.items.forEach((itemLabel, iIdx) => {
+                    const itemId = `${section.id}_${iIdx}`;
+                    if (!appState.checklist[itemId]) {
+                        appState.checklist[itemId] = { status: null, obs: '' };
+                    }
+
+                    itemsHtml += `
+                        <div id="row-${itemId}" class="p-3.5 sm:px-5 border-b border-slate-100 last:border-b-0 transition-colors">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                                <!-- Título do Item -->
+                                <div class="flex items-start gap-2">
+                                    <span class="text-xs font-bold text-slate-400 mt-0.5">${iIdx + 1}.</span>
+                                    <span class="text-sm font-medium text-slate-800 leading-snug">${itemLabel}</span>
+                                </div>
+
+                                <!-- Botões Grandes Mobile-First (Thumb-Friendly) -->
+                                <div class="grid grid-cols-12 sm:flex items-center gap-1.5 w-full sm:w-auto shrink-0">
+                                    <button type="button" onclick="setItemStatus('${itemId}', 'ok')" id="btn-${itemId}-ok"
+                                        class="status-btn touch-target-btn col-span-4 sm:w-auto px-2.5 py-2 rounded-xl text-xs font-semibold border border-slate-200 bg-white text-slate-600 transition flex items-center justify-center gap-1">
+                                        <i class="ph-bold ph-check"></i> Conforme
+                                    </button>
+                                    <button type="button" onclick="setItemStatus('${itemId}', 'nok')" id="btn-${itemId}-nok"
+                                        class="status-btn touch-target-btn col-span-4 sm:w-auto px-2.5 py-2 rounded-xl text-xs font-semibold border border-slate-200 bg-white text-slate-600 transition flex items-center justify-center gap-1">
+                                        <i class="ph-bold ph-x"></i> Avaria
+                                    </button>
+                                    <button type="button" onclick="setItemStatus('${itemId}', 'na')" id="btn-${itemId}-na"
+                                        class="status-btn touch-target-btn col-span-2 sm:w-auto px-2 py-2 rounded-xl text-xs font-semibold border border-slate-200 bg-white text-slate-500 transition flex items-center justify-center">
+                                        N/A
+                                    </button>
+                                    <button type="button" onclick="toggleObsInput('${itemId}')" id="btn-obs-${itemId}" title="Observação"
+                                        class="touch-target-btn col-span-2 sm:w-auto px-2.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-500 hover:text-[#0072ce] transition flex items-center justify-center no-print">
+                                        <i class="ph-bold ph-chat-text text-base"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Campo de Observação Individual -->
+                            <div id="obs-box-${itemId}" class="obs-container hidden mt-2.5">
+                                <input type="text" id="obs-input-${itemId}" oninput="updateItemObs('${itemId}', this.value)"
+                                    placeholder="Descreva o detalhe ou avaria deste item..."
+                                    class="touch-target-btn w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:bg-white focus:border-[#0072ce] outline-none transition">
+                            </div>
+                        </div>
+                    `;
+                });
+
+                sectionEl.innerHTML = `
+                    <button type="button" onclick="toggleExpander('${expId}')" class="expander-header w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left transition" style="background-color: ${section.bgColor};">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-white shadow-2xs" style="color: ${section.accentColor};">
+                                <i class="ph-duotone ${section.icon} text-xl"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <h2 class="font-bold text-slate-900 text-sm sm:text-base truncate">${section.title}</h2>
+                                <p class="text-[11px] text-slate-500 truncate">${section.subtitle}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span id="badge-sec-${section.id}" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-white border" style="color: ${section.accentColor}; border-color: ${section.borderColor};">
+                                0/${section.items.length} verificados
+                            </span>
+                            <i class="ph-bold ph-caret-down text-slate-500 text-base expander-chevron"></i>
+                        </div>
+                    </button>
+                    <div class="expander-body border-t border-slate-100 divide-y divide-slate-100">
+                        ${itemsHtml}
+                    </div>
+                `;
+
+                container.appendChild(sectionEl);
+            });
+        }
+
+        /**
+         * 5. INTERAÇÃO COM OS ITENS DO CHECKLIST
+         */
+        function setItemStatus(itemId, status) {
+            const current = appState.checklist[itemId].status;
+            const nextStatus = current === status ? null : status;
+            appState.checklist[itemId].status = nextStatus;
+
+            applyItemVisualState(itemId);
+
+            if (nextStatus === 'nok') {
+                const obsBox = document.getElementById(`obs-box-${itemId}`);
+                obsBox.classList.remove('hidden');
+            }
+
+            updateAllBadgesAndStats();
+            saveToLocalStorage();
+        }
+
+        function applyItemVisualState(itemId) {
+            const state = appState.checklist[itemId];
+            const btnOk = document.getElementById(`btn-${itemId}-ok`);
+            const btnNok = document.getElementById(`btn-${itemId}-nok`);
+            const btnNa = document.getElementById(`btn-${itemId}-na`);
+            const row = document.getElementById(`row-${itemId}`);
+
+            btnOk.className = 'status-btn touch-target-btn col-span-4 sm:w-auto px-2.5 py-2 rounded-xl text-xs font-semibold border border-slate-200 bg-white text-slate-600 transition flex items-center justify-center gap-1';
+            btnNok.className = 'status-btn touch-target-btn col-span-4 sm:w-auto px-2.5 py-2 rounded-xl text-xs font-semibold border border-slate-200 bg-white text-slate-600 transition flex items-center justify-center gap-1';
+            btnNa.className = 'status-btn touch-target-btn col-span-2 sm:w-auto px-2 py-2 rounded-xl text-xs font-semibold border border-slate-200 bg-white text-slate-500 transition flex items-center justify-center';
+            row.classList.remove('bg-emerald-50/40', 'bg-rose-50/40');
+
+            if (state.status === 'ok') {
+                btnOk.className = 'status-btn status-ok-active touch-target-btn col-span-4 sm:w-auto px-2.5 py-2 rounded-xl text-xs font-semibold border border-emerald-600 bg-emerald-600 text-white shadow-xs transition flex items-center justify-center gap-1';
+                row.classList.add('bg-emerald-50/40');
+            } else if (state.status === 'nok') {
+                btnNok.className = 'status-btn status-nok-active touch-target-btn col-span-4 sm:w-auto px-2.5 py-2 rounded-xl text-xs font-semibold border border-rose-600 bg-rose-600 text-white shadow-xs transition flex items-center justify-center gap-1';
+                row.classList.add('bg-rose-50/40');
+            } else if (state.status === 'na') {
+                btnNa.className = 'status-btn status-na-active touch-target-btn col-span-2 sm:w-auto px-2 py-2 rounded-xl text-xs font-semibold border border-slate-600 bg-slate-600 text-white shadow-xs transition flex items-center justify-center';
+            }
+
+            const obsBox = document.getElementById(`obs-box-${itemId}`);
+            const obsInput = document.getElementById(`obs-input-${itemId}`);
+            const btnObs = document.getElementById(`btn-obs-${itemId}`);
+
+            obsInput.value = state.obs || '';
+            if (state.obs && state.obs.trim() !== '') {
+                obsBox.classList.remove('hidden');
+                obsBox.classList.add('has-content');
+                btnObs.classList.add('text-[#0072ce]', 'border-blue-300', 'bg-blue-50');
+            } else {
+                obsBox.classList.remove('has-content');
+                btnObs.classList.remove('text-[#0072ce]', 'border-blue-300', 'bg-blue-50');
+            }
+        }
+
+        function toggleObsInput(itemId) {
+            const obsBox = document.getElementById(`obs-box-${itemId}`);
+            const input = document.getElementById(`obs-input-${itemId}`);
+            obsBox.classList.toggle('hidden');
+            if (!obsBox.classList.contains('hidden')) {
+                input.focus();
+            }
+        }
+
+        function updateItemObs(itemId, value) {
+            appState.checklist[itemId].obs = value;
+            const obsBox = document.getElementById(`obs-box-${itemId}`);
+            const btnObs = document.getElementById(`btn-obs-${itemId}`);
+            if (value.trim() !== '') {
+                obsBox.classList.add('has-content');
+                btnObs.classList.add('text-[#0072ce]', 'border-blue-300', 'bg-blue-50');
+            } else {
+                obsBox.classList.remove('has-content');
+                btnObs.classList.remove('text-[#0072ce]', 'border-blue-300', 'bg-blue-50');
+            }
+            saveToLocalStorage();
+        }
+
+        /**
+         * 6. ATUALIZAÇÃO DE TODOS OS BADGES DOS EXPANDERS E ESTATÍSTICAS GERAIS
+         */
+        function updateAllBadgesAndStats() {
+            // 1. Estatísticas globais do checklist
+            const keys = Object.keys(appState.checklist);
+            const total = keys.length;
+            let ok = 0;
+            let nok = 0;
+            let na = 0;
+            let answered = 0;
+
+            keys.forEach(k => {
+                const st = appState.checklist[k].status;
+                if (st) answered++;
+                if (st === 'ok') ok++;
+                if (st === 'nok') nok++;
+                if (st === 'na') na++;
+            });
+
+            const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
+            document.getElementById('stat-ok').textContent = ok;
+            document.getElementById('stat-nok').textContent = nok;
+            document.getElementById('stat-progress').textContent = `${pct}%`;
+            document.getElementById('progress-bar').style.width = `${pct}%`;
+
+            // Sincroniza resumo do cabeçalho de impressão
+            const printTotal = document.getElementById('print-stat-total');
+            if (printTotal) {
+                printTotal.textContent = total;
+                document.getElementById('print-stat-ok').textContent = ok;
+                document.getElementById('print-stat-nok').textContent = nok;
+                document.getElementById('print-stat-na').textContent = na;
+                document.getElementById('print-stat-pins').textContent = appState.pins.length;
+            }
+
+            // 2. Badge da Identificação do Veículo (6 campos principais)
+            const idFields = ['vistoriador', 'motorista', 'placa', 'modelo', 'cor', 'km'];
+            const filledIdCount = idFields.filter(f => (appState.vehicle[f] || '').toString().trim() !== '').length;
+            const badgeId = document.getElementById('badge-identificacao');
+            if (badgeId) {
+                badgeId.textContent = `${filledIdCount}/${idFields.length} preenchidos`;
+            }
+
+            // 3. Badges individuais de cada categoria do checklist
+            CHECKLIST_SCHEMA.forEach(section => {
+                let secAnswered = 0;
+                section.items.forEach((_, iIdx) => {
+                    const itemId = `${section.id}_${iIdx}`;
+                    if (appState.checklist[itemId] && appState.checklist[itemId].status) {
+                        secAnswered++;
+                    }
+                });
+                const secBadge = document.getElementById(`badge-sec-${section.id}`);
+                if (secBadge) {
+                    secBadge.textContent = `${secAnswered}/${section.items.length} verificados`;
+                }
+            });
+
+            // 4. Badge do Croqui
+            const pinsCount = appState.pins.length;
+            document.getElementById('badge-croqui').textContent = pinsCount === 1 ? '1 avaria' : `${pinsCount} avarias`;
+
+            // 5. Badge das Assinaturas
+            const sigV = Boolean(appState.signatures['sig-vistoriador']);
+            const sigM = Boolean(appState.signatures['sig-motorista']);
+            const badgeSig = document.getElementById('badge-assinaturas');
+            if (sigV && sigM) {
+                badgeSig.textContent = 'Assinado (2/2)';
+            } else if (sigV || sigM) {
+                badgeSig.textContent = 'Parcial (1/2)';
+            } else {
+                badgeSig.textContent = 'Pendente';
+            }
+        }
+
+        /**
+         * PREPARAÇÃO DO LAUDO TÉCNICO ANTES DE IMPRIMIR / GERAR PDF
+         */
+        function prepareAndPrint() {
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            const dtEl = document.getElementById('print-emission-datetime');
+            if (dtEl) dtEl.textContent = formattedDate;
+
+            updateAllBadgesAndStats();
+
+            // Redimensiona e redesenha assinaturas antes de abrir a caixa de impressão
+            Object.values(signaturePads).forEach(pad => {
+                if (pad && typeof pad.resizeCanvas === 'function') {
+                    pad.resizeCanvas();
+                }
+            });
+
+            setTimeout(() => {
+                window.print();
+            }, 80);
+        }
+
+        /**
+         * 7. INPUTS DO VEÍCULO E NÍVEL DE COMBUSTÍVEL
+         */
+        function setupVehicleInputs() {
+            const fieldMap = {
+                'v-data': 'data',
+                'v-tipo': 'tipo',
+                'v-vistoriador': 'vistoriador',
+                'v-motorista': 'motorista',
+                'v-placa': 'placa',
+                'v-modelo': 'modelo',
+                'v-ano': 'ano',
+                'v-cor': 'cor',
+                'v-km': 'km',
+                'v-obs-gerais': 'obsGerais'
+            };
+
+            Object.entries(fieldMap).forEach(([elId, stateKey]) => {
+                const el = document.getElementById(elId);
+                if (!el) return;
+                el.value = appState.vehicle[stateKey] || '';
+                el.addEventListener('input', (e) => {
+                    appState.vehicle[stateKey] = e.target.value;
+                    if (elId === 'v-vistoriador') {
+                        document.getElementById('sig-label-vistoriador').textContent = e.target.value || 'Assine acima';
+                    }
+                    if (elId === 'v-motorista') {
+                        document.getElementById('sig-label-motorista').textContent = e.target.value || 'Assine acima';
+                    }
+                    updateAllBadgesAndStats();
+                    saveToLocalStorage();
+                });
+            });
+
+            if (appState.vehicle.vistoriador) {
+                document.getElementById('sig-label-vistoriador').textContent = appState.vehicle.vistoriador;
+            }
+            if (appState.vehicle.motorista) {
+                document.getElementById('sig-label-motorista').textContent = appState.vehicle.motorista;
+            }
+        }
+
+        function setupFuelSelector() {
+            document.querySelectorAll('.fuel-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const val = btn.dataset.fuel;
+                    appState.vehicle.combustivel = val;
+                    updateFuelUI(val);
+                    saveToLocalStorage();
+                });
+            });
+            updateFuelUI(appState.vehicle.combustivel || '1/2');
+        }
+
+        function updateFuelUI(selectedVal) {
+            document.getElementById('v-combustivel').value = selectedVal;
+            document.querySelectorAll('.fuel-btn').forEach(btn => {
+                if (btn.dataset.fuel === selectedVal) {
+                    btn.className = 'fuel-btn min-h-[36px] px-1 rounded-lg text-xs font-semibold transition bg-[#0072ce] text-white shadow-xs';
+                } else {
+                    btn.className = 'fuel-btn min-h-[36px] px-1 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-white/60';
+                }
+            });
+        }
+
+        /**
+         * 8. CROQUI VISUAL INTERATIVO DE AVARIAS
+         */
+        function setupDiagramInteractions() {
+            document.querySelectorAll('.damage-type-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    selectedDamageType = btn.dataset.damageType;
+                    document.querySelectorAll('.damage-type-btn').forEach(b => {
+                        b.className = 'damage-type-btn touch-target-btn px-2 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition';
+                    });
+                    btn.className = 'damage-type-btn touch-target-btn px-2 py-2 rounded-xl text-xs font-semibold bg-rose-600 text-white shadow-xs transition';
+                });
+            });
+
+            const diagram = document.getElementById('car-diagram-container');
+            diagram.addEventListener('click', (e) => {
+                const rect = diagram.getBoundingClientRect();
+                const xPct = ((e.clientX - rect.left) / rect.width) * 100;
+                const yPct = ((e.clientY - rect.top) / rect.height) * 100;
+
+                appState.pins.push({
+                    id: Date.now(),
+                    x: Math.max(4, Math.min(96, xPct)),
+                    y: Math.max(6, Math.min(94, yPct)),
+                    type: selectedDamageType,
+                    desc: ''
+                });
+
+                renderDamagePins();
+                updateAllBadgesAndStats();
+                saveToLocalStorage();
+            });
+
+            document.getElementById('btn-clear-pins').addEventListener('click', () => {
+                if (appState.pins.length === 0) return;
+                appState.pins = [];
+                renderDamagePins();
+                updateAllBadgesAndStats();
+                saveToLocalStorage();
+                showToast('Pontos do croqui removidos');
+            });
+
+            renderDamagePins();
+        }
+
+        function renderDamagePins() {
+            const pinsLayer = document.getElementById('pins-layer');
+            const listEl = document.getElementById('damage-list');
+            pinsLayer.innerHTML = '';
+
+            if (appState.pins.length === 0) {
+                listEl.innerHTML = `
+                    <div class="text-center py-7 px-4 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-xs">
+                        Nenhuma avaria marcada no desenho.<br>Toque no croqui para registrar.
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = '';
+            appState.pins.forEach((pin, idx) => {
+                const num = idx + 1;
+
+                const pinEl = document.createElement('div');
+                pinEl.className = 'damage-pin absolute w-6 h-6 rounded-full bg-rose-600 text-white font-bold text-xs flex items-center justify-center shadow-md border-2 border-white pointer-events-auto cursor-pointer';
+                pinEl.style.left = `${pin.x}%`;
+                pinEl.style.top = `${pin.y}%`;
+                pinEl.textContent = num;
+                pinEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const input = document.getElementById(`pin-desc-${pin.id}`);
+                    if (input) input.focus();
+                });
+                pinsLayer.appendChild(pinEl);
+
+                const itemEl = document.createElement('div');
+                itemEl.className = 'flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200';
+                itemEl.innerHTML = `
+                    <span class="w-6 h-6 rounded-full bg-rose-600 text-white font-bold text-xs flex items-center justify-center shrink-0">${num}</span>
+                    <div class="flex-1 min-w-0">
+                        <span class="block text-[11px] font-bold text-rose-700 leading-tight">${pin.type}</span>
+                        <input type="text" id="pin-desc-${pin.id}" value="${pin.desc || ''}" placeholder="Local / detalhe da avaria..."
+                            oninput="updatePinDesc(${pin.id}, this.value)"
+                            class="w-full text-xs bg-transparent border-b border-slate-300 focus:border-[#0072ce] outline-none py-1 text-slate-700">
+                    </div>
+                    <button type="button" onclick="removePin(${pin.id})" title="Remover"
+                        class="p-2 text-slate-400 hover:text-rose-600 rounded-lg transition no-print">
+                        <i class="ph-bold ph-trash text-base"></i>
+                    </button>
+                `;
+                listEl.appendChild(itemEl);
+            });
+        }
+
+        function updatePinDesc(pinId, val) {
+            const pin = appState.pins.find(p => p.id === pinId);
+            if (pin) {
+                pin.desc = val;
+                saveToLocalStorage();
+            }
+        }
+
+        function removePin(pinId) {
+            appState.pins = appState.pins.filter(p => p.id !== pinId);
+            renderDamagePins();
+            updateAllBadgesAndStats();
+            saveToLocalStorage();
+        }
+
+        /**
+         * 9. ASSINATURAS DIGITAIS EM CANVAS
+         */
+        function setupSignatureCanvases() {
+            ['sig-vistoriador', 'sig-motorista'].forEach(canvasId => {
+                const canvas = document.getElementById(canvasId);
+                const ctx = canvas.getContext('2d');
+                let isDrawing = false;
+
+                function resizeCanvas() {
+                    const rect = canvas.parentElement.getBoundingClientRect();
+                    if (rect.width === 0 || rect.height === 0) return;
+                    const dataUrl = appState.signatures[canvasId];
+                    canvas.width = rect.width;
+                    canvas.height = rect.height;
+                    ctx.lineWidth = 2.4;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.strokeStyle = '#0f172a';
+
+                    if (dataUrl) {
+                        const img = new Image();
+                        img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        img.src = dataUrl;
+                    }
+                }
+
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
+                // Garante renderização correta antes de imprimir
+                window.addEventListener('beforeprint', resizeCanvas);
+
+                function getCoords(e) {
+                    const rect = canvas.getBoundingClientRect();
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    return {
+                        x: clientX - rect.left,
+                        y: clientY - rect.top
+                    };
+                }
+
+                function startDraw(e) {
+                    isDrawing = true;
+                    const { x, y } = getCoords(e);
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                }
+
+                function draw(e) {
+                    if (!isDrawing) return;
+                    if (e.cancelable) e.preventDefault();
+                    const { x, y } = getCoords(e);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                }
+
+                function endDraw() {
+                    if (!isDrawing) return;
+                    isDrawing = false;
+                    appState.signatures[canvasId] = canvas.toDataURL();
+                    updateAllBadgesAndStats();
+                    saveToLocalStorage();
+                }
+
+                canvas.addEventListener('mousedown', startDraw);
+                canvas.addEventListener('mousemove', draw);
+                window.addEventListener('mouseup', endDraw);
+
+                canvas.addEventListener('touchstart', startDraw, { passive: false });
+                canvas.addEventListener('touchmove', draw, { passive: false });
+                canvas.addEventListener('touchend', endDraw);
+
+                signaturePads[canvasId] = { canvas, ctx, resizeCanvas };
+            });
+        }
+
+        function clearSignature(canvasId) {
+            const pad = signaturePads[canvasId];
+            if (!pad) return;
+            pad.ctx.clearRect(0, 0, pad.canvas.width, pad.canvas.height);
+            appState.signatures[canvasId] = null;
+            updateAllBadgesAndStats();
+            saveToLocalStorage();
+        }
+
+        /**
+         * 10. BOTÕES DE AÇÃO GLOBAL E MODAL
+         */
+        function setupActionButtons() {
+            document.getElementById('btn-expand-all').addEventListener('click', () => {
+                setAllExpanders(true);
+            });
+
+            document.getElementById('btn-collapse-all').addEventListener('click', () => {
+                setAllExpanders(false);
+            });
+
+            document.getElementById('btn-mark-all-ok').addEventListener('click', () => {
+                openConfirmModal(
+                    'Marcar Todos como Conforme?',
+                    'Todos os itens das 6 categorias serão marcados como "Conforme". Você poderá alterar itens com avarias individualmente.',
+                    () => {
+                        Object.keys(appState.checklist).forEach(itemId => {
+                            appState.checklist[itemId].status = 'ok';
+                            applyItemVisualState(itemId);
+                        });
+                        updateAllBadgesAndStats();
+                        saveToLocalStorage();
+                        showToast('Todos os itens marcados como Conforme!');
+                    }
+                );
+            });
+
+            document.getElementById('btn-reset-form').addEventListener('click', () => {
+                openConfirmModal(
+                    'Limpar Todo o Formulário?',
+                    'Esta ação apagará os dados do veículo, respostas do checklist, marcações do croqui e assinaturas.',
+                    () => {
+                        localStorage.removeItem(STORAGE_KEY);
+                        appState = {
+                            vehicle: {
+                                data: new Date().toISOString().split('T')[0],
+                                tipo: 'Entrada',
+                                vistoriador: '',
+                                motorista: '',
+                                placa: '',
+                                modelo: '',
+                                ano: '',
+                                cor: '',
+                                km: '',
+                                combustivel: '1/2',
+                                obsGerais: ''
+                            },
+                            checklist: {},
+                            pins: [],
+                            signatures: {
+                                'sig-vistoriador': null,
+                                'sig-motorista': null
+                            }
+                        };
+                        renderChecklistSections();
+                        setupVehicleInputs();
+                        updateFuelUI('1/2');
+                        renderDamagePins();
+                        clearSignature('sig-vistoriador');
+                        clearSignature('sig-motorista');
+                        document.getElementById('sig-label-vistoriador').textContent = 'Assine acima';
+                        document.getElementById('sig-label-motorista').textContent = 'Assine acima';
+                        setAllExpanders(false);
+                        updateAllBadgesAndStats();
+                        showToast('Formulário reiniciado!');
+                    }
+                );
+            });
+        }
+
+        function openConfirmModal(title, desc, onConfirm) {
+            const modal = document.getElementById('confirm-modal');
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-desc').textContent = desc;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            const close = () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            };
+
+            document.getElementById('modal-cancel').onclick = close;
+            document.getElementById('modal-confirm').onclick = () => {
+                close();
+                onConfirm();
+            };
+        }
+
+        /**
+         * 11. PERSISTÊNCIA OFFLINE NO LOCALSTORAGE
+         */
+        let saveTimeout;
+        function saveToLocalStorage() {
+            const dot = document.getElementById('save-status-dot');
+            const text = document.getElementById('save-status-text');
+            dot.classList.replace('bg-emerald-500', 'bg-amber-400');
+            text.textContent = 'Salvando...';
+
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+                    dot.classList.replace('bg-amber-400', 'bg-emerald-500');
+                    text.textContent = 'Salvo offline';
+                } catch (err) {
+                    console.warn('Erro ao salvar no localStorage:', err);
+                }
+            }, 250);
+        }
+
+        function loadFromLocalStorage() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return;
+                const saved = JSON.parse(raw);
+
+                if (saved.vehicle) {
+                    appState.vehicle = { ...appState.vehicle, ...saved.vehicle };
+                }
+                if (saved.checklist) {
+                    Object.keys(appState.checklist).forEach(k => {
+                        if (saved.checklist[k]) {
+                            appState.checklist[k] = saved.checklist[k];
+                            applyItemVisualState(k);
+                        }
+                    });
+                }
+                if (Array.isArray(saved.pins)) {
+                    appState.pins = saved.pins;
+                }
+                if (saved.signatures) {
+                    appState.signatures = saved.signatures;
+                }
+            } catch (err) {
+                console.warn('Erro ao restaurar rascunho:', err);
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = msg;
+            toast.classList.remove('translate-y-24', 'sm:translate-x-full', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'sm:translate-x-full', 'opacity-0');
+            }, 2800);
+        }
+    </script>
+</body>
+</html>
