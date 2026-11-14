@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#004b93">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,407 +13,32 @@
     <!-- Favicon Vetorial SVG Corporativo -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23004b93'/%3E%3Cstop offset='100%25' stop-color='%230072ce'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M16 36l4-12c1-3 3.5-5 6.5-5h11c3 0 5.5 2 6.5 5l4 12v10a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-2H23v2a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V36zm7.5-11l-2.5 8h22l-2.5-8c-.5-1.5-1.8-2.5-3.4-2.5h-10.2c-1.6 0-2.9 1-3.4 2.5z' fill='%23ffffff'/%3E%3Ccircle cx='22' cy='38' r='2.5' fill='%23004b93'/%3E%3Ccircle cx='42' cy='38' r='2.5' fill='%23004b93'/%3E%3Ccircle cx='48' cy='16' r='10' fill='%2310b981' stroke='%23ffffff' stroke-width='2.5'/%3E%3Cpath d='M43.5 16l3 3 5.5-5.5' fill='none' stroke='%23ffffff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23004b93'/%3E%3Cpath d='M16 36l4-12c1-3 3.5-5 6.5-5h11c3 0 5.5 2 6.5 5l4 12v10a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-2H23v2a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V36z' fill='%23ffffff'/%3E%3C/svg%3E">
-    <link id="pwa-manifest" rel="manifest" href="">
+    <link rel="manifest" href="manifest.webmanifest">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- CSS e ícones empacotados: sem dependências externas. -->
+    <link rel="stylesheet" href="assets/app.css">
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        corp: {
-                            dark: '#004b93',
-                            main: '#0072ce',
-                            light: '#e6f2fc',
-                            surface: '#f0f7ff'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        body {
-            background-color: #f4f7fa;
-            color: #0f172a;
-            -webkit-tap-highlight-color: transparent;
-            overscroll-behavior-y: contain;
-        }
-
-        /* Estilo do Expander / Acordeão */
-        .expander-body {
-            display: none;
-        }
-        .expander-card.is-open .expander-body {
-            display: block;
-            animation: fadeSlideDown 0.2s ease-out;
-        }
-        .expander-chevron {
-            transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .expander-card.is-open .expander-chevron {
-            transform: rotate(180deg);
-        }
-
-        @keyframes fadeSlideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-4px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Alvos de toque confortáveis para mobile */
-        .touch-target-btn {
-            min-height: 42px;
-        }
-
-        /* Canvas de Assinatura */
-        canvas.signature-pad {
-            touch-action: none;
-            cursor: crosshair;
-        }
-
-        /* Croqui Interativo */
-        #car-diagram-container {
-            position: relative;
-            user-select: none;
-            touch-action: manipulation;
-        }
-
-        .damage-pin {
-            transform: translate(-50%, -50%);
-            transition: transform 0.15s ease-out;
-        }
-        .damage-pin:hover, .damage-pin:active {
-            transform: translate(-50%, -50%) scale(1.18);
-            z-index: 20;
-        }
-
-        /* Estilos exclusivos de impressão ocultos na tela */
-        .print-only {
-            display: none;
-        }
-
-        /* Regras de Impressão / Laudo Técnico PDF Profissional e Clean */
-        @media print {
-            @page {
-                size: A4 portrait;
-                margin: 10mm 11mm;
-            }
-            * {
-                box-shadow: none !important;
-                text-shadow: none !important;
-            }
-            body {
-                background-color: #ffffff !important;
-                color: #0f172a !important;
-                font-size: 9.5pt !important;
-                line-height: 1.35 !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .print-only {
-                display: block !important;
-            }
-            header {
-                display: none !important;
-            }
-            main {
-                max-width: 100% !important;
-                width: 100% !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-            main > * + * {
-                margin-top: 8px !important;
-            }
-
-            /* Cabeçalho Oficial do Laudo Técnico */
-            #print-official-header {
-                border: 1px solid #94a3b8 !important;
-                border-radius: 4px !important;
-                margin-bottom: 10px !important;
-                page-break-inside: avoid;
-                break-inside: avoid;
-            }
-
-            /* Transforma Expanders em Blocos Corporativos Oficiais */
-            .expander-card {
-                border: 1px solid #cbd5e1 !important;
-                border-left: 3px solid #004b93 !important;
-                border-radius: 4px !important;
-                background-color: #ffffff !important;
-                margin-bottom: 8px !important;
-                overflow: visible !important;
-            }
-            .expander-header {
-                background-color: #f8fafc !important;
-                border-bottom: 1px solid #cbd5e1 !important;
-                padding: 5px 10px !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            .expander-header h2 {
-                font-size: 10pt !important;
-                font-weight: 700 !important;
-                color: #0f172a !important;
-                text-transform: uppercase;
-                letter-spacing: 0.02em;
-            }
-            .expander-header p,
-            .expander-chevron,
-            .expander-header .w-9 {
-                display: none !important;
-            }
-            .expander-header span[id^="badge-"] {
-                background: #ffffff !important;
-                color: #334155 !important;
-                border: 1px solid #cbd5e1 !important;
-                font-size: 8pt !important;
-                padding: 1px 7px !important;
-            }
-            .expander-body {
-                display: block !important;
-                padding: 8px 10px !important;
-            }
-
-            /* Identificação do Veículo em Grade Limpa */
-            #exp-identificacao .expander-body > div {
-                display: grid !important;
-                grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-                gap: 6px 10px !important;
-            }
-            #exp-identificacao label {
-                font-size: 7.5pt !important;
-                text-transform: uppercase;
-                color: #475569 !important;
-                margin-bottom: 1px !important;
-            }
-            #exp-identificacao input,
-            #exp-identificacao select {
-                min-height: 0 !important;
-                height: auto !important;
-                padding: 2px 0 !important;
-                font-size: 9pt !important;
-                font-weight: 600 !important;
-                color: #0f172a !important;
-                border: none !important;
-                border-bottom: 1px solid #cbd5e1 !important;
-                border-radius: 0 !important;
-                background: transparent !important;
-                appearance: none !important;
-                -webkit-appearance: none !important;
-            }
-            #fuel-selector {
-                background: transparent !important;
-                border: 1px solid #cbd5e1 !important;
-                padding: 2px !important;
-                border-radius: 3px !important;
-            }
-            .fuel-btn {
-                min-height: 0 !important;
-                padding: 2px 4px !important;
-                font-size: 7.5pt !important;
-                color: #64748b !important;
-            }
-            .fuel-btn.bg-\[\#0072ce\] {
-                background-color: #004b93 !important;
-                color: #ffffff !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            /* Itens do Checklist em Formato Tabular/Matricial Limpo */
-            #checklist-sections {
-                display: block !important;
-            }
-            #checklist-sections .expander-card {
-                margin-bottom: 8px !important;
-            }
-            #checklist-sections .expander-body {
-                padding: 0 !important;
-            }
-            #checklist-sections [id^="row-"] {
-                padding: 4px 10px !important;
-                border-bottom: 1px solid #e2e8f0 !important;
-                background-color: #ffffff !important;
-                page-break-inside: avoid;
-                break-inside: avoid;
-            }
-            #checklist-sections [id^="row-"]:nth-child(even) {
-                background-color: #fafbfc !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            #checklist-sections [id^="row-"] > div:first-child {
-                display: flex !important;
-                flex-direction: row !important;
-                align-items: center !important;
-                justify-content: space-between !important;
-                gap: 8px !important;
-            }
-            #checklist-sections [id^="row-"] span.text-sm {
-                font-size: 8.8pt !important;
-                color: #1e293b !important;
-            }
-            #checklist-sections [id^="row-"] .grid {
-                display: flex !important;
-                width: auto !important;
-                gap: 0 !important;
-            }
-
-            /* Oculta botões não marcados e exibe selo limpo do status selecionado */
-            .status-btn {
-                display: none !important;
-            }
-            .status-btn.status-ok-active,
-            .status-btn.status-nok-active,
-            .status-btn.status-na-active {
-                display: inline-flex !important;
-                min-height: 0 !important;
-                padding: 1px 8px !important;
-                font-size: 7.5pt !important;
-                font-weight: 700 !important;
-                border-radius: 3px !important;
-                text-transform: uppercase;
-                letter-spacing: 0.03em;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            .status-ok-active {
-                background-color: #ecfdf5 !important;
-                color: #065f46 !important;
-                border: 1px solid #6ee7b7 !important;
-            }
-            .status-nok-active {
-                background-color: #fef2f2 !important;
-                color: #991b1b !important;
-                border: 1px solid #fca5a5 !important;
-            }
-            .status-na-active {
-                background-color: #f1f5f9 !important;
-                color: #475569 !important;
-                border: 1px solid #cbd5e1 !important;
-            }
-            /* Caso nenhum status tenha sido marcado */
-            [id^="row-"]:not(:has(.status-ok-active)):not(:has(.status-nok-active)):not(:has(.status-na-active)) .grid::after {
-                content: "Não verificado";
-                font-size: 7.5pt;
-                color: #94a3b8;
-                font-style: italic;
-            }
-
-            .obs-container {
-                display: none !important;
-            }
-            .obs-container.has-content {
-                display: block !important;
-                margin-top: 2px !important;
-                padding-left: 14px !important;
-            }
-            .obs-container.has-content input {
-                min-height: 0 !important;
-                padding: 1px 0 !important;
-                font-size: 8pt !important;
-                font-style: italic;
-                color: #334155 !important;
-                border: none !important;
-                background: transparent !important;
-            }
-
-            /* Croqui e Assinaturas sem quebras de página */
-            #exp-croqui,
-            #exp-assinaturas {
-                page-break-inside: avoid;
-                break-inside: avoid;
-            }
-            #exp-croqui .expander-body > div {
-                display: grid !important;
-                grid-template-columns: 55% 43% !important;
-                gap: 2% !important;
-                align-items: start !important;
-            }
-            #car-diagram-container {
-                border: 1px solid #cbd5e1 !important;
-                background-color: #ffffff !important;
-                padding: 4px !important;
-                max-width: 100% !important;
-            }
-            #damage-list {
-                max-height: none !important;
-                overflow: visible !important;
-            }
-            #damage-list > div {
-                padding: 3px 6px !important;
-                border-radius: 3px !important;
-                background: #ffffff !important;
-                border: 1px solid #cbd5e1 !important;
-            }
-            #damage-list input {
-                border: none !important;
-                padding: 0 !important;
-                font-size: 8pt !important;
-            }
-
-            #v-obs-gerais {
-                border: 1px solid #cbd5e1 !important;
-                border-radius: 3px !important;
-                padding: 5px 8px !important;
-                font-size: 8.5pt !important;
-                min-height: 42px !important;
-                background: #ffffff !important;
-            }
-            #exp-assinaturas .grid-cols-1.md\:grid-cols-2 {
-                display: grid !important;
-                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-                gap: 14px !important;
-            }
-            #exp-assinaturas .h-36 {
-                height: 82px !important;
-                border: 1px solid #cbd5e1 !important;
-                background: #ffffff !important;
-                border-radius: 3px !important;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="assets/print-and-custom.css">
 </head>
-<body class="antialiased pb-24 sm:pb-14">
+<body class="antialiased pb-24 sm:pb-14 layout-columns">
+    <a href="#conteudo-principal" class="skip-link no-print">Pular para o conteúdo principal</a>
 
     <!-- Notificação Toast Flutuante -->
-    <div id="toast" class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:top-20 sm:bottom-auto z-50 transform transition-all duration-300 translate-y-24 sm:translate-y-0 sm:translate-x-full opacity-0 pointer-events-none no-print">
+    <div id="toast" role="status" aria-live="polite" aria-atomic="true" class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:top-20 sm:bottom-auto z-50 transform transition-all duration-300 translate-y-24 sm:translate-y-0 sm:translate-x-full opacity-0 pointer-events-none no-print">
         <div class="bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-medium border border-slate-700">
             <i id="toast-icon" class="ph-fill ph-check-circle text-emerald-400 text-xl shrink-0"></i>
             <span id="toast-message">Ação realizada com sucesso!</span>
         </div>
     </div>
 
-    <!-- Modal de Confirmação Customizado -->
-    <div id="confirm-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4 no-print">
+    <!-- Modal de Confirmação / Validação Customizado -->
+    <div id="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc" class="modal-backdrop fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4 no-print">
         <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200">
             <div class="flex items-center gap-3 text-amber-600 mb-2.5">
-                <i class="ph-fill ph-warning-circle text-3xl"></i>
+                <i id="modal-icon" class="ph-fill ph-warning-circle text-3xl"></i>
                 <h3 id="modal-title" class="text-lg font-bold text-slate-900">Confirmar Ação</h3>
             </div>
-            <p id="modal-desc" class="text-slate-600 text-sm mb-6 leading-relaxed">Tem certeza que deseja continuar?</p>
+            <div id="modal-desc" class="text-slate-600 text-sm mb-6 leading-relaxed">Tem certeza que deseja continuar?</div>
             <div class="grid grid-cols-2 sm:flex sm:justify-end gap-2.5">
                 <button id="modal-cancel" class="touch-target-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition">Cancelar</button>
                 <button id="modal-confirm" class="touch-target-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#0072ce] hover:bg-[#004b93] transition">Confirmar</button>
@@ -421,11 +46,89 @@
         </div>
     </div>
 
+    <!-- Modal de Histórico de Vistorias Salvas e Backup JSON (OPÇÃO 3) -->
+    <div id="history-modal" role="dialog" aria-modal="true" aria-labelledby="history-dialog-title" class="modal-backdrop fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[88vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+            <!-- Cabeçalho Modal -->
+            <div class="px-5 py-4 bg-[#f0f7ff] border-b border-blue-200 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-[#004b93] text-white flex items-center justify-center">
+                        <i class="ph-bold ph-folder-open text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 id="history-dialog-title" class="text-base font-bold text-slate-900">Histórico de Vistorias & Backup</h3>
+                        <p class="text-xs text-slate-500">Arquive, duplique, consulte e exporte vistorias localmente</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeHistoryModal()" title="Fechar histórico" aria-label="Fechar histórico" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition">
+                    <i class="ph-bold ph-x text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Ações Rápidas de Arquivo -->
+            <div class="p-4 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                <button type="button" id="btn-save-current-history" onclick="saveCurrentToHistory()" class="touch-target-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-[#0072ce] text-white hover:bg-[#004b93] flex items-center gap-1.5 shadow-xs transition">
+                    <i class="ph-bold ph-floppy-disk text-base"></i> Salvar Vistoria Atual no Histórico
+                </button>
+
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="exportCurrentJSON()" class="touch-target-btn px-3 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-300 hover:bg-slate-100 flex items-center gap-1.5 transition">
+                        <i class="ph-bold ph-export text-base text-[#0072ce]"></i> Exportar JSON
+                    </button>
+                    <label class="touch-target-btn px-3 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-300 hover:bg-slate-100 flex items-center gap-1.5 cursor-pointer transition">
+                        <i class="ph-bold ph-upload-simple text-base text-emerald-600"></i> Importar JSON
+                        <input type="file" id="json-import-input" accept=".json,application/json" class="hidden" onchange="importJSONFile(event)">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Contagem transparente: cada salvamento cria uma versão independente -->
+            <div class="history-tally px-4 py-2.5 border-b border-slate-200 text-xs text-slate-600" role="status" aria-live="polite">
+                <i class="ph-bold ph-files"></i>
+                <strong id="history-total-count">0 registros arquivados</strong>
+                <span class="history-tally-note">Cada clique em salvar mantém um novo registro.</span>
+            </div>
+            <!-- Lista de Vistorias Salvas -->
+            <div id="history-list-container" class="p-4 overflow-y-auto space-y-2.5 flex-1">
+                <!-- Preenchido via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Input Oculto para Captura/Seleção de Fotos (OPÇÃO 2) -->
+    <input type="file" id="camera-file-input" accept="image/jpeg,image/png,image/webp" capture="environment" class="hidden">
+
+    <!-- Navegação lateral: recolhida por padrão, com expansão opcional -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop no-print" aria-hidden="true"></div>
+    <aside id="app-sidebar" class="app-sidebar no-print" aria-label="Navegação da vistoria">
+        <div class="sidebar-brand">
+            <button type="button" id="btn-sidebar-collapse" class="sidebar-action sidebar-toggle" title="Expandir menu lateral" aria-label="Expandir menu lateral" aria-expanded="false" aria-controls="sidebar-items">
+                <i class="ph-bold ph-list text-xl"></i>
+            </button>
+            <span class="sidebar-brand-label">Navegação</span>
+        </div>
+        <nav id="sidebar-items" class="sidebar-nav" aria-label="Seções da vistoria">
+            <button type="button" class="sidebar-link" data-go="exp-identificacao" title="Identificação do veículo" aria-label="Identificação do veículo"><i class="ph-bold ph-identification-card"></i><span class="sidebar-label">Identificação</span></button>
+            <button type="button" class="sidebar-link" data-go="checklist-sections" title="Checklist de inspeção" aria-label="Checklist de inspeção"><i class="ph-bold ph-clipboard-text"></i><span class="sidebar-label">Checklist</span></button>
+            <button type="button" class="sidebar-link" data-go="exp-croqui" title="Croqui de avarias" aria-label="Croqui de avarias"><i class="ph-bold ph-car-simple"></i><span class="sidebar-label">Croqui de avarias</span></button>
+            <button type="button" class="sidebar-link" data-go="exp-assinaturas" title="Observações e assinaturas" aria-label="Observações e assinaturas"><i class="ph-bold ph-signature"></i><span class="sidebar-label">Assinaturas</span></button>
+            <span class="sidebar-divider"></span>
+            <button type="button" class="sidebar-link" data-command="history" title="Histórico e backups" aria-label="Histórico e backups"><i class="ph-bold ph-folder-open"></i><span class="sidebar-label">Histórico e backups</span></button>
+            <button type="button" class="sidebar-link" data-command="print" title="Imprimir laudo" aria-label="Imprimir laudo"><i class="ph-bold ph-printer"></i><span class="sidebar-label">Gerar PDF</span></button>
+            <button type="button" class="sidebar-link" data-command="settings" title="Configurações e informações" aria-label="Configurações e informações"><i class="ph-bold ph-gear"></i><span class="sidebar-label">Configurações</span></button>
+        </nav>
+        <div class="sidebar-footer" title="Vistoria Veicular v1.3.0"><span class="sidebar-version-mark">1.3</span><span class="sidebar-label">v1.3.0 • Offline</span></div>
+    </aside>
+
     <!-- Barra Superior Fixa Compacta Mobile-First -->
     <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
-        <div class="max-w-4xl mx-auto px-3 sm:px-5 py-2.5 flex items-center justify-between gap-2">
+        <div class="header-inner max-w-4xl mx-auto px-3 sm:px-5 py-2.5 flex items-center justify-between gap-2">
+            <!-- Menu lateral responsivo -->
+            <button type="button" id="btn-sidebar-mobile" class="header-menu-btn no-print" title="Abrir menu lateral" aria-label="Abrir menu lateral" aria-expanded="false" aria-controls="app-sidebar">
+                <i class="ph-bold ph-list text-xl"></i>
+            </button>
             <!-- Identidade Visual Corporativa -->
-            <div class="flex items-center gap-2.5 min-w-0">
+            <div class="header-brand flex items-center gap-2.5 min-w-0">
                 <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#004b93] to-[#0072ce] text-white flex items-center justify-center shadow-xs shrink-0">
                     <i class="ph-bold ph-car-profile text-xl sm:text-2xl"></i>
                 </div>
@@ -433,14 +136,13 @@
                     <h1 class="text-sm sm:text-base font-bold text-slate-900 truncate leading-tight">Vistoria Veicular</h1>
                     <p class="text-[11px] text-slate-500 flex items-center gap-1.5 truncate">
                         <span id="save-status-dot" class="w-2 h-2 rounded-full bg-emerald-500 inline-block shrink-0"></span>
-                        <span id="save-status-text" class="truncate">Salvo offline</span>
+                        <span id="save-status-text" class="truncate">Iniciando armazenamento...</span>
                     </p>
                 </div>
             </div>
 
             <!-- Contadores Compactos + Botão Instalar PWA -->
-            <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-                <!-- Botão Discreto Instalar PWA (aparece quando beforeinstallprompt dispara) -->
+            <div class="header-status flex items-center gap-1.5 sm:gap-2.5 shrink-0">
                 <button type="button" id="btn-install-pwa" class="hidden no-print items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#004b93] text-white hover:bg-[#0072ce] shadow-xs transition active:scale-95">
                     <i class="ph-bold ph-download-simple text-sm"></i>
                     <span>Instalar App</span>
@@ -464,64 +166,12 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- Barra de Progresso Contínua -->
-        <div class="w-full bg-slate-100 h-1.5 no-print">
-            <div id="progress-bar" class="bg-gradient-to-r from-[#004b93] to-[#0072ce] h-1.5 transition-all duration-300" style="width: 0%"></div>
-        </div>
-    </header>
-
-    <!-- Conteúdo Principal -->
-    <main class="max-w-4xl mx-auto px-3 sm:px-5 pt-4 space-y-3.5">
-
-        <!-- Cabeçalho Institucional Exclusivo para Impressão / PDF -->
-        <div id="print-official-header" class="print-only bg-white">
-            <div class="flex items-center justify-between px-3.5 py-2.5 border-b border-slate-300 bg-slate-50">
-                <div class="flex items-center gap-2.5">
-                    <svg class="w-7 h-7 shrink-0" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="64" height="64" rx="14" fill="#004b93"/>
-                        <path d="M16 36l4-12c1-3 3.5-5 6.5-5h11c3 0 5.5 2 6.5 5l4 12v10a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-2H23v2a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V36zm7.5-11l-2.5 8h22l-2.5-8c-.5-1.5-1.8-2.5-3.4-2.5h-10.2c-1.6 0-2.9 1-3.4 2.5z" fill="#ffffff"/>
-                    </svg>
-                    <div>
-                        <h1 class="text-sm font-bold text-slate-900 uppercase tracking-wide leading-tight">Laudo Técnico de Vistoria Veicular</h1>
-                        <p class="text-[8pt] text-slate-500">Relatório Oficial de Inspeção, Estado de Conservação e Avarias</p>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <span class="block text-[7.5pt] uppercase font-bold text-slate-500">Emissão do Documento</span>
-                    <span id="print-emission-datetime" class="text-[8.5pt] font-semibold text-slate-800">--/--/---- --:--</span>
-                </div>
-            </div>
-            <div class="grid grid-cols-5 divide-x divide-slate-300 text-center py-1.5 bg-white">
-                <div>
-                    <span class="block text-[7pt] uppercase font-bold text-slate-500">Total Itens</span>
-                    <span id="print-stat-total" class="text-[9.5pt] font-bold text-slate-900">47</span>
-                </div>
-                <div>
-                    <span class="block text-[7pt] uppercase font-bold text-emerald-700">Conformes</span>
-                    <span id="print-stat-ok" class="text-[9.5pt] font-bold text-emerald-700">0</span>
-                </div>
-                <div>
-                    <span class="block text-[7pt] uppercase font-bold text-rose-700">Avarias</span>
-                    <span id="print-stat-nok" class="text-[9.5pt] font-bold text-rose-700">0</span>
-                </div>
-                <div>
-                    <span class="block text-[7pt] uppercase font-bold text-slate-600">N/A</span>
-                    <span id="print-stat-na" class="text-[9.5pt] font-bold text-slate-600">0</span>
-                </div>
-                <div>
-                    <span class="block text-[7pt] uppercase font-bold text-[#004b93]">Pontos no Croqui</span>
-                    <span id="print-stat-pins" class="text-[9.5pt] font-bold text-[#004b93]">0</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Barra de Controle Global Apenas com Ícones SVG -->
-        <div class="bg-white p-2.5 sm:px-3.5 sm:py-2.5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between gap-2 no-print">
-            <!-- Grupo Esquerdo: Expandir / Recolher Todas -->
-            <div class="flex items-center gap-1.5">
-                <button type="button" id="btn-expand-all" title="Expandir Todas as Seções" aria-label="Expandir Todas as Seções"
-                    class="w-10 h-10 rounded-xl inline-flex items-center justify-center bg-[#f0f7ff] text-[#004b93] hover:bg-[#e6f2fc] border border-blue-200 transition active:scale-95">
+            <!-- Appbar de ações: ícones sem card, sempre acessíveis -->
+            <div id="appbar-actions" class="appbar-actions no-print" role="toolbar" aria-label="Ações da vistoria">
+            <!-- Atalhos gerais: Expandir / Recolher / Histórico -->
+            <div class="appbar-group">
+                <button type="button" id="btn-expand-all" title="Abrir primeira seção" aria-label="Abrir primeira seção"
+                    class="appbar-icon w-10 h-10 rounded-xl inline-flex items-center justify-center bg-[#f0f7ff] text-[#004b93] hover:bg-[#e6f2fc] border border-blue-200 transition active:scale-95">
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="7 8 12 3 17 8"></polyline>
                         <polyline points="7 16 12 21 17 16"></polyline>
@@ -529,26 +179,33 @@
                     </svg>
                 </button>
                 <button type="button" id="btn-collapse-all" title="Recolher Todas as Seções" aria-label="Recolher Todas as Seções"
-                    class="w-10 h-10 rounded-xl inline-flex items-center justify-center bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200 transition active:scale-95">
+                    class="appbar-icon w-10 h-10 rounded-xl inline-flex items-center justify-center bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200 transition active:scale-95">
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="7 4 12 9 17 4"></polyline>
                         <polyline points="7 20 12 15 17 20"></polyline>
                         <line x1="4" y1="12" x2="20" y2="12"></line>
                     </svg>
                 </button>
+                <button type="button" onclick="openHistoryModal()" title="Histórico de Vistorias e Backup JSON" aria-label="Histórico de Vistorias e Backup JSON"
+                    class="appbar-icon w-10 h-10 rounded-xl inline-flex items-center justify-center bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition active:scale-95 relative">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span id="history-count-dot" class="hidden absolute -top-1 -right-1 min-w-4 h-4 px-0.5 rounded-full bg-indigo-600 text-white text-[9px] font-bold flex items-center justify-center">0</span>
+                </button>
             </div>
 
-            <!-- Grupo Direito: Marcar Todos OK, Limpar Formulário, Imprimir / Gerar PDF -->
-            <div class="flex items-center gap-2">
+            <!-- Atalhos gerais: Marcar Conforme / Reiniciar / PDF -->
+            <div class="appbar-group">
                 <button type="button" id="btn-mark-all-ok" title="Marcar Todos como Conforme" aria-label="Marcar Todos como Conforme"
-                    class="w-10 h-10 rounded-xl inline-flex items-center justify-center bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition active:scale-95">
+                    class="appbar-icon w-10 h-10 rounded-xl inline-flex items-center justify-center bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition active:scale-95">
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 6 7 17l-5-5"></path>
                         <path d="m22 10-7.5 7.5L13 16"></path>
                     </svg>
                 </button>
                 <button type="button" id="btn-reset-form" title="Limpar Formulário" aria-label="Limpar Formulário"
-                    class="w-10 h-10 rounded-xl inline-flex items-center justify-center bg-slate-100 text-slate-700 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-slate-200 transition active:scale-95">
+                    class="appbar-icon w-10 h-10 rounded-xl inline-flex items-center justify-center bg-slate-100 text-slate-700 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-slate-200 transition active:scale-95">
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 6h18"></path>
                         <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
@@ -557,20 +214,127 @@
                         <line x1="14" y1="11" x2="14" y2="17"></line>
                     </svg>
                 </button>
-                <button type="button" onclick="prepareAndPrint()" title="Imprimir / Gerar PDF" aria-label="Imprimir / Gerar PDF"
-                    class="w-10 h-10 rounded-xl inline-flex items-center justify-center bg-[#0072ce] text-white hover:bg-[#004b93] shadow-xs transition active:scale-95">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                        <rect x="6" y="14" width="12" height="8"></rect>
+            </div>
+            </div>
+        </div>
+        <!-- Barra de Progresso Contínua -->
+        <div class="w-full bg-slate-100 h-1.5 no-print">
+            <div id="progress-bar" class="bg-gradient-to-r from-[#004b93] to-[#0072ce] h-1.5 transition-all duration-300" style="width: 0%"></div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main id="conteudo-principal" class="max-w-4xl mx-auto px-3 sm:px-5 pt-4 space-y-3.5">
+
+        <!-- Cabeçalho Institucional Exclusivo para Impressão / PDF -->
+        <div id="print-official-header" class="print-only bg-white">
+            <div class="flex items-center justify-between px-3.5 py-2.5 border-b border-slate-300 bg-[#f0f7ff]">
+                <div class="flex items-center gap-2.5">
+                    <svg class="w-8 h-8 shrink-0" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="64" height="64" rx="14" fill="#004b93"/>
+                        <path d="M16 36l4-12c1-3 3.5-5 6.5-5h11c3 0 5.5 2 6.5 5l4 12v10a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-2H23v2a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V36zm7.5-11l-2.5 8h22l-2.5-8c-.5-1.5-1.8-2.5-3.4-2.5h-10.2c-1.6 0-2.9 1-3.4 2.5z" fill="#ffffff"/>
                     </svg>
-                </button>
+                    <div>
+                        <h1 class="text-sm font-bold text-[#004b93] uppercase tracking-wide leading-tight">Laudo Técnico de Vistoria Veicular</h1>
+                        <p class="text-[7.8pt] text-slate-600">Relatório Oficial de Inspeção, Estado de Conservação, Avarias e Evidências</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="block text-[7pt] uppercase font-bold text-slate-500">Protocolo / Emissão</span>
+                    <span id="print-protocol-id" class="block text-[8pt] font-mono font-bold text-[#004b93]">#VST-0000</span>
+                    <span id="print-emission-datetime" class="text-[8pt] font-semibold text-slate-800">--/--/---- --:--</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-6 divide-x divide-slate-300 text-center py-1.5 bg-white">
+                <div>
+                    <span class="block text-[6.8pt] uppercase font-bold text-slate-500">Total Itens</span>
+                    <span id="print-stat-total" class="text-[9pt] font-bold text-slate-900">47</span>
+                </div>
+                <div>
+                    <span class="block text-[6.8pt] uppercase font-bold text-emerald-700">Conformes</span>
+                    <span id="print-stat-ok" class="text-[9pt] font-bold text-emerald-700">0</span>
+                </div>
+                <div>
+                    <span class="block text-[6.8pt] uppercase font-bold text-rose-700">Avarias</span>
+                    <span id="print-stat-nok" class="text-[9pt] font-bold text-rose-700">0</span>
+                </div>
+                <div>
+                    <span class="block text-[6.8pt] uppercase font-bold text-slate-600">N/A</span>
+                    <span id="print-stat-na" class="text-[9pt] font-bold text-slate-600">0</span>
+                </div>
+                <div>
+                    <span class="block text-[6.8pt] uppercase font-bold text-[#ea580c]">Croqui</span>
+                    <span id="print-stat-pins" class="text-[9pt] font-bold text-[#ea580c]">0</span>
+                </div>
+                <div>
+                    <span class="block text-[6.8pt] uppercase font-bold text-[#004b93]">Fotos</span>
+                    <span id="print-stat-photos" class="text-[9pt] font-bold text-[#004b93]">0</span>
+                </div>
             </div>
         </div>
 
-        <!-- EXPANDER 1: IDENTIFICAÇÃO DO VEÍCULO E CONDUTOR (Azul Corporativo #0072ce / #f0f7ff) -->
-        <section id="exp-identificacao" class="expander-card bg-white rounded-2xl border border-slate-200 border-l-[5px] shadow-xs overflow-hidden" style="border-left-color: #0072ce;">
-            <button type="button" onclick="toggleExpander('exp-identificacao')" class="expander-header w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left transition" style="background-color: #f0f7ff;">
+        <!-- Quadro Estático de Identificação do Veículo Exclusivo para Impressão (OPÇÃO 1) -->
+        <div id="print-vehicle-summary" class="print-only bg-white">
+            <div class="bg-slate-50 px-3 py-1 border-b border-slate-300 flex items-center justify-between">
+                <span class="text-[8.5pt] font-bold uppercase text-slate-800">Identificação do Veículo e Condutor</span>
+                <span id="print-gps-badge" class="text-[7.2pt] font-mono text-slate-500"></span>
+            </div>
+            <div class="grid grid-cols-4 gap-px bg-slate-200 text-[8.2pt]">
+                <div class="bg-white p-1.5">
+                    <span class="block text-[6.8pt] uppercase text-slate-500 font-bold">Data / Tipo</span>
+                    <span id="p-v-data-tipo" class="font-bold text-slate-900">-</span>
+                </div>
+                <div class="bg-white p-1.5">
+                    <span class="block text-[6.8pt] uppercase text-slate-500 font-bold">Placa</span>
+                    <span id="p-v-placa" class="font-mono font-bold text-slate-900 text-[9.5pt]">-</span>
+                </div>
+                <div class="bg-white p-1.5">
+                    <span class="block text-[6.8pt] uppercase text-slate-500 font-bold">Marca / Modelo</span>
+                    <span id="p-v-modelo" class="font-bold text-slate-900">-</span>
+                </div>
+                <div class="bg-white p-1.5">
+                    <span class="block text-[6.8pt] uppercase text-slate-500 font-bold">Ano / Cor</span>
+                    <span id="p-v-ano-cor" class="font-semibold text-slate-900">-</span>
+                </div>
+                <div class="bg-white p-1.5">
+                    <span class="block text-[6.8pt] uppercase text-slate-500 font-bold">Quilometragem</span>
+                    <span id="p-v-km" class="font-bold text-slate-900">-</span>
+                </div>
+                <div class="bg-white p-1.5">
+                    <span class="block text-[6.8pt] uppercase text-slate-500 font-bold">Combustível</span>
+                    <span id="p-v-combustivel" class="font-bold text-[#004b93]">-</span>
+                </div>
+                <div class="bg-white p-1.5">
+                    <span class="block text-[6.8pt] uppercase text-slate-500 font-bold">Vistoriador</span>
+                    <span id="p-v-vistoriador" class="font-semibold text-slate-900">-</span>
+                </div>
+                <div class="bg-white p-1.5">
+                    <span class="block text-[6.8pt] uppercase text-slate-500 font-bold">Motorista / Condutor</span>
+                    <span id="p-v-motorista" class="font-semibold text-slate-900">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visão de trabalho: navegação contextual e escolha de densidade no desktop -->
+        <section id="workspace-heading" class="workspace-heading no-print" aria-label="Área de trabalho">
+            <div class="workspace-heading-copy">
+                <div class="workspace-eyebrow"><span class="workspace-live-dot"></span> INSPEÇÃO DIGITAL <span class="workspace-eyebrow-divider">/</span> ÁREA DE TRABALHO</div>
+                <h2>Uma vistoria completa, em uma única tela.</h2>
+                <p>Identificação, 47 verificações, croqui e assinaturas organizados por etapa.</p>
+            </div>
+            <div class="workspace-heading-actions">
+                <div class="layout-switch" role="group" aria-label="Visualização do checklist">
+                    <button type="button" id="btn-layout-columns" class="layout-switch-btn is-selected" title="Visualizar checklist em duas colunas" aria-label="Visualizar checklist em duas colunas" aria-pressed="true"><i class="ph-bold ph-columns"></i><span>Colunas</span></button>
+                    <button type="button" id="btn-layout-list" class="layout-switch-btn" title="Visualizar checklist em lista" aria-label="Visualizar checklist em lista" aria-pressed="false"><i class="ph-bold ph-list"></i><span>Lista</span></button>
+                </div>
+                <span class="workspace-count-pill"><i class="ph-bold ph-shield-check"></i> 47 itens · 6 categorias</span>
+            </div>
+        </section>
+
+        <div id="inspection-workspace" class="inspection-workspace">
+        <!-- EXPANDER 1: IDENTIFICAÇÃO DO VEÍCULO E CONDUTOR -->
+        <section id="exp-identificacao" class="expander-card bg-white rounded-2xl border border-slate-200 border-l-[5px] shadow-xs overflow-hidden no-print" style="border-left-color: #0072ce;">
+            <button type="button" onclick="toggleExpander('exp-identificacao')" aria-expanded="false" aria-controls="content-exp-identificacao" class="expander-header w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left transition" style="background-color: #f0f7ff;">
                 <div class="flex items-center gap-3 min-w-0">
                     <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-white shadow-2xs" style="color: #0072ce;">
                         <i class="ph-duotone ph-identification-card text-xl"></i>
@@ -588,7 +352,7 @@
                 </div>
             </button>
 
-            <div class="expander-body p-4 sm:p-5 border-t border-slate-100">
+            <div id="content-exp-identificacao" class="expander-body p-4 sm:p-5 border-t border-slate-100">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
                     <div>
                         <label for="v-data" class="block text-xs font-semibold text-slate-600 mb-1">Data da Vistoria</label>
@@ -616,7 +380,7 @@
                     </div>
 
                     <div>
-                        <label for="v-placa" class="block text-xs font-semibold text-slate-600 mb-1">Placa *</label>
+                        <label for="v-placa" class="block text-xs font-semibold text-slate-600 mb-1">Placa (Mercosul/Antiga) *</label>
                         <input type="text" id="v-placa" placeholder="ABC-1D23" maxlength="8" class="touch-target-btn w-full uppercase font-mono font-bold tracking-wider rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-[#0072ce] focus:ring-2 focus:ring-[#0072ce]/20 outline-none transition">
                     </div>
 
@@ -627,7 +391,7 @@
 
                     <div>
                         <label for="v-ano" class="block text-xs font-semibold text-slate-600 mb-1">Ano Fab./Mod.</label>
-                        <input type="text" id="v-ano" placeholder="Ex: 2025/2026" class="touch-target-btn w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-[#0072ce] focus:ring-2 focus:ring-[#0072ce]/20 outline-none transition">
+                        <input type="text" id="v-ano" placeholder="Ex: 2025/2026" maxlength="9" class="touch-target-btn w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-[#0072ce] focus:ring-2 focus:ring-[#0072ce]/20 outline-none transition">
                     </div>
 
                     <div>
@@ -638,7 +402,7 @@
                     <div class="sm:col-span-1 lg:col-span-2">
                         <label for="v-km" class="block text-xs font-semibold text-slate-600 mb-1">Quilometragem Atual (KM) *</label>
                         <div class="relative">
-                            <input type="number" inputmode="numeric" id="v-km" placeholder="Ex: 45230" class="touch-target-btn w-full rounded-xl border border-slate-300 pl-3 pr-12 py-2 text-sm font-semibold text-slate-800 focus:border-[#0072ce] focus:ring-2 focus:ring-[#0072ce]/20 outline-none transition">
+                            <input type="text" inputmode="numeric" id="v-km" placeholder="Ex: 45.230" class="touch-target-btn w-full rounded-xl border border-slate-300 pl-3 pr-12 py-2 text-sm font-semibold text-slate-800 focus:border-[#0072ce] focus:ring-2 focus:ring-[#0072ce]/20 outline-none transition">
                             <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">KM</span>
                         </div>
                     </div>
@@ -654,6 +418,17 @@
                             <button type="button" data-fuel="Cheio" class="fuel-btn min-h-[36px] px-1 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-white/60">Cheio</button>
                         </div>
                     </div>
+
+                    <!-- Captura de Localização GPS Opcional -->
+                    <div class="sm:col-span-2 lg:col-span-4 flex items-center justify-between bg-slate-50 px-3 py-2 rounded-xl border border-slate-200">
+                        <div class="flex items-center gap-2 text-xs text-slate-600">
+                            <i class="ph-duotone ph-map-pin text-lg text-[#0072ce]"></i>
+                            <span id="gps-status-text">Localização GPS não registrada</span>
+                        </div>
+                        <button type="button" onclick="captureGPSLocation()" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-300 text-[#004b93] hover:bg-blue-50 transition">
+                            Capturar GPS
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -661,16 +436,16 @@
         <!-- EXPANDERS 2 A 7: SEÇÕES CATEGORIZADAS DE INSPEÇÃO (Injetadas via JS) -->
         <div id="checklist-sections" class="space-y-3.5"></div>
 
-        <!-- EXPANDER 8: CROQUI VISUAL DE AVARIAS (Laranja Queimado Clean #ea580c / #fff7ed) -->
+        <!-- EXPANDER 8: CROQUI VISUAL DE AVARIAS -->
         <section id="exp-croqui" class="expander-card bg-white rounded-2xl border border-slate-200 border-l-[5px] shadow-xs overflow-hidden" style="border-left-color: #ea580c;">
-            <button type="button" onclick="toggleExpander('exp-croqui')" class="expander-header w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left transition" style="background-color: #fff7ed;">
+            <button type="button" onclick="toggleExpander('exp-croqui')" aria-expanded="false" aria-controls="content-exp-croqui" class="expander-header w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left transition" style="background-color: #fff7ed;">
                 <div class="flex items-center gap-3 min-w-0">
                     <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-white shadow-2xs" style="color: #ea580c;">
                         <i class="ph-duotone ph-car text-xl"></i>
                     </div>
                     <div class="min-w-0">
                         <h2 class="font-bold text-slate-900 text-sm sm:text-base truncate">Croqui Visual de Avarias</h2>
-                        <p class="text-[11px] text-slate-500 truncate">Marcação interativa de danos na lataria e vidros</p>
+                        <p class="text-[11px] text-slate-500 truncate">Marcação interativa de danos na lataria, vidros e fotos</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
@@ -681,7 +456,7 @@
                 </div>
             </button>
 
-            <div class="expander-body p-4 sm:p-5 border-t border-slate-100">
+            <div id="content-exp-croqui" class="expander-body p-4 sm:p-5 border-t border-slate-100">
                 <div class="flex items-center justify-between mb-3 no-print">
                     <span class="text-xs text-slate-500">Selecione o tipo e toque no desenho do veículo:</span>
                     <button type="button" id="btn-clear-pins" class="text-xs font-semibold text-rose-600 hover:bg-rose-50 px-2.5 py-1.5 rounded-lg border border-rose-200 transition">
@@ -699,7 +474,7 @@
                             <button type="button" data-damage-type="Faltando" class="damage-type-btn touch-target-btn px-2 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Faltando</button>
                         </div>
 
-                        <div id="car-diagram-container" class="w-full max-w-[440px] bg-slate-50 border-2 border-dashed border-slate-300 rounded-2xl p-3 cursor-crosshair relative overflow-hidden">
+                        <div id="car-diagram-container" role="button" tabindex="0" aria-label="Croqui do veículo: clique para marcar uma avaria; pressione Enter ou Espaço para inserir um ponto no centro" class="w-full max-w-[440px] bg-slate-50 border-2 border-dashed border-slate-300 rounded-2xl p-3 cursor-crosshair relative overflow-hidden">
                             <svg id="car-svg" viewBox="0 0 500 260" class="w-full h-auto block pointer-events-none">
                                 <text x="20" y="135" fill="#94a3b8" font-size="11" font-weight="bold" text-anchor="middle" transform="rotate(-90 20 135)">FRENTE</text>
                                 <text x="480" y="135" fill="#94a3b8" font-size="11" font-weight="bold" text-anchor="middle" transform="rotate(90 480 135)">TRASEIRA</text>
@@ -750,7 +525,7 @@
                         <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                             Pontos Registrados
                         </h3>
-                        <div id="damage-list" class="space-y-2 max-h-[250px] overflow-y-auto pr-1">
+                        <div id="damage-list" class="space-y-2 max-h-[260px] overflow-y-auto pr-1">
                             <div class="text-center py-7 px-4 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-xs">
                                 Nenhuma avaria marcada no desenho.<br>Toque no croqui para registrar.
                             </div>
@@ -760,9 +535,18 @@
             </div>
         </section>
 
-        <!-- EXPANDER 9: OBSERVAÇÕES GERAIS E ASSINATURAS (Verde Floresta Clean #059669 / #ecfdf5) -->
+        <!-- ANEXO FOTOGRÁFICO DE EVIDÊNCIAS (EXIBIDO NO PDF QUANDO HOUVER FOTOS - OPÇÃO 2) -->
+        <section id="print-photo-section" class="hidden expander-card bg-white rounded-2xl border border-slate-200 border-l-[5px] shadow-xs overflow-hidden" style="border-left-color: #0284c7;">
+            <div class="expander-header w-full px-4 py-2.5 flex items-center justify-between gap-3 text-left" style="background-color: #f0f9ff;">
+                <h2 class="font-bold text-slate-900 text-sm uppercase">Anexo Fotográfico de Evidências</h2>
+                <span id="badge-print-photos" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-white border border-sky-200 text-sky-700">0 fotos</span>
+            </div>
+            <div id="print-photo-grid" class="p-3 grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+        </section>
+
+        <!-- EXPANDER 9: OBSERVAÇÕES GERAIS E ASSINATURAS -->
         <section id="exp-assinaturas" class="expander-card bg-white rounded-2xl border border-slate-200 border-l-[5px] shadow-xs overflow-hidden" style="border-left-color: #059669;">
-            <button type="button" onclick="toggleExpander('exp-assinaturas')" class="expander-header w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left transition" style="background-color: #ecfdf5;">
+            <button type="button" onclick="toggleExpander('exp-assinaturas')" aria-expanded="false" aria-controls="content-exp-assinaturas" class="expander-header w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left transition" style="background-color: #ecfdf5;">
                 <div class="flex items-center gap-3 min-w-0">
                     <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-white shadow-2xs" style="color: #059669;">
                         <i class="ph-duotone ph-signature text-xl"></i>
@@ -780,7 +564,7 @@
                 </div>
             </button>
 
-            <div class="expander-body p-4 sm:p-5 border-t border-slate-100 space-y-5">
+            <div id="content-exp-assinaturas" class="expander-body p-4 sm:p-5 border-t border-slate-100 space-y-5">
                 <div>
                     <label for="v-obs-gerais" class="block text-xs font-semibold text-slate-600 mb-1.5">Observações Gerais / Ressalvas da Vistoria</label>
                     <textarea id="v-obs-gerais" rows="3" placeholder="Descreva pertences no veículo, observações mecânicas ou ressalvas..." class="w-full rounded-xl border border-slate-300 p-3 text-sm text-slate-800 focus:border-[#059669] focus:ring-2 focus:ring-[#059669]/20 outline-none transition"></textarea>
@@ -795,10 +579,11 @@
                                 <i class="ph-bold ph-eraser"></i> Limpar
                             </button>
                         </div>
-                        <div class="relative bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl overflow-hidden h-36">
+                        <div class="sig-canvas-wrapper relative bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl overflow-hidden h-36">
                             <canvas id="sig-vistoriador" class="signature-pad w-full h-full block"></canvas>
-                            <div class="pointer-events-none absolute bottom-2 inset-x-6 border-b border-slate-300 text-center">
-                                <span id="sig-label-vistoriador" class="text-[10px] text-slate-400 uppercase tracking-wider bg-slate-50 px-2">Assine acima</span>
+                            <img id="img-print-sig-vistoriador" class="sig-print-img hidden" alt="Assinatura Vistoriador">
+                            <div class="pointer-events-none absolute bottom-1.5 inset-x-6 border-b border-slate-300 text-center">
+                                <span id="sig-label-vistoriador" class="text-[10px] text-slate-500 uppercase tracking-wider bg-white/90 px-2">Assine acima</span>
                             </div>
                         </div>
                     </div>
@@ -811,10 +596,11 @@
                                 <i class="ph-bold ph-eraser"></i> Limpar
                             </button>
                         </div>
-                        <div class="relative bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl overflow-hidden h-36">
+                        <div class="sig-canvas-wrapper relative bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl overflow-hidden h-36">
                             <canvas id="sig-motorista" class="signature-pad w-full h-full block"></canvas>
-                            <div class="pointer-events-none absolute bottom-2 inset-x-6 border-b border-slate-300 text-center">
-                                <span id="sig-label-motorista" class="text-[10px] text-slate-400 uppercase tracking-wider bg-slate-50 px-2">Assine acima</span>
+                            <img id="img-print-sig-motorista" class="sig-print-img hidden" alt="Assinatura Motorista">
+                            <div class="pointer-events-none absolute bottom-1.5 inset-x-6 border-b border-slate-300 text-center">
+                                <span id="sig-label-motorista" class="text-[10px] text-slate-500 uppercase tracking-wider bg-white/90 px-2">Assine acima</span>
                             </div>
                         </div>
                     </div>
@@ -826,9 +612,11 @@
             </div>
         </section>
 
+        </div><!-- /inspection-workspace -->
+
         <!-- Botão de Finalização Inferior Apenas com Ícone -->
         <div class="pt-1 flex justify-end no-print">
-            <button type="button" onclick="prepareAndPrint()" title="Finalizar e Gerar Relatório PDF" aria-label="Finalizar e Gerar Relatório PDF"
+            <button type="button" onclick="validateAndPrint()" title="Validar e Gerar Relatório PDF" aria-label="Validar e Gerar Relatório PDF"
                 class="w-12 h-12 rounded-2xl inline-flex items-center justify-center bg-gradient-to-r from-[#004b93] to-[#0072ce] text-white hover:opacity-95 shadow-md transition active:scale-95">
                 <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="6 9 6 2 18 2 18 9"></polyline>
@@ -839,983 +627,59 @@
         </div>
     </main>
 
-    <script>
-        /**
-         * 1. CONFIGURAÇÃO PWA (MANIFEST DINÂMICO, SERVICE WORKER EMBUTIDO E INSTALL PROMPT)
-         */
-        let deferredInstallPrompt = null;
-
-        function initPWA() {
-            // Gera ícone PNG/SVG em Data URI para o manifest
-            const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#004b93"/><stop offset="100%" stop-color="#0072ce"/></linearGradient></defs><rect width="512" height="512" rx="112" fill="url(#g)"/><path d="M128 288l32-96c8-24 28-40 52-40h88c24 0 44 16 52 40l32 96v80a16 16 0 0 1-16 16h-24a16 16 0 0 1-16-16v-16H184v16a16 16 0 0 1-16 16h-24a16 16 0 0 1-16-16v-80zm60-88l-20 64h176l-20-64c-4-12-14.4-20-27.2-20h-81.6c-12.8 0-23.2 8-27.2 20z" fill="#ffffff"/><circle cx="176" cy="304" r="20" fill="#004b93"/><circle cx="336" cy="304" r="20" fill="#004b93"/><circle cx="384" cy="128" r="76" fill="#10b981" stroke="#ffffff" stroke-width="18"/><path d="M350 128l22 22 44-44" fill="none" stroke="#ffffff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-            const iconDataUri = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgIcon)));
-
-            const manifestObj = {
-                name: 'Vistoria Veicular',
-                short_name: 'Vistoria',
-                description: 'Checklist Digital de Vistoria Veicular Offline',
-                start_url: window.location.href,
-                display: 'standalone',
-                background_color: '#f4f7fa',
-                theme_color: '#004b93',
-                orientation: 'portrait-primary',
-                icons: [
-                    {
-                        src: iconDataUri,
-                        sizes: '192x192',
-                        type: 'image/svg+xml',
-                        purpose: 'any maskable'
-                    },
-                    {
-                        src: iconDataUri,
-                        sizes: '512x512',
-                        type: 'image/svg+xml',
-                        purpose: 'any maskable'
-                    }
-                ]
-            };
-
-            try {
-                const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
-                const manifestURL = URL.createObjectURL(manifestBlob);
-                document.getElementById('pwa-manifest').setAttribute('href', manifestURL);
-            } catch (e) {
-                console.warn('Não foi possível criar manifest dinâmico:', e);
-            }
-
-            // Registra Service Worker embutido via Blob URL (com fallback gracioso)
-            if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
-                const swCode = `
-                    const CACHE_NAME = 'vistoria-veicular-pwa-v1';
-                    self.addEventListener('install', (event) => {
-                        self.skipWaiting();
-                    });
-                    self.addEventListener('activate', (event) => {
-                        event.waitUntil(self.clients.claim());
-                    });
-                    self.addEventListener('fetch', (event) => {
-                        if (event.request.method !== 'GET') return;
-                        event.respondWith(
-                            caches.open(CACHE_NAME).then((cache) => {
-                                return fetch(event.request)
-                                    .then((networkResponse) => {
-                                        if (networkResponse && networkResponse.status === 200) {
-                                            cache.put(event.request, networkResponse.clone());
-                                        }
-                                        return networkResponse;
-                                    })
-                                    .catch(() => cache.match(event.request));
-                            })
-                        );
-                    });
-                `;
-                try {
-                    const swBlob = new Blob([swCode], { type: 'application/javascript' });
-                    const swUrl = URL.createObjectURL(swBlob);
-                    navigator.serviceWorker.register(swUrl).catch(() => {
-                        // Fallback silencioso caso o navegador/sandbox restrinja Blob SW
-                    });
-                } catch (err) {
-                    // Fallback silencioso
-                }
-            }
-
-            // Captura evento de instalação PWA
-            const installBtn = document.getElementById('btn-install-pwa');
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredInstallPrompt = e;
-                installBtn.classList.remove('hidden');
-                installBtn.classList.add('inline-flex');
-            });
-
-            installBtn.addEventListener('click', async () => {
-                if (!deferredInstallPrompt) return;
-                deferredInstallPrompt.prompt();
-                const { outcome } = await deferredInstallPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    installBtn.classList.add('hidden');
-                    showToast('Aplicativo instalado com sucesso!');
-                }
-                deferredInstallPrompt = null;
-            });
-
-            window.addEventListener('appinstalled', () => {
-                installBtn.classList.add('hidden');
-                deferredInstallPrompt = null;
-            });
-        }
-
-        /**
-         * 2. SCHEMA DAS 6 SEÇÕES DE CHECKLIST COM CORES CLEAN DE DESTAQUE
-         */
-        const CHECKLIST_SCHEMA = [
-            {
-                id: 'doc_obrigatorios',
-                title: '1. Documentação e Itens Obrigatórios',
-                subtitle: 'CRLV, CNH, estepe, macaco, triângulo e cintos',
-                icon: 'ph-shield-check',
-                accentColor: '#4f46e5',
-                bgColor: '#eef2ff',
-                borderColor: '#c7d2fe',
-                items: [
-                    'CRLV (Documento do Veículo)',
-                    'CNH do Condutor Regular',
-                    'Triângulo de Sinalização',
-                    'Macaco',
-                    'Chave de Roda',
-                    'Pneu Estepe (Estado e Calibragem)',
-                    'Extintor de Incêndio (se aplicável)',
-                    'Cintos de Segurança (Todos)'
-                ]
-            },
-            {
-                id: 'exterior_lataria',
-                title: '2. Exterior, Lataria e Vidros',
-                subtitle: 'Para-choques, portas, retrovisores, para-brisa e palhetas',
-                icon: 'ph-car-simple',
-                accentColor: '#0284c7',
-                bgColor: '#f0f9ff',
-                borderColor: '#bae6fd',
-                items: [
-                    'Para-choque Dianteiro',
-                    'Para-choque Traseiro',
-                    'Capô',
-                    'Teto',
-                    'Tampa do Porta-malas / Caçamba',
-                    'Portas Lado Esquerdo',
-                    'Portas Lado Direito',
-                    'Retrovisores (Externos e Interno)',
-                    'Para-brisa Dianteiro',
-                    'Vidros Laterais e Traseiro',
-                    'Palhetas / Limpadores de Para-brisa'
-                ]
-            },
-            {
-                id: 'pneus_rodas',
-                title: '3. Pneus, Rodas e Suspensão',
-                subtitle: 'Sulcos dos pneus, rodas/calotas e estabilidade visual',
-                icon: 'ph-tire',
-                accentColor: '#0d9488',
-                bgColor: '#f0fdfa',
-                borderColor: '#99f6e4',
-                items: [
-                    'Pneu Dianteiro Esquerdo (Sulcos/Desgaste)',
-                    'Pneu Dianteiro Direito (Sulcos/Desgaste)',
-                    'Pneu Traseiro Esquerdo (Sulcos/Desgaste)',
-                    'Pneu Traseiro Direito (Sulcos/Desgaste)',
-                    'Rodas / Calotas e Parafusos',
-                    'Alinhamento / Suspensão Visual'
-                ]
-            },
-            {
-                id: 'iluminacao',
-                title: '4. Iluminação e Sinalização',
-                subtitle: 'Faróis, lanternas, setas, luzes de freio, ré e placa',
-                icon: 'ph-lightbulb',
-                accentColor: '#d97706',
-                bgColor: '#fffbeb',
-                borderColor: '#fde68a',
-                items: [
-                    'Faróis (Baixo e Alto)',
-                    'Faróis de Neblina / Milha',
-                    'Lanternas Dianteiras e Traseiras',
-                    'Luzes de Freio (incluindo Brake-light)',
-                    'Setas e Pisca-alerta',
-                    'Luz de Ré',
-                    'Luz de Placa'
-                ]
-            },
-            {
-                id: 'interior_painel',
-                title: '5. Interior, Painel e Conforto',
-                subtitle: 'Painel, ar-condicionado, buzina, vidros, travas e bancos',
-                icon: 'ph-steering-wheel',
-                accentColor: '#7c3aed',
-                bgColor: '#f5f3ff',
-                borderColor: '#ddd6fe',
-                items: [
-                    'Painel de Instrumentos (Sem luzes de alerta)',
-                    'Ar-condicionado / Ventilação',
-                    'Buzina',
-                    'Vidros Elétricos',
-                    'Travas Elétricas e Chave/Alarme',
-                    'Estofamento e Bancos',
-                    'Tapetes e Forração Interna',
-                    'Sistema de Som / Multimídia'
-                ]
-            },
-            {
-                id: 'motor_fluidos',
-                title: '6. Motor, Fluidos e Mecânica',
-                subtitle: 'Óleo, radiador, fluido de freio, bateria e vazamentos',
-                icon: 'ph-engine',
-                accentColor: '#e11d48',
-                bgColor: '#fff1f2',
-                borderColor: '#fecdd3',
-                items: [
-                    'Nível de Óleo do Motor',
-                    'Água do Radiador / Líquido Arrefecimento',
-                    'Nível do Fluido de Freio',
-                    'Água do Limpador de Para-brisa',
-                    'Bateria e Terminais',
-                    'Correias e Mangueiras Visíveis',
-                    'Ausência de Vazamentos Sob o Veículo'
-                ]
-            }
-        ];
-
-        const STORAGE_KEY = 'vistoria_veicular_pwa_v2';
-
-        let appState = {
-            vehicle: {
-                data: '',
-                tipo: 'Entrada',
-                vistoriador: '',
-                motorista: '',
-                placa: '',
-                modelo: '',
-                ano: '',
-                cor: '',
-                km: '',
-                combustivel: '1/2',
-                obsGerais: ''
-            },
-            checklist: {},
-            pins: [],
-            signatures: {
-                'sig-vistoriador': null,
-                'sig-motorista': null
-            }
-        };
-
-        let selectedDamageType = 'Amassado';
-        const signaturePads = {};
-
-        /**
-         * INICIALIZAÇÃO GERAL
-         */
-        document.addEventListener('DOMContentLoaded', () => {
-            initPWA();
-            initDefaultDate();
-            renderChecklistSections();
-            loadFromLocalStorage();
-            setupVehicleInputs();
-            setupFuelSelector();
-            setupDiagramInteractions();
-            setupSignatureCanvases();
-            setupActionButtons();
-            updateAllBadgesAndStats();
-        });
-
-        function initDefaultDate() {
-            const today = new Date().toISOString().split('T')[0];
-            appState.vehicle.data = today;
-            document.getElementById('v-data').value = today;
-        }
-
-        /**
-         * 3. CONTROLE DOS EXPANDERS (FECHADOS POR PADRÃO)
-         */
-        function toggleExpander(cardId, forceOpen = null) {
-            const card = document.getElementById(cardId);
-            if (!card) return;
-
-            const willOpen = forceOpen !== null ? forceOpen : !card.classList.contains('is-open');
-            if (willOpen) {
-                card.classList.add('is-open');
-                // Se abrir o expander de assinaturas, recalcula tamanho dos canvases
-                if (cardId === 'exp-assinaturas') {
-                    setTimeout(() => {
-                        Object.values(signaturePads).forEach(pad => pad.resizeCanvas());
-                    }, 30);
-                }
-            } else {
-                card.classList.remove('is-open');
-            }
-        }
-
-        function setAllExpanders(openState) {
-            document.querySelectorAll('.expander-card').forEach(card => {
-                toggleExpander(card.id, openState);
-            });
-        }
-
-        /**
-         * 4. RENDERIZAÇÃO DAS SEÇÕES DE CHECKLIST EM EXPANDERS FECHADOS
-         */
-        function renderChecklistSections() {
-            const container = document.getElementById('checklist-sections');
-            container.innerHTML = '';
-
-            CHECKLIST_SCHEMA.forEach((section) => {
-                const expId = `exp-sec-${section.id}`;
-                const sectionEl = document.createElement('section');
-                sectionEl.id = expId;
-                sectionEl.className = 'expander-card bg-white rounded-2xl border border-slate-200 border-l-[5px] shadow-xs overflow-hidden';
-                sectionEl.style.borderLeftColor = section.accentColor;
-
-                let itemsHtml = '';
-                section.items.forEach((itemLabel, iIdx) => {
-                    const itemId = `${section.id}_${iIdx}`;
-                    if (!appState.checklist[itemId]) {
-                        appState.checklist[itemId] = { status: null, obs: '' };
-                    }
-
-                    itemsHtml += `
-                        <div id="row-${itemId}" class="p-3.5 sm:px-5 border-b border-slate-100 last:border-b-0 transition-colors">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                                <!-- Título do Item -->
-                                <div class="flex items-start gap-2">
-                                    <span class="text-xs font-bold text-slate-400 mt-0.5">${iIdx + 1}.</span>
-                                    <span class="text-sm font-medium text-slate-800 leading-snug">${itemLabel}</span>
-                                </div>
-
-                                <!-- Botões Grandes Mobile-First (Thumb-Friendly) -->
-                                <div class="grid grid-cols-12 sm:flex items-center gap-1.5 w-full sm:w-auto shrink-0">
-                                    <button type="button" onclick="setItemStatus('${itemId}', 'ok')" id="btn-${itemId}-ok"
-                                        class="status-btn touch-target-btn col-span-4 sm:w-auto px-2.5 py-2 rounded-xl text-xs font-semibold border border-slate-200 bg-white text-slate-600 transition flex items-center justify-center gap-1">
-                                        <i class="ph-bold ph-check"></i> Conforme
-                                    </button>
-                                    <button type="button" onclick="setItemStatus('${itemId}', 'nok')" id="btn-${itemId}-nok"
-                                        class="status-btn touch-target-btn col-span-4 sm:w-auto px-2.5 py-2 rounded-xl text-xs font-semibold border border-slate-200 bg-white text-slate-600 transition flex items-center justify-center gap-1">
-                                        <i class="ph-bold ph-x"></i> Avaria
-                                    </button>
-                                    <button type="button" onclick="setItemStatus('${itemId}', 'na')" id="btn-${itemId}-na"
-                                        class="status-btn touch-target-btn col-span-2 sm:w-auto px-2 py-2 rounded-xl text-xs font-semibold border border-slate-200 bg-white text-slate-500 transition flex items-center justify-center">
-                                        N/A
-                                    </button>
-                                    <button type="button" onclick="toggleObsInput('${itemId}')" id="btn-obs-${itemId}" title="Observação"
-                                        class="touch-target-btn col-span-2 sm:w-auto px-2.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-500 hover:text-[#0072ce] transition flex items-center justify-center no-print">
-                                        <i class="ph-bold ph-chat-text text-base"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Campo de Observação Individual -->
-                            <div id="obs-box-${itemId}" class="obs-container hidden mt-2.5">
-                                <input type="text" id="obs-input-${itemId}" oninput="updateItemObs('${itemId}', this.value)"
-                                    placeholder="Descreva o detalhe ou avaria deste item..."
-                                    class="touch-target-btn w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:bg-white focus:border-[#0072ce] outline-none transition">
-                            </div>
-                        </div>
-                    `;
-                });
-
-                sectionEl.innerHTML = `
-                    <button type="button" onclick="toggleExpander('${expId}')" class="expander-header w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left transition" style="background-color: ${section.bgColor};">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-white shadow-2xs" style="color: ${section.accentColor};">
-                                <i class="ph-duotone ${section.icon} text-xl"></i>
-                            </div>
-                            <div class="min-w-0">
-                                <h2 class="font-bold text-slate-900 text-sm sm:text-base truncate">${section.title}</h2>
-                                <p class="text-[11px] text-slate-500 truncate">${section.subtitle}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2 shrink-0">
-                            <span id="badge-sec-${section.id}" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-white border" style="color: ${section.accentColor}; border-color: ${section.borderColor};">
-                                0/${section.items.length} verificados
-                            </span>
-                            <i class="ph-bold ph-caret-down text-slate-500 text-base expander-chevron"></i>
-                        </div>
-                    </button>
-                    <div class="expander-body border-t border-slate-100 divide-y divide-slate-100">
-                        ${itemsHtml}
-                    </div>
-                `;
-
-                container.appendChild(sectionEl);
-            });
-        }
-
-        /**
-         * 5. INTERAÇÃO COM OS ITENS DO CHECKLIST
-         */
-        function setItemStatus(itemId, status) {
-            const current = appState.checklist[itemId].status;
-            const nextStatus = current === status ? null : status;
-            appState.checklist[itemId].status = nextStatus;
-
-            applyItemVisualState(itemId);
-
-            if (nextStatus === 'nok') {
-                const obsBox = document.getElementById(`obs-box-${itemId}`);
-                obsBox.classList.remove('hidden');
-            }
-
-            updateAllBadgesAndStats();
-            saveToLocalStorage();
-        }
-
-        function applyItemVisualState(itemId) {
-            const state = appState.checklist[itemId];
-            const btnOk = document.getElementById(`btn-${itemId}-ok`);
-            const btnNok = document.getElementById(`btn-${itemId}-nok`);
-            const btnNa = document.getElementById(`btn-${itemId}-na`);
-            const row = document.getElementById(`row-${itemId}`);
-
-            btnOk.className = 'status-btn touch-target-btn col-span-4 sm:w-auto px-2.5 py-2 rounded-xl text-xs font-semibold border border-slate-200 bg-white text-slate-600 transition flex items-center justify-center gap-1';
-            btnNok.className = 'status-btn touch-target-btn col-span-4 sm:w-auto px-2.5 py-2 rounded-xl text-xs font-semibold border border-slate-200 bg-white text-slate-600 transition flex items-center justify-center gap-1';
-            btnNa.className = 'status-btn touch-target-btn col-span-2 sm:w-auto px-2 py-2 rounded-xl text-xs font-semibold border border-slate-200 bg-white text-slate-500 transition flex items-center justify-center';
-            row.classList.remove('bg-emerald-50/40', 'bg-rose-50/40');
-
-            if (state.status === 'ok') {
-                btnOk.className = 'status-btn status-ok-active touch-target-btn col-span-4 sm:w-auto px-2.5 py-2 rounded-xl text-xs font-semibold border border-emerald-600 bg-emerald-600 text-white shadow-xs transition flex items-center justify-center gap-1';
-                row.classList.add('bg-emerald-50/40');
-            } else if (state.status === 'nok') {
-                btnNok.className = 'status-btn status-nok-active touch-target-btn col-span-4 sm:w-auto px-2.5 py-2 rounded-xl text-xs font-semibold border border-rose-600 bg-rose-600 text-white shadow-xs transition flex items-center justify-center gap-1';
-                row.classList.add('bg-rose-50/40');
-            } else if (state.status === 'na') {
-                btnNa.className = 'status-btn status-na-active touch-target-btn col-span-2 sm:w-auto px-2 py-2 rounded-xl text-xs font-semibold border border-slate-600 bg-slate-600 text-white shadow-xs transition flex items-center justify-center';
-            }
-
-            const obsBox = document.getElementById(`obs-box-${itemId}`);
-            const obsInput = document.getElementById(`obs-input-${itemId}`);
-            const btnObs = document.getElementById(`btn-obs-${itemId}`);
-
-            obsInput.value = state.obs || '';
-            if (state.obs && state.obs.trim() !== '') {
-                obsBox.classList.remove('hidden');
-                obsBox.classList.add('has-content');
-                btnObs.classList.add('text-[#0072ce]', 'border-blue-300', 'bg-blue-50');
-            } else {
-                obsBox.classList.remove('has-content');
-                btnObs.classList.remove('text-[#0072ce]', 'border-blue-300', 'bg-blue-50');
-            }
-        }
-
-        function toggleObsInput(itemId) {
-            const obsBox = document.getElementById(`obs-box-${itemId}`);
-            const input = document.getElementById(`obs-input-${itemId}`);
-            obsBox.classList.toggle('hidden');
-            if (!obsBox.classList.contains('hidden')) {
-                input.focus();
-            }
-        }
-
-        function updateItemObs(itemId, value) {
-            appState.checklist[itemId].obs = value;
-            const obsBox = document.getElementById(`obs-box-${itemId}`);
-            const btnObs = document.getElementById(`btn-obs-${itemId}`);
-            if (value.trim() !== '') {
-                obsBox.classList.add('has-content');
-                btnObs.classList.add('text-[#0072ce]', 'border-blue-300', 'bg-blue-50');
-            } else {
-                obsBox.classList.remove('has-content');
-                btnObs.classList.remove('text-[#0072ce]', 'border-blue-300', 'bg-blue-50');
-            }
-            saveToLocalStorage();
-        }
-
-        /**
-         * 6. ATUALIZAÇÃO DE TODOS OS BADGES DOS EXPANDERS E ESTATÍSTICAS GERAIS
-         */
-        function updateAllBadgesAndStats() {
-            // 1. Estatísticas globais do checklist
-            const keys = Object.keys(appState.checklist);
-            const total = keys.length;
-            let ok = 0;
-            let nok = 0;
-            let na = 0;
-            let answered = 0;
-
-            keys.forEach(k => {
-                const st = appState.checklist[k].status;
-                if (st) answered++;
-                if (st === 'ok') ok++;
-                if (st === 'nok') nok++;
-                if (st === 'na') na++;
-            });
-
-            const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
-            document.getElementById('stat-ok').textContent = ok;
-            document.getElementById('stat-nok').textContent = nok;
-            document.getElementById('stat-progress').textContent = `${pct}%`;
-            document.getElementById('progress-bar').style.width = `${pct}%`;
-
-            // Sincroniza resumo do cabeçalho de impressão
-            const printTotal = document.getElementById('print-stat-total');
-            if (printTotal) {
-                printTotal.textContent = total;
-                document.getElementById('print-stat-ok').textContent = ok;
-                document.getElementById('print-stat-nok').textContent = nok;
-                document.getElementById('print-stat-na').textContent = na;
-                document.getElementById('print-stat-pins').textContent = appState.pins.length;
-            }
-
-            // 2. Badge da Identificação do Veículo (6 campos principais)
-            const idFields = ['vistoriador', 'motorista', 'placa', 'modelo', 'cor', 'km'];
-            const filledIdCount = idFields.filter(f => (appState.vehicle[f] || '').toString().trim() !== '').length;
-            const badgeId = document.getElementById('badge-identificacao');
-            if (badgeId) {
-                badgeId.textContent = `${filledIdCount}/${idFields.length} preenchidos`;
-            }
-
-            // 3. Badges individuais de cada categoria do checklist
-            CHECKLIST_SCHEMA.forEach(section => {
-                let secAnswered = 0;
-                section.items.forEach((_, iIdx) => {
-                    const itemId = `${section.id}_${iIdx}`;
-                    if (appState.checklist[itemId] && appState.checklist[itemId].status) {
-                        secAnswered++;
-                    }
-                });
-                const secBadge = document.getElementById(`badge-sec-${section.id}`);
-                if (secBadge) {
-                    secBadge.textContent = `${secAnswered}/${section.items.length} verificados`;
-                }
-            });
-
-            // 4. Badge do Croqui
-            const pinsCount = appState.pins.length;
-            document.getElementById('badge-croqui').textContent = pinsCount === 1 ? '1 avaria' : `${pinsCount} avarias`;
-
-            // 5. Badge das Assinaturas
-            const sigV = Boolean(appState.signatures['sig-vistoriador']);
-            const sigM = Boolean(appState.signatures['sig-motorista']);
-            const badgeSig = document.getElementById('badge-assinaturas');
-            if (sigV && sigM) {
-                badgeSig.textContent = 'Assinado (2/2)';
-            } else if (sigV || sigM) {
-                badgeSig.textContent = 'Parcial (1/2)';
-            } else {
-                badgeSig.textContent = 'Pendente';
-            }
-        }
-
-        /**
-         * PREPARAÇÃO DO LAUDO TÉCNICO ANTES DE IMPRIMIR / GERAR PDF
-         */
-        function prepareAndPrint() {
-            const now = new Date();
-            const formattedDate = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-            const dtEl = document.getElementById('print-emission-datetime');
-            if (dtEl) dtEl.textContent = formattedDate;
-
-            updateAllBadgesAndStats();
-
-            // Redimensiona e redesenha assinaturas antes de abrir a caixa de impressão
-            Object.values(signaturePads).forEach(pad => {
-                if (pad && typeof pad.resizeCanvas === 'function') {
-                    pad.resizeCanvas();
-                }
-            });
-
-            setTimeout(() => {
-                window.print();
-            }, 80);
-        }
-
-        /**
-         * 7. INPUTS DO VEÍCULO E NÍVEL DE COMBUSTÍVEL
-         */
-        function setupVehicleInputs() {
-            const fieldMap = {
-                'v-data': 'data',
-                'v-tipo': 'tipo',
-                'v-vistoriador': 'vistoriador',
-                'v-motorista': 'motorista',
-                'v-placa': 'placa',
-                'v-modelo': 'modelo',
-                'v-ano': 'ano',
-                'v-cor': 'cor',
-                'v-km': 'km',
-                'v-obs-gerais': 'obsGerais'
-            };
-
-            Object.entries(fieldMap).forEach(([elId, stateKey]) => {
-                const el = document.getElementById(elId);
-                if (!el) return;
-                el.value = appState.vehicle[stateKey] || '';
-                el.addEventListener('input', (e) => {
-                    appState.vehicle[stateKey] = e.target.value;
-                    if (elId === 'v-vistoriador') {
-                        document.getElementById('sig-label-vistoriador').textContent = e.target.value || 'Assine acima';
-                    }
-                    if (elId === 'v-motorista') {
-                        document.getElementById('sig-label-motorista').textContent = e.target.value || 'Assine acima';
-                    }
-                    updateAllBadgesAndStats();
-                    saveToLocalStorage();
-                });
-            });
-
-            if (appState.vehicle.vistoriador) {
-                document.getElementById('sig-label-vistoriador').textContent = appState.vehicle.vistoriador;
-            }
-            if (appState.vehicle.motorista) {
-                document.getElementById('sig-label-motorista').textContent = appState.vehicle.motorista;
-            }
-        }
-
-        function setupFuelSelector() {
-            document.querySelectorAll('.fuel-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const val = btn.dataset.fuel;
-                    appState.vehicle.combustivel = val;
-                    updateFuelUI(val);
-                    saveToLocalStorage();
-                });
-            });
-            updateFuelUI(appState.vehicle.combustivel || '1/2');
-        }
-
-        function updateFuelUI(selectedVal) {
-            document.getElementById('v-combustivel').value = selectedVal;
-            document.querySelectorAll('.fuel-btn').forEach(btn => {
-                if (btn.dataset.fuel === selectedVal) {
-                    btn.className = 'fuel-btn min-h-[36px] px-1 rounded-lg text-xs font-semibold transition bg-[#0072ce] text-white shadow-xs';
-                } else {
-                    btn.className = 'fuel-btn min-h-[36px] px-1 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-white/60';
-                }
-            });
-        }
-
-        /**
-         * 8. CROQUI VISUAL INTERATIVO DE AVARIAS
-         */
-        function setupDiagramInteractions() {
-            document.querySelectorAll('.damage-type-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    selectedDamageType = btn.dataset.damageType;
-                    document.querySelectorAll('.damage-type-btn').forEach(b => {
-                        b.className = 'damage-type-btn touch-target-btn px-2 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition';
-                    });
-                    btn.className = 'damage-type-btn touch-target-btn px-2 py-2 rounded-xl text-xs font-semibold bg-rose-600 text-white shadow-xs transition';
-                });
-            });
-
-            const diagram = document.getElementById('car-diagram-container');
-            diagram.addEventListener('click', (e) => {
-                const rect = diagram.getBoundingClientRect();
-                const xPct = ((e.clientX - rect.left) / rect.width) * 100;
-                const yPct = ((e.clientY - rect.top) / rect.height) * 100;
-
-                appState.pins.push({
-                    id: Date.now(),
-                    x: Math.max(4, Math.min(96, xPct)),
-                    y: Math.max(6, Math.min(94, yPct)),
-                    type: selectedDamageType,
-                    desc: ''
-                });
-
-                renderDamagePins();
-                updateAllBadgesAndStats();
-                saveToLocalStorage();
-            });
-
-            document.getElementById('btn-clear-pins').addEventListener('click', () => {
-                if (appState.pins.length === 0) return;
-                appState.pins = [];
-                renderDamagePins();
-                updateAllBadgesAndStats();
-                saveToLocalStorage();
-                showToast('Pontos do croqui removidos');
-            });
-
-            renderDamagePins();
-        }
-
-        function renderDamagePins() {
-            const pinsLayer = document.getElementById('pins-layer');
-            const listEl = document.getElementById('damage-list');
-            pinsLayer.innerHTML = '';
-
-            if (appState.pins.length === 0) {
-                listEl.innerHTML = `
-                    <div class="text-center py-7 px-4 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-xs">
-                        Nenhuma avaria marcada no desenho.<br>Toque no croqui para registrar.
-                    </div>
-                `;
-                return;
-            }
-
-            listEl.innerHTML = '';
-            appState.pins.forEach((pin, idx) => {
-                const num = idx + 1;
-
-                const pinEl = document.createElement('div');
-                pinEl.className = 'damage-pin absolute w-6 h-6 rounded-full bg-rose-600 text-white font-bold text-xs flex items-center justify-center shadow-md border-2 border-white pointer-events-auto cursor-pointer';
-                pinEl.style.left = `${pin.x}%`;
-                pinEl.style.top = `${pin.y}%`;
-                pinEl.textContent = num;
-                pinEl.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const input = document.getElementById(`pin-desc-${pin.id}`);
-                    if (input) input.focus();
-                });
-                pinsLayer.appendChild(pinEl);
-
-                const itemEl = document.createElement('div');
-                itemEl.className = 'flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200';
-                itemEl.innerHTML = `
-                    <span class="w-6 h-6 rounded-full bg-rose-600 text-white font-bold text-xs flex items-center justify-center shrink-0">${num}</span>
-                    <div class="flex-1 min-w-0">
-                        <span class="block text-[11px] font-bold text-rose-700 leading-tight">${pin.type}</span>
-                        <input type="text" id="pin-desc-${pin.id}" value="${pin.desc || ''}" placeholder="Local / detalhe da avaria..."
-                            oninput="updatePinDesc(${pin.id}, this.value)"
-                            class="w-full text-xs bg-transparent border-b border-slate-300 focus:border-[#0072ce] outline-none py-1 text-slate-700">
-                    </div>
-                    <button type="button" onclick="removePin(${pin.id})" title="Remover"
-                        class="p-2 text-slate-400 hover:text-rose-600 rounded-lg transition no-print">
-                        <i class="ph-bold ph-trash text-base"></i>
-                    </button>
-                `;
-                listEl.appendChild(itemEl);
-            });
-        }
-
-        function updatePinDesc(pinId, val) {
-            const pin = appState.pins.find(p => p.id === pinId);
-            if (pin) {
-                pin.desc = val;
-                saveToLocalStorage();
-            }
-        }
-
-        function removePin(pinId) {
-            appState.pins = appState.pins.filter(p => p.id !== pinId);
-            renderDamagePins();
-            updateAllBadgesAndStats();
-            saveToLocalStorage();
-        }
-
-        /**
-         * 9. ASSINATURAS DIGITAIS EM CANVAS
-         */
-        function setupSignatureCanvases() {
-            ['sig-vistoriador', 'sig-motorista'].forEach(canvasId => {
-                const canvas = document.getElementById(canvasId);
-                const ctx = canvas.getContext('2d');
-                let isDrawing = false;
-
-                function resizeCanvas() {
-                    const rect = canvas.parentElement.getBoundingClientRect();
-                    if (rect.width === 0 || rect.height === 0) return;
-                    const dataUrl = appState.signatures[canvasId];
-                    canvas.width = rect.width;
-                    canvas.height = rect.height;
-                    ctx.lineWidth = 2.4;
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-                    ctx.strokeStyle = '#0f172a';
-
-                    if (dataUrl) {
-                        const img = new Image();
-                        img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        img.src = dataUrl;
-                    }
-                }
-
-                resizeCanvas();
-                window.addEventListener('resize', resizeCanvas);
-                // Garante renderização correta antes de imprimir
-                window.addEventListener('beforeprint', resizeCanvas);
-
-                function getCoords(e) {
-                    const rect = canvas.getBoundingClientRect();
-                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                    return {
-                        x: clientX - rect.left,
-                        y: clientY - rect.top
-                    };
-                }
-
-                function startDraw(e) {
-                    isDrawing = true;
-                    const { x, y } = getCoords(e);
-                    ctx.beginPath();
-                    ctx.moveTo(x, y);
-                }
-
-                function draw(e) {
-                    if (!isDrawing) return;
-                    if (e.cancelable) e.preventDefault();
-                    const { x, y } = getCoords(e);
-                    ctx.lineTo(x, y);
-                    ctx.stroke();
-                }
-
-                function endDraw() {
-                    if (!isDrawing) return;
-                    isDrawing = false;
-                    appState.signatures[canvasId] = canvas.toDataURL();
-                    updateAllBadgesAndStats();
-                    saveToLocalStorage();
-                }
-
-                canvas.addEventListener('mousedown', startDraw);
-                canvas.addEventListener('mousemove', draw);
-                window.addEventListener('mouseup', endDraw);
-
-                canvas.addEventListener('touchstart', startDraw, { passive: false });
-                canvas.addEventListener('touchmove', draw, { passive: false });
-                canvas.addEventListener('touchend', endDraw);
-
-                signaturePads[canvasId] = { canvas, ctx, resizeCanvas };
-            });
-        }
-
-        function clearSignature(canvasId) {
-            const pad = signaturePads[canvasId];
-            if (!pad) return;
-            pad.ctx.clearRect(0, 0, pad.canvas.width, pad.canvas.height);
-            appState.signatures[canvasId] = null;
-            updateAllBadgesAndStats();
-            saveToLocalStorage();
-        }
-
-        /**
-         * 10. BOTÕES DE AÇÃO GLOBAL E MODAL
-         */
-        function setupActionButtons() {
-            document.getElementById('btn-expand-all').addEventListener('click', () => {
-                setAllExpanders(true);
-            });
-
-            document.getElementById('btn-collapse-all').addEventListener('click', () => {
-                setAllExpanders(false);
-            });
-
-            document.getElementById('btn-mark-all-ok').addEventListener('click', () => {
-                openConfirmModal(
-                    'Marcar Todos como Conforme?',
-                    'Todos os itens das 6 categorias serão marcados como "Conforme". Você poderá alterar itens com avarias individualmente.',
-                    () => {
-                        Object.keys(appState.checklist).forEach(itemId => {
-                            appState.checklist[itemId].status = 'ok';
-                            applyItemVisualState(itemId);
-                        });
-                        updateAllBadgesAndStats();
-                        saveToLocalStorage();
-                        showToast('Todos os itens marcados como Conforme!');
-                    }
-                );
-            });
-
-            document.getElementById('btn-reset-form').addEventListener('click', () => {
-                openConfirmModal(
-                    'Limpar Todo o Formulário?',
-                    'Esta ação apagará os dados do veículo, respostas do checklist, marcações do croqui e assinaturas.',
-                    () => {
-                        localStorage.removeItem(STORAGE_KEY);
-                        appState = {
-                            vehicle: {
-                                data: new Date().toISOString().split('T')[0],
-                                tipo: 'Entrada',
-                                vistoriador: '',
-                                motorista: '',
-                                placa: '',
-                                modelo: '',
-                                ano: '',
-                                cor: '',
-                                km: '',
-                                combustivel: '1/2',
-                                obsGerais: ''
-                            },
-                            checklist: {},
-                            pins: [],
-                            signatures: {
-                                'sig-vistoriador': null,
-                                'sig-motorista': null
-                            }
-                        };
-                        renderChecklistSections();
-                        setupVehicleInputs();
-                        updateFuelUI('1/2');
-                        renderDamagePins();
-                        clearSignature('sig-vistoriador');
-                        clearSignature('sig-motorista');
-                        document.getElementById('sig-label-vistoriador').textContent = 'Assine acima';
-                        document.getElementById('sig-label-motorista').textContent = 'Assine acima';
-                        setAllExpanders(false);
-                        updateAllBadgesAndStats();
-                        showToast('Formulário reiniciado!');
-                    }
-                );
-            });
-        }
-
-        function openConfirmModal(title, desc, onConfirm) {
-            const modal = document.getElementById('confirm-modal');
-            document.getElementById('modal-title').textContent = title;
-            document.getElementById('modal-desc').textContent = desc;
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-
-            const close = () => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            };
-
-            document.getElementById('modal-cancel').onclick = close;
-            document.getElementById('modal-confirm').onclick = () => {
-                close();
-                onConfirm();
-            };
-        }
-
-        /**
-         * 11. PERSISTÊNCIA OFFLINE NO LOCALSTORAGE
-         */
-        let saveTimeout;
-        function saveToLocalStorage() {
-            const dot = document.getElementById('save-status-dot');
-            const text = document.getElementById('save-status-text');
-            dot.classList.replace('bg-emerald-500', 'bg-amber-400');
-            text.textContent = 'Salvando...';
-
-            clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => {
-                try {
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-                    dot.classList.replace('bg-amber-400', 'bg-emerald-500');
-                    text.textContent = 'Salvo offline';
-                } catch (err) {
-                    console.warn('Erro ao salvar no localStorage:', err);
-                }
-            }, 250);
-        }
-
-        function loadFromLocalStorage() {
-            try {
-                const raw = localStorage.getItem(STORAGE_KEY);
-                if (!raw) return;
-                const saved = JSON.parse(raw);
-
-                if (saved.vehicle) {
-                    appState.vehicle = { ...appState.vehicle, ...saved.vehicle };
-                }
-                if (saved.checklist) {
-                    Object.keys(appState.checklist).forEach(k => {
-                        if (saved.checklist[k]) {
-                            appState.checklist[k] = saved.checklist[k];
-                            applyItemVisualState(k);
-                        }
-                    });
-                }
-                if (Array.isArray(saved.pins)) {
-                    appState.pins = saved.pins;
-                }
-                if (saved.signatures) {
-                    appState.signatures = saved.signatures;
-                }
-            } catch (err) {
-                console.warn('Erro ao restaurar rascunho:', err);
-            }
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-message').textContent = msg;
-            toast.classList.remove('translate-y-24', 'sm:translate-x-full', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-24', 'sm:translate-x-full', 'opacity-0');
-            }, 2800);
-        }
-    </script>
+    <!-- Dock inferior com atalhos operacionais -->
+    <nav id="bottom-dock" class="bottom-dock no-print" aria-label="Navegação rápida inferior">
+        <div class="bottom-dock-inner">
+            <button type="button" class="dock-btn" data-go="exp-identificacao" title="Identificação" aria-label="Abrir identificação"><i class="ph-bold ph-identification-card"></i><span>Dados</span></button>
+            <button type="button" class="dock-btn" data-go="checklist-sections" title="Checklist" aria-label="Abrir checklist"><i class="ph-bold ph-clipboard-text"></i><span>Itens</span></button>
+            <button type="button" class="dock-btn" data-go="exp-croqui" title="Croqui" aria-label="Abrir croqui"><i class="ph-bold ph-car-simple"></i><span>Croqui</span></button>
+            <button type="button" class="dock-btn" data-go="exp-assinaturas" title="Assinaturas" aria-label="Abrir assinaturas"><i class="ph-bold ph-signature"></i><span>Assinar</span></button>
+            <span class="dock-separator" role="separator"></span>
+            <button type="button" class="dock-btn" data-command="history" title="Histórico e backup" aria-label="Abrir histórico de vistorias"><i class="ph-bold ph-folder-open"></i><span>Histórico</span></button>
+            <button type="button" class="dock-btn dock-primary" data-command="print" title="Gerar laudo PDF" aria-label="Validar e gerar laudo PDF"><i class="ph-bold ph-printer"></i><span>PDF</span></button>
+            <button type="button" id="btn-mobile-actions" class="dock-btn dock-mobile-actions" title="Ações da vistoria" aria-label="Abrir ações da vistoria" aria-controls="mobile-actions-sheet" aria-expanded="false"><i class="ph-bold ph-squares-four"></i><span>Ações</span></button>
+            <button type="button" class="dock-btn" data-command="settings" title="Configurações e sobre" aria-label="Abrir configurações"><i class="ph-bold ph-gear"></i><span>Ajustes</span></button>
+            <span class="dock-credit-pill" title="Desenvolvedor responsável">v1.3.0 <span class="dock-credit-divider">·</span> Hagliberto Alves de Oliveira</span>
+        </div>
+    </nav>
+
+    <!-- Ações compactas para celular; o PDF permanece exclusivamente na navbar. -->
+    <div id="mobile-actions-sheet" class="mobile-actions-overlay no-print" role="dialog" aria-modal="true" aria-label="Ações da vistoria" hidden>
+        <div class="mobile-actions-panel">
+            <div class="mobile-actions-heading"><strong>Ações da vistoria</strong><button id="btn-close-actions" type="button" title="Fechar ações" aria-label="Fechar ações"><i class="ph-bold ph-x"></i></button></div>
+            <div class="mobile-actions-grid">
+                <button type="button" data-action-target="btn-expand-all"><i class="ph-bold ph-folder-open"></i><span>Abrir primeira seção</span></button>
+                <button type="button" data-action-target="btn-collapse-all"><i class="ph-bold ph-arrows-in"></i><span>Fechar seção</span></button>
+                <button type="button" data-action-target="btn-mark-all-ok"><i class="ph-bold ph-checks"></i><span>Tudo conforme</span></button>
+                <button type="button" data-action-target="btn-reset-form"><i class="ph-bold ph-trash"></i><span>Limpar formulário</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preferências visuais e identidade do projeto -->
+    <div id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title" aria-describedby="settings-description" class="modal-backdrop settings-modal no-print" hidden>
+        <div class="settings-panel">
+            <div class="settings-panel-header">
+                <div class="settings-panel-brand"><span class="settings-gear-mark"><i class="ph-bold ph-gear"></i></span><div><p class="settings-overline">PREFERÊNCIAS</p><h2 id="settings-title">Configurações</h2></div></div>
+                <button type="button" id="btn-close-settings" class="settings-close" title="Fechar configurações" aria-label="Fechar configurações"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <p id="settings-description" class="settings-lead">Personalize a organização da área de trabalho. Suas vistorias permanecem salvas neste dispositivo.</p>
+            <div class="settings-group">
+                <p class="settings-group-title">VISUALIZAÇÃO NO DESKTOP</p>
+                <div class="settings-choice-row"><div><strong>Checklist em colunas</strong><small>Exibe as seis categorias lado a lado em telas largas.</small></div><button type="button" class="settings-choice-btn" data-layout="columns">Usar colunas</button></div>
+                <div class="settings-choice-row"><div><strong>Checklist em lista</strong><small>Uma categoria por linha, usando toda a largura disponível.</small></div><button type="button" class="settings-choice-btn" data-layout="list">Usar lista</button></div>
+                <div class="settings-choice-row"><div><strong>Menu lateral</strong><small>Inicia recolhido para ampliar a área útil de trabalho.</small></div><button type="button" id="btn-settings-sidebar" class="settings-choice-btn">Expandir menu</button></div>
+            </div>
+            <div class="settings-about">
+                <div class="settings-about-top"><span class="settings-about-icon"><i class="ph-bold ph-car-profile"></i></span><div><strong>Vistoria Veicular</strong><small>Checklist digital · PWA offline-first</small></div><span class="settings-version-pill">Versão 1.3.0</span></div>
+                <span class="settings-developer-label">DESENVOLVIDO POR</span>
+                <span class="settings-developer-pill"><i class="ph-bold ph-check-circle"></i> Hagliberto Alves de Oliveira</span>
+                <p>Os registros, fotografias e assinaturas são mantidos localmente, sem envio automático a servidores.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/icons.js" defer></script>
+    <script src="assets/app.js" defer></script>
 </body>
 </html>
