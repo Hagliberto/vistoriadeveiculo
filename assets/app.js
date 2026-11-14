@@ -37,7 +37,7 @@
          * Atualizações PWA: somente versões publicadas no mesmo host, com confirmação.
          * A verificação não acessa nem altera IndexedDB/localStorage de vistorias.
          */
-        const APP_VERSION = '1.4.1';
+        const APP_VERSION = '1.4.3';
         let updateRegistration = null;
         let availableUpdateVersion = null;
         let updateCheckInProgress = false;
@@ -465,6 +465,7 @@
             }
             const trigger = card.querySelector('.expander-trigger') || card.querySelector('.expander-header[aria-expanded]');
             if (trigger) trigger.setAttribute('aria-expanded', String(willOpen));
+            if (typeof syncWorkspaceNavigation === 'function') syncWorkspaceNavigation();
         }
 
         function setAllExpanders(openState) {
@@ -1335,9 +1336,11 @@
         function updateHistoryCounterBadge() {
             const count = getHistoryList().length;
             const dot = document.getElementById('history-count-dot');
-            dot.textContent = count > 999 ? '999+' : String(count);
-            dot.classList.toggle('hidden', count === 0);
-            dot.setAttribute('aria-label', `${count} vistorias arquivadas`);
+            if (dot) {
+                dot.textContent = count > 999 ? '999+' : String(count);
+                dot.classList.toggle('hidden', count === 0);
+                dot.setAttribute('aria-label', `${count} vistorias arquivadas`);
+            }
             const total = document.getElementById('history-total-count');
             if (total) total.textContent = `${count} ${count === 1 ? 'registro arquivado' : 'registros arquivados'}`;
         }
@@ -1535,8 +1538,8 @@
          * 11. BOTÕES DE AÇÃO GLOBAL E MODAL
          */
         function setupActionButtons() {
-            document.getElementById('btn-expand-all').addEventListener('click', () => setAllExpanders(true));
-            document.getElementById('btn-collapse-all').addEventListener('click', () => setAllExpanders(false));
+            document.getElementById('btn-expand-all')?.addEventListener('click', () => setAllExpanders(true));
+            document.getElementById('btn-collapse-all')?.addEventListener('click', () => setAllExpanders(false));
 
             document.getElementById('btn-mark-all-ok').addEventListener('click', () => {
                 openConfirmModal(
@@ -1637,6 +1640,21 @@
             settingsReturnFocus = null;
         }
 
+        /** Mantém dock e sidebar com a mesma etapa ativa, inclusive ao abrir um expander diretamente. */
+        function syncWorkspaceNavigation() {
+            const opened = [...document.querySelectorAll('#inspection-workspace .expander-card.is-open')]
+                .find(card => card.id !== 'print-photo-section');
+            const activeId = opened
+                ? (opened.closest('#checklist-sections') ? 'checklist-sections' : opened.id)
+                : null;
+            document.querySelectorAll('[data-go]').forEach(button => {
+                const isActive = Boolean(activeId && button.dataset.go === activeId);
+                button.classList.toggle('is-active', isActive);
+                if (isActive) button.setAttribute('aria-current', 'location');
+                else button.removeAttribute('aria-current');
+            });
+        }
+
         function navigateWorkspaceTo(id) {
             const target = id === 'checklist-sections'
                 ? document.querySelector('#checklist-sections .expander-card')
@@ -1644,12 +1662,7 @@
             if (!target) return;
             if (target.classList.contains('expander-card')) toggleExpander(target.id, true);
             closeSidebar();
-            document.querySelectorAll('[data-go]').forEach(btn => {
-                const active = btn.dataset.go === id;
-                btn.classList.toggle('is-active', active);
-                if (active) btn.setAttribute('aria-current', 'location');
-                else btn.removeAttribute('aria-current');
-            });
+            syncWorkspaceNavigation();
             requestAnimationFrame(() => target.scrollIntoView({
                 behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
                 block: 'start'
@@ -1700,7 +1713,7 @@
                     const command = button.dataset.command;
                     closeSidebar();
                     if (command === 'history') openHistoryModal();
-                    else if (command === 'print') validateAndPrint();
+                    else if (command === 'export') window.openExportModal?.();
                     else if (command === 'settings') openSettingsModal();
                 });
             });
@@ -1718,6 +1731,7 @@
                 if (event.target.id === 'settings-modal') closeSettingsModal();
             });
             updateSidebarButtons();
+            syncWorkspaceNavigation();
         }
 
         let confirmReturnFocus = null;
