@@ -1,3 +1,11 @@
+## v1.4.6 — PDF oficial único para salvar, imprimir e compartilhar
+
+- Salvar como PDF, Imprimir e Compartilhar PDF oficial utilizam o **mesmo laudo HTML/CSS A4** via impressão do navegador.
+- Removido o segundo gerador PDF rasterizado, que produzia cabeçalho, croqui e paginação diferentes do laudo aprovado.
+- Compartilhar PDF abre o diálogo do navegador; escolha **Salvar como PDF** e depois anexe o arquivo gerado no WhatsApp/e-mail. O navegador não disponibiliza ao JavaScript o PDF emitido por sua impressora virtual.
+- Baixar PNG permanece como opção independente de imagem, explicitamente não equivalente ao PDF de impressão.
+- Versão e cache atualizados, mantendo histórico, salvamento e dados locais.
+
 ## v1.4.5 — PDF visualmente idêntico ao laudo impresso
 
 - O comando Salvar como PDF reutiliza a renderização de impressão A4, sem redesenhar o laudo em canvas.

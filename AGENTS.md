@@ -127,3 +127,8 @@ Manter compatibilidade com a estrutura de dados central:
 - A ação Salvar como PDF deve invocar `validateAndPrint()` (mesmo pipeline da impressão), não `generatePDF()` rasterizado.
 - O diálogo nativo exige que o usuário escolha Salvar como PDF; não afirmar download direto.
 - Compartilhamento de arquivos continua separado: o PDF compatível com Web Share é rasterizado e pode ter visual distinto.
+
+
+## PDF canônico — v1.4.6
+
+O arquivo PDF oficial deve **sempre** ser derivado do laudo HTML/CSS `@media print`, por `validateAndPrint()`/`prepareAndPrint()`. Não introduzir outro gerador PDF em canvas como alternativa para o usuário, pois altera a composição, os detalhes do croqui e a paginação. Compartilhar PDF oficial pode abrir o diálogo de impressão e orientar o envio manual do arquivo gerado. PNG é formato independente, não representa o PDF canônico.
