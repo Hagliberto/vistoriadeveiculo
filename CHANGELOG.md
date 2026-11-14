@@ -1,3 +1,11 @@
+## v1.4.4 — Compartilhamento PDF e imagens nítidas
+
+- Compartilhar prioriza PDF A4; utiliza PNG se o dispositivo não aceitar PDF; se não houver compartilhamento, baixa PDF.
+- PDF gerado diretamente, offline, com páginas em alta resolução e quebras preferenciais entre itens.
+- PNG com escala de renderização de até 2x e limite preventivo de memória.
+- Cancelamento do compartilhamento não provoca download involuntário; impressão nativa preservada.
+- Cache do PWA e versão atualizados para 1.4.4.
+
 ## v1.4.3 — Central de exportação e compartilhamento
 - Appbar simplificada: retirados Abrir primeira seção, Fechar todas e Histórico. Histórico permanece no dock e sidebar.
 - Novo ícone Exportar com modal acessível: PDF (Salvar como PDF no navegador), PNG (imagem completa do relatório), compartilhamento nativo de arquivo e impressão A4.
