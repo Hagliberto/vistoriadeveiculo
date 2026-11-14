@@ -33,3 +33,10 @@ Faça a homologação preferencialmente em Chrome/Edge e Firefox, em desktop e c
 - [ ] Abrir Exportar → Imprimir, comparar prévias A4 lado a lado, sem mudar configurações de papel e escala.
 - [ ] Conferir quebra de páginas, tabela, croqui, fotos e assinaturas em ambos.
 - [ ] Verificar compartilhamento separadamente: PDF enviado por Share API ainda usa uma representação raster.
+
+
+## v1.4.7 — Sem duplicidade de PDF
+- [ ] Abrir Exportar: somente Salvar como PDF, Baixar em PNG e Imprimir.
+- [ ] Salvar como PDF: conferir layout A4 e possibilidade de anexar arquivo salvo no WhatsApp/e-mail.
+- [ ] Imprimir: confirmar a mesma composição e paginação.
+- [ ] Baixar PNG: conferir resolução e dados completos.

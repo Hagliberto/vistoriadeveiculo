@@ -132,3 +132,7 @@ Manter compatibilidade com a estrutura de dados central:
 ## PDF canônico — v1.4.6
 
 O arquivo PDF oficial deve **sempre** ser derivado do laudo HTML/CSS `@media print`, por `validateAndPrint()`/`prepareAndPrint()`. Não introduzir outro gerador PDF em canvas como alternativa para o usuário, pois altera a composição, os detalhes do croqui e a paginação. Compartilhar PDF oficial pode abrir o diálogo de impressão e orientar o envio manual do arquivo gerado. PNG é formato independente, não representa o PDF canônico.
+
+
+## Central de exportação — v1.4.7
+Manter apenas **Salvar como PDF**, **Baixar em PNG** e **Imprimir**; não adicionar ação Compartilhar PDF que apenas repete a impressão nativa. O PDF permanece canônico via CSS `@media print`.

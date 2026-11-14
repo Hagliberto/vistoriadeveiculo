@@ -1,4 +1,4 @@
-/* Central de exportação offline-first · Vistoria Veicular 1.4.6.
+/* Central de exportação offline-first · Vistoria Veicular 1.4.7.
  * Nenhum dado é enviado a servidores; compartilhamento exige ação direta do usuário.
  */
 (() => {
@@ -206,7 +206,7 @@
             }
             y+=25;
             line(margin,y,width-margin,y,'#ccd9ea');
-            y+=15;text('Documento gerado localmente · Vistoria Veicular · v1.4.6',margin,y,15,'#687b91');
+            y+=15;text('Documento gerado localmente · Vistoria Veicular · v1.4.7',margin,y,15,'#687b91');
             return y+65;
         };
         const height=Math.ceil(paint(false));
@@ -246,11 +246,8 @@
         busy=true;options.forEach(button=>button.disabled=true);
         feedback.textContent='Preparando o documento...';
         try {
-            if(kind==='print' || kind==='pdf' || kind==='share') {
-                // Ambos usam exclusivamente o mesmo DOM/CSS, garantindo laudo idêntico.
-                // Web Share API não permite obter o PDF criado por "Salvar como PDF".
-                // Para compartilhar, o usuário salva o PDF e o anexa no destino.
-                if(kind==='share') showToast('Salve como PDF e anexe o arquivo ao WhatsApp ou e-mail.');
+            if(kind==='print' || kind==='pdf') {
+                // Um único documento oficial HTML/CSS A4, usado por PDF e impressão.
                 openOfficialPdf();
                 return;
             }

@@ -172,7 +172,7 @@
             <div id="appbar-actions" class="appbar-actions no-print" role="toolbar" aria-label="Ações da vistoria">
             <!-- Central de exportação e compartilhamento -->
             <div class="appbar-group">
-                <button type="button" class="appbar-icon export-action-trigger w-10 h-10 rounded-xl inline-flex items-center justify-center bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200 transition active:scale-95" data-open-export title="Exportar, compartilhar ou imprimir" aria-label="Exportar, compartilhar ou imprimir" aria-haspopup="dialog" aria-controls="export-modal">
+                <button type="button" class="appbar-icon export-action-trigger w-10 h-10 rounded-xl inline-flex items-center justify-center bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200 transition active:scale-95" data-open-export title="Exportar ou imprimir" aria-label="Exportar ou imprimir" aria-haspopup="dialog" aria-controls="export-modal">
                     <i class="ph-bold ph-export text-xl" aria-hidden="true"></i>
                 </button>
             </div>
@@ -598,7 +598,7 @@
 
         <!-- Botão de Finalização Inferior Apenas com Ícone -->
         <div class="pt-1 flex justify-end no-print">
-            <button type="button" data-open-export title="Exportar, compartilhar ou imprimir" aria-label="Abrir opções de exportação"
+            <button type="button" data-open-export title="Exportar ou imprimir" aria-label="Abrir opções de exportação"
                 class="w-12 h-12 rounded-2xl inline-flex items-center justify-center bg-gradient-to-r from-[#004b93] to-[#0072ce] text-white hover:opacity-95 shadow-md transition active:scale-95">
                 <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="6 9 6 2 18 2 18 9"></polyline>
@@ -635,18 +635,18 @@
         </div>
     </div>
 
-    <!-- Central de exportação: um único destino para PDF, PNG, compartilhar e imprimir -->
+    <!-- Central de exportação: PDF oficial, PNG ou impressão -->
     <div id="export-modal" class="export-modal no-print" role="dialog" aria-modal="true" aria-labelledby="export-title" aria-describedby="export-description" hidden>
         <div class="export-panel" role="document">
             <div class="export-heading">
-                <div class="export-heading-brand"><span class="export-heading-icon"><i class="ph-bold ph-export"></i></span><div><span class="export-eyebrow">DOCUMENTOS DA VISTORIA</span><h2 id="export-title">Exportar e compartilhar</h2></div></div>
+                <div class="export-heading-brand"><span class="export-heading-icon"><i class="ph-bold ph-export"></i></span><div><span class="export-eyebrow">DOCUMENTOS DA VISTORIA</span><h2 id="export-title">Exportar laudo</h2></div></div>
                 <button id="btn-close-export" type="button" class="export-close" aria-label="Fechar opções de exportação" title="Fechar"><i class="ph-bold ph-x"></i></button>
             </div>
-            <p id="export-description" class="export-description">Escolha como deseja salvar ou enviar o laudo da vistoria atual.</p>
+            <p id="export-description" class="export-description">Escolha como deseja salvar ou imprimir o laudo da vistoria atual.</p>
             <div class="export-options">
-                <button type="button" data-export-format="pdf" class="export-option"><span class="export-option-icon export-pdf"><i class="ph-bold ph-file-pdf"></i></span><span><strong>Salvar como PDF</strong><small>Mesmo laudo da impressão · escolha “Salvar como PDF” no navegador</small></span><i class="ph-bold ph-caret-right export-option-arrow"></i></button>
+                <button type="button" data-export-format="pdf" class="export-option"><span class="export-option-icon export-pdf"><i class="ph-bold ph-file-pdf"></i></span><span><strong>Salvar como PDF</strong><small>Mesmo laudo da impressão · salve e compartilhe o arquivo depois</small></span><i class="ph-bold ph-caret-right export-option-arrow"></i></button>
                 <button type="button" data-export-format="png" class="export-option"><span class="export-option-icon export-png"><i class="ph-bold ph-file-image"></i></span><span><strong>Baixar em PNG</strong><small>Imagem em alta resolução, com evidências</small></span><i class="ph-bold ph-caret-right export-option-arrow"></i></button>
-                <button type="button" data-export-format="share" class="export-option"><span class="export-option-icon export-share"><i class="ph-bold ph-share-network"></i></span><span><strong>Compartilhar PDF oficial</strong><small>PDF idêntico ao impresso · salve e anexe ao WhatsApp ou e-mail</small></span><i class="ph-bold ph-caret-right export-option-arrow"></i></button>
+                
                 <button type="button" data-export-format="print" class="export-option"><span class="export-option-icon export-print"><i class="ph-bold ph-printer"></i></span><span><strong>Imprimir</strong><small>Laudo técnico formatado para papel A4</small></span><i class="ph-bold ph-caret-right export-option-arrow"></i></button>
             </div>
             <p id="export-feedback" class="export-feedback" aria-live="polite" role="status"></p>

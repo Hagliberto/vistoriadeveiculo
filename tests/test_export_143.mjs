@@ -5,14 +5,14 @@ const html=load('index.html'),js=load('assets/app.js'),exports=load('assets/expo
 const appbar=html.slice(html.indexOf('id="appbar-actions"'),html.indexOf('<!-- Barra de Progresso'));
 assert.ok(!appbar.includes('btn-expand-all')&&!appbar.includes('btn-collapse-all')&&!appbar.includes('openHistoryModal'));
 assert.ok(appbar.includes('data-open-export'));
-for(const kind of ['pdf','png','share','print']) assert.ok(html.includes(`data-export-format="${kind}"`));
+for(const kind of ['pdf','png','print']) assert.ok(html.includes(`data-export-format="${kind}"`));
 assert.ok(html.includes('id="export-modal"')&&html.includes('aria-modal="true"'));
 assert.ok(html.includes('data-command="export"')&&html.includes('assets/export.js'));
 assert.ok(js.includes("if (dot) {")&&js.includes("command === 'export'"));
 assert.ok(exports.includes('generatePNG')&&exports.includes('getAllAttachedPhotos()')&&exports.includes('appState.pins')&&exports.includes('appState.signatures'));
 assert.ok(exports.includes('openOfficialPdf()')&&exports.includes('validateAndPrint()'));
 assert.ok(css.includes('.export-modal[hidden]'));
-for(const icon of ['file-pdf','file-image','share-network','caret-right'])assert.ok(icons.includes(`'${icon}'`));
+for(const icon of ['file-pdf','file-image','caret-right'])assert.ok(icons.includes(`'${icon}'`));
 assert.ok(sw.includes("'./assets/export.js'"));
-assert.ok(/^1\.4\.[346]$/.test(JSON.parse(load('version.json')).version));
-console.log('OK: modal de exportação, appbar, SVG offline, PDF/PNG/compartilhar/imprimir e versionamento.');
+assert.ok(/^1\.4\.[3467]$/.test(JSON.parse(load('version.json')).version));
+console.log('OK: modal de exportação, appbar, SVG offline, PDF/PNG/imprimir e versionamento.');

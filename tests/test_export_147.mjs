@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const read = path => fs.readFileSync(new URL('../' + path, import.meta.url), 'utf8');
+const html = read('index.html'), js = read('assets/export.js');
+const matches = [...html.matchAll(/data-export-format="([^"]+)"/g)].map(m=>m[1]);
+assert.deepEqual(matches, ['pdf','png','print'], 'Somente três opções, sem ação duplicada');
+assert.ok(!html.includes('Compartilhar PDF oficial'));
+assert.ok(!js.includes("kind==='share'"));
+assert.match(js, /if\(kind==='print' \|\| kind==='pdf'\)/);
+assert.match(js, /function openOfficialPdf\(\) {[\s\S]*?validateAndPrint\(\)/);
+assert.equal(JSON.parse(read('version.json')).version, '1.4.7');
+assert.ok(read('service-worker.js').includes('shell-v1.4.7'));
+console.log('OK: modal sem duplicidade, três ações, PDF A4 canônico e versão 1.4.7.');
