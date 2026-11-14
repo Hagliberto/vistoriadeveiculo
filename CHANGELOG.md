@@ -1,3 +1,8 @@
+## v1.4.2 — Croqui após dados e navegação lateral
+- Croqui de avarias reposicionado imediatamente depois dos dados, antes das categorias de checklist, também no dock e na sidebar.
+- Sidebar refinada com grupos, detalhes contextuais, estado ativo sincronizado e foco acessível; permanece recolhida no desktop.
+- Nenhuma mudança nos dados persistidos ou nos campos da vistoria.
+
 ## v1.4.1 — Ajustes de apresentação
 - Retirado o pill de crédito da navbar inferior; o desenvolvedor continua identificado no painel Configurações.
 - Ocultado o card introdutório "Uma vistoria completa" em telas de até 599px; permanece no desktop.

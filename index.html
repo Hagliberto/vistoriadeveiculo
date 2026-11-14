@@ -105,19 +105,21 @@
             <button type="button" id="btn-sidebar-collapse" class="sidebar-action sidebar-toggle" title="Expandir menu lateral" aria-label="Expandir menu lateral" aria-expanded="false" aria-controls="sidebar-items">
                 <i class="ph-bold ph-list text-xl"></i>
             </button>
-            <span class="sidebar-brand-label">Navegação</span>
+            <span class="sidebar-brand-label"><strong>Etapas da vistoria</strong><small>Escolha onde continuar</small></span>
         </div>
         <nav id="sidebar-items" class="sidebar-nav" aria-label="Seções da vistoria">
-            <button type="button" class="sidebar-link" data-go="exp-identificacao" title="Identificação do veículo" aria-label="Identificação do veículo"><i class="ph-bold ph-identification-card"></i><span class="sidebar-label">Identificação</span></button>
-            <button type="button" class="sidebar-link" data-go="checklist-sections" title="Checklist de inspeção" aria-label="Checklist de inspeção"><i class="ph-bold ph-clipboard-text"></i><span class="sidebar-label">Checklist</span></button>
-            <button type="button" class="sidebar-link" data-go="exp-croqui" title="Croqui de avarias" aria-label="Croqui de avarias"><i class="ph-bold ph-car-simple"></i><span class="sidebar-label">Croqui de avarias</span></button>
-            <button type="button" class="sidebar-link" data-go="exp-assinaturas" title="Observações e assinaturas" aria-label="Observações e assinaturas"><i class="ph-bold ph-signature"></i><span class="sidebar-label">Assinaturas</span></button>
-            <span class="sidebar-divider"></span>
-            <button type="button" class="sidebar-link" data-command="history" title="Histórico e backups" aria-label="Histórico e backups"><i class="ph-bold ph-folder-open"></i><span class="sidebar-label">Histórico e backups</span></button>
-            <button type="button" class="sidebar-link" data-command="print" title="Imprimir laudo" aria-label="Imprimir laudo"><i class="ph-bold ph-printer"></i><span class="sidebar-label">Gerar PDF</span></button>
-            <button type="button" class="sidebar-link" data-command="settings" title="Configurações e informações" aria-label="Configurações e informações"><i class="ph-bold ph-gear"></i><span class="sidebar-label">Configurações</span></button>
+            <span class="sidebar-group-heading">ETAPAS</span>
+            <button type="button" class="sidebar-link" data-go="exp-identificacao" title="Identificação do veículo" aria-label="Identificação do veículo"><i class="ph-bold ph-identification-card"></i><span class="sidebar-label">Dados do veículo<small>Identificação e condutor</small></span></button>
+            <button type="button" class="sidebar-link" data-go="exp-croqui" title="Croqui de avarias" aria-label="Croqui de avarias"><i class="ph-bold ph-car-simple"></i><span class="sidebar-label">Croqui de avarias<small>Marcação visual de danos</small></span></button>
+            <button type="button" class="sidebar-link" data-go="checklist-sections" title="Checklist de inspeção" aria-label="Checklist de inspeção"><i class="ph-bold ph-clipboard-text"></i><span class="sidebar-label">Checklist<small>47 verificações</small></span></button>
+            <button type="button" class="sidebar-link" data-go="exp-assinaturas" title="Observações e assinaturas" aria-label="Observações e assinaturas"><i class="ph-bold ph-signature"></i><span class="sidebar-label">Assinaturas<small>Conferência e aceite</small></span></button>
+            <span class="sidebar-divider" role="separator"></span>
+            <span class="sidebar-group-heading">FERRAMENTAS</span>
+            <button type="button" class="sidebar-link" data-command="history" title="Histórico e backups" aria-label="Histórico e backups"><i class="ph-bold ph-folder-open"></i><span class="sidebar-label">Histórico e backups<small>Registros armazenados</small></span></button>
+            <button type="button" class="sidebar-link" data-command="print" title="Imprimir laudo" aria-label="Imprimir laudo"><i class="ph-bold ph-printer"></i><span class="sidebar-label">Gerar PDF<small>Laudo A4</small></span></button>
+            <button type="button" class="sidebar-link" data-command="settings" title="Configurações e informações" aria-label="Configurações e informações"><i class="ph-bold ph-gear"></i><span class="sidebar-label">Configurações<small>Preferências e versão</small></span></button>
         </nav>
-        <div class="sidebar-footer" title="Vistoria Veicular v1.4.1"><span class="sidebar-version-mark">1.4</span><span class="sidebar-label">v1.4.1 • Offline</span></div>
+        <div class="sidebar-footer" title="Vistoria Veicular v1.4.2"><span class="sidebar-version-mark">1.4</span><span class="sidebar-label">v1.4.2 • Offline</span></div>
     </aside>
 
     <!-- Barra Superior Fixa Compacta Mobile-First -->
@@ -433,10 +435,7 @@
             </div>
         </section>
 
-        <!-- EXPANDERS 2 A 7: SEÇÕES CATEGORIZADAS DE INSPEÇÃO (Injetadas via JS) -->
-        <div id="checklist-sections" class="space-y-3.5"></div>
-
-        <!-- EXPANDER 8: CROQUI VISUAL DE AVARIAS -->
+        <!-- ETAPA 2: CROQUI VISUAL DE AVARIAS -->
         <section id="exp-croqui" class="expander-card bg-white rounded-2xl border border-slate-200 border-l-[5px] shadow-xs overflow-hidden" style="border-left-color: #ea580c;">
             <button type="button" onclick="toggleExpander('exp-croqui')" aria-expanded="false" aria-controls="content-exp-croqui" class="expander-header w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left transition" style="background-color: #fff7ed;">
                 <div class="flex items-center gap-3 min-w-0">
@@ -535,6 +534,9 @@
             </div>
         </section>
 
+        <!-- EXPANDERS 2 A 7: SEÇÕES CATEGORIZADAS DE INSPEÇÃO (Injetadas via JS) -->
+        <div id="checklist-sections" class="space-y-3.5"></div>
+
         <!-- ANEXO FOTOGRÁFICO DE EVIDÊNCIAS (EXIBIDO NO PDF QUANDO HOUVER FOTOS - OPÇÃO 2) -->
         <section id="print-photo-section" class="hidden expander-card bg-white rounded-2xl border border-slate-200 border-l-[5px] shadow-xs overflow-hidden" style="border-left-color: #0284c7;">
             <div class="expander-header w-full px-4 py-2.5 flex items-center justify-between gap-3 text-left" style="background-color: #f0f9ff;">
@@ -631,8 +633,8 @@
     <nav id="bottom-dock" class="bottom-dock no-print" aria-label="Navegação rápida inferior">
         <div class="bottom-dock-inner">
             <button type="button" class="dock-btn" data-go="exp-identificacao" title="Identificação" aria-label="Abrir identificação"><i class="ph-bold ph-identification-card"></i><span>Dados</span></button>
-            <button type="button" class="dock-btn" data-go="checklist-sections" title="Checklist" aria-label="Abrir checklist"><i class="ph-bold ph-clipboard-text"></i><span>Itens</span></button>
             <button type="button" class="dock-btn" data-go="exp-croqui" title="Croqui" aria-label="Abrir croqui"><i class="ph-bold ph-car-simple"></i><span>Croqui</span></button>
+            <button type="button" class="dock-btn" data-go="checklist-sections" title="Checklist" aria-label="Abrir checklist"><i class="ph-bold ph-clipboard-text"></i><span>Itens</span></button>
             <button type="button" class="dock-btn" data-go="exp-assinaturas" title="Assinaturas" aria-label="Abrir assinaturas"><i class="ph-bold ph-signature"></i><span>Assinar</span></button>
             <span class="dock-separator" role="separator"></span>
             <button type="button" class="dock-btn" data-command="history" title="Histórico e backup" aria-label="Abrir histórico de vistorias"><i class="ph-bold ph-folder-open"></i><span>Histórico</span></button>
@@ -673,7 +675,7 @@
                 <div class="settings-choice-row"><div><strong>Atualização do aplicativo</strong><small id="app-update-settings-status" role="status" aria-live="polite">Verificação automática ao abrir o aplicativo.</small></div><button type="button" id="btn-check-updates" class="settings-choice-btn">Verificar agora</button></div>
             </div>
             <div class="settings-about">
-                <div class="settings-about-top"><span class="settings-about-icon"><i class="ph-bold ph-car-profile"></i></span><div><strong>Vistoria Veicular</strong><small>Checklist digital · PWA offline-first</small></div><span class="settings-version-pill">Versão 1.4.1</span></div>
+                <div class="settings-about-top"><span class="settings-about-icon"><i class="ph-bold ph-car-profile"></i></span><div><strong>Vistoria Veicular</strong><small>Checklist digital · PWA offline-first</small></div><span class="settings-version-pill">Versão 1.4.2</span></div>
                 <span class="settings-developer-label">DESENVOLVIDO POR</span>
                 <span class="settings-developer-pill"><i class="ph-bold ph-check-circle"></i> Hagliberto Alves de Oliveira</span>
                 <p>Os registros, fotografias e assinaturas são mantidos localmente, sem envio automático a servidores.</p>

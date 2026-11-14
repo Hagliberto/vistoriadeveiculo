@@ -1,6 +1,6 @@
 # Vistoria Veicular — Checklist Digital
 
-> **Versão profissional 1.2.0 (14/11/2026)** · HTML + CSS + JavaScript puro · offline-first · sem servidor de dados
+> **Versão profissional 1.4.2 (14/11/2026)** · HTML + CSS + JavaScript puro · offline-first · sem servidor de dados
 
 Aplicação de inspeção de veículos com **47 verificações distribuídas em 6 categorias**, identificação, controle do nível de combustível, croqui interativo, registros fotográficos, assinaturas digitais e geração de laudo técnico em papel A4/PDF.
 
@@ -16,7 +16,7 @@ Aplicação de inspeção de veículos com **47 verificações distribuídas em 
 
 - **Área de trabalho WIDE:** duas colunas de expanders a partir de 1280 px, com opção **Lista** para quem preferir blocos na largura total. A preferência fica salva no navegador.
 - **Appbar:** os seis ícones de ação ficam na barra superior, sem o antigo minicard. Ações: expandir/recolher, histórico, marcar tudo Conforme, limpar e imprimir.
-- **Navbar inferior:** atalhos para dados, checklist, croqui, assinaturas, histórico, impressão e configurações.
+- **Navbar inferior:** atalhos para dados, croqui, checklist, assinaturas, histórico, impressão e configurações.
 - **Sidebar recolhida por padrão:** pode ser expandida no desktop ou aberta como menu sobreposto no celular.
 - **Configurações:** engrenagem no dock inferior e na sidebar, mostrando versão e pill **Hagliberto Alves de Oliveira**.
 - **Ação por categoria:** cada uma das seis categorias tem um ícone **Tudo conforme**. Caso exista uma avaria ou N/A, um diálogo solicita confirmação. A alteração nunca atinge outras categorias e preserva comentários e fotos.
@@ -137,3 +137,6 @@ Durante a primeira migração da versão 1.3.0, o service worker antigo pode ati
 
 ## Ajustes visuais v1.4.1
 No celular (até 599px), o card de apresentação da área de trabalho é ocultado. A identificação do desenvolvedor aparece somente em Configurações, acessível pela engrenagem.
+
+## Navegação v1.4.2
+A ordem das etapas na tela, na barra inferior e na sidebar é **Dados → Croqui → Checklist → Assinaturas**. A sidebar recolhida apresenta os ícones com cores de cada etapa; ao expandir, aparecem descrições curtas. A seção ativa acompanha o expander aberto.

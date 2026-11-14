@@ -111,3 +111,8 @@ Manter compatibilidade com a estrutura de dados central:
 - O crédito nominal do desenvolvedor deve aparecer somente no painel de Configurações, não na navbar inferior.
 - O card `#workspace-heading` deve permanecer visível em desktop e oculto em telas de até 599px.
 - Atualizar simultaneamente `version.json`, `APP_VERSION`, `service-worker.js` e rótulos de versão em novas releases.
+
+## Navegação v1.4.2
+- Ordem de inspeção: Dados, Croqui, checklist (seis categorias) e Assinaturas.
+- Sidebar recolhida por padrão no desktop, gaveta sobreposta no mobile, rótulos descritivos na expansão e seção ativa sincronizada.
+- Preservar o fluxo de impressão e a compatibilidade de dados existentes.

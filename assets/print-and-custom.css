@@ -661,3 +661,37 @@
 @media screen and (max-width: 599px) {
     #workspace-heading { display: none !important; }
 }
+
+/* v1.4.2 — Sidebar contextual: rail compacto, leitura clara e destaque de etapa. */
+@media screen {
+  .app-sidebar { background:linear-gradient(180deg,#ffffff 0%,#fbfdff 72%,#f5f9ff 100%); border-color:#dce7f5; box-shadow:0 14px 42px rgba(18,49,93,.12); }
+  .sidebar-brand { margin:10px 7px 7px; padding-bottom:11px; }
+  .sidebar-brand-label { display:flex;flex-direction:column;gap:3px;min-width:0; }
+  .sidebar-brand-label strong {font-size:12px;font-weight:850;color:#153957;}
+  .sidebar-brand-label small {font-size:10px;color:#7890a9;font-weight:500;}
+  .sidebar-group-heading {display:block;overflow:hidden;white-space:nowrap;opacity:0;height:0;color:#68839f;letter-spacing:.13em;font-size:9px;font-weight:850;transition:opacity .18s ease;}
+  .sidebar-link {position:relative;height:52px;padding:0 15px;transition:background .16s ease,transform .16s ease,color .16s ease;}
+  .sidebar-link .icon {flex:0 0 20px;position:relative;z-index:1;}
+  .sidebar-link::before {content:'';position:absolute;left:5px;top:6px;width:42px;height:40px;border-radius:12px;background:color-mix(in srgb,var(--nav-icon,#0072ce) 10%,white);pointer-events:none;}
+  .sidebar-link.is-active {background:color-mix(in srgb,var(--nav-icon,#0072ce) 10%,white);color:#153957;}
+  .sidebar-link.is-active::after {content:'';position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:4px;background:var(--nav-icon,#0072ce);}
+  .sidebar-link:hover {background:#edf5ff;transform:translateX(1px);}
+  .sidebar-link:focus-visible, .sidebar-action:focus-visible {outline:3px solid #4c9feb;outline-offset:-3px;}
+  .sidebar-label {font-size:12px;line-height:1.2;min-width:0;}
+  .sidebar-label small {display:block;font-size:10px;font-weight:500;color:#7e91a6;margin-top:4px;white-space:nowrap;}
+  .sidebar-footer {margin-top:auto;}
+  body.sidebar-expanded .sidebar-group-heading {opacity:1;height:auto;padding:13px 13px 5px;}
+  body.sidebar-expanded .sidebar-link {height:58px;}
+  body.sidebar-expanded .sidebar-link::before {width:40px;height:40px;top:9px;}
+  body.sidebar-expanded .sidebar-nav {padding-bottom:8px;}
+  .sidebar-backdrop {backdrop-filter:blur(3px);}
+}
+@media screen and (max-width:1023px) {
+  .app-sidebar .sidebar-group-heading {opacity:1;height:auto;padding:13px 13px 5px;}
+  .app-sidebar .sidebar-link {height:58px;}
+  .app-sidebar .sidebar-link::before {width:40px;height:40px;top:9px;}
+  .app-sidebar {width:min(312px,calc(100vw - 40px));}
+}
+@media screen and (prefers-reduced-motion:reduce) {
+  .sidebar-link,.sidebar-group-heading {transition:none!important;}
+}
