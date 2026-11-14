@@ -91,7 +91,7 @@ Manter compatibilidade com a estrutura de dados central:
 }
 ---
 
-## 11. Regras de Interface e Histórico — v1.2.0
+## 11. Regras de Interface e Histórico — v1.3.0
 
 - **Desktop:** checklist em duas colunas a partir de 1280 px (com opção de lista), navbar inferior de ícones e barra lateral recolhida ao iniciar. A barra superior concentra as ações globais, sem minicard redundante.
 - **Ações individuais de categoria:** as seis categorias oferecem um controle independente **Tudo conforme**; nunca modificar os itens de outras categorias. Antes de sobrescrever uma classificação `nok` (avaria) ou `na`, exigir confirmação customizada. Preservar observações e fotos existentes.

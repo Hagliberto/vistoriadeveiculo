@@ -117,7 +117,7 @@
             <button type="button" class="sidebar-link" data-command="print" title="Imprimir laudo" aria-label="Imprimir laudo"><i class="ph-bold ph-printer"></i><span class="sidebar-label">Gerar PDF</span></button>
             <button type="button" class="sidebar-link" data-command="settings" title="Configurações e informações" aria-label="Configurações e informações"><i class="ph-bold ph-gear"></i><span class="sidebar-label">Configurações</span></button>
         </nav>
-        <div class="sidebar-footer" title="Vistoria Veicular v1.2.0"><span class="sidebar-version-mark">1.2</span><span class="sidebar-label">v1.2.0 • Offline</span></div>
+        <div class="sidebar-footer" title="Vistoria Veicular v1.3.0"><span class="sidebar-version-mark">1.3</span><span class="sidebar-label">v1.3.0 • Offline</span></div>
     </aside>
 
     <!-- Barra Superior Fixa Compacta Mobile-First -->
@@ -170,7 +170,7 @@
             <div id="appbar-actions" class="appbar-actions no-print" role="toolbar" aria-label="Ações da vistoria">
             <!-- Atalhos gerais: Expandir / Recolher / Histórico -->
             <div class="appbar-group">
-                <button type="button" id="btn-expand-all" title="Expandir Todas as Seções" aria-label="Expandir Todas as Seções"
+                <button type="button" id="btn-expand-all" title="Abrir primeira seção" aria-label="Abrir primeira seção"
                     class="appbar-icon w-10 h-10 rounded-xl inline-flex items-center justify-center bg-[#f0f7ff] text-[#004b93] hover:bg-[#e6f2fc] border border-blue-200 transition active:scale-95">
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="7 8 12 3 17 8"></polyline>
@@ -212,14 +212,6 @@
                         <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
                         <line x1="10" y1="11" x2="10" y2="17"></line>
                         <line x1="14" y1="11" x2="14" y2="17"></line>
-                    </svg>
-                </button>
-                <button type="button" onclick="validateAndPrint()" title="Validar e Gerar PDF" aria-label="Validar e Gerar PDF"
-                    class="appbar-icon w-10 h-10 rounded-xl inline-flex items-center justify-center bg-[#0072ce] text-white hover:bg-[#004b93] shadow-xs transition active:scale-95">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                        <rect x="6" y="14" width="12" height="8"></rect>
                     </svg>
                 </button>
             </div>
@@ -645,10 +637,24 @@
             <span class="dock-separator" role="separator"></span>
             <button type="button" class="dock-btn" data-command="history" title="Histórico e backup" aria-label="Abrir histórico de vistorias"><i class="ph-bold ph-folder-open"></i><span>Histórico</span></button>
             <button type="button" class="dock-btn dock-primary" data-command="print" title="Gerar laudo PDF" aria-label="Validar e gerar laudo PDF"><i class="ph-bold ph-printer"></i><span>PDF</span></button>
+            <button type="button" id="btn-mobile-actions" class="dock-btn dock-mobile-actions" title="Ações da vistoria" aria-label="Abrir ações da vistoria" aria-controls="mobile-actions-sheet" aria-expanded="false"><i class="ph-bold ph-squares-four"></i><span>Ações</span></button>
             <button type="button" class="dock-btn" data-command="settings" title="Configurações e sobre" aria-label="Abrir configurações"><i class="ph-bold ph-gear"></i><span>Ajustes</span></button>
-            <span class="dock-credit-pill" title="Desenvolvedor responsável">v1.2.0 <span class="dock-credit-divider">·</span> Hagliberto Alves de Oliveira</span>
+            <span class="dock-credit-pill" title="Desenvolvedor responsável">v1.3.0 <span class="dock-credit-divider">·</span> Hagliberto Alves de Oliveira</span>
         </div>
     </nav>
+
+    <!-- Ações compactas para celular; o PDF permanece exclusivamente na navbar. -->
+    <div id="mobile-actions-sheet" class="mobile-actions-overlay no-print" role="dialog" aria-modal="true" aria-label="Ações da vistoria" hidden>
+        <div class="mobile-actions-panel">
+            <div class="mobile-actions-heading"><strong>Ações da vistoria</strong><button id="btn-close-actions" type="button" title="Fechar ações" aria-label="Fechar ações"><i class="ph-bold ph-x"></i></button></div>
+            <div class="mobile-actions-grid">
+                <button type="button" data-action-target="btn-expand-all"><i class="ph-bold ph-folder-open"></i><span>Abrir primeira seção</span></button>
+                <button type="button" data-action-target="btn-collapse-all"><i class="ph-bold ph-arrows-in"></i><span>Fechar seção</span></button>
+                <button type="button" data-action-target="btn-mark-all-ok"><i class="ph-bold ph-checks"></i><span>Tudo conforme</span></button>
+                <button type="button" data-action-target="btn-reset-form"><i class="ph-bold ph-trash"></i><span>Limpar formulário</span></button>
+            </div>
+        </div>
+    </div>
 
     <!-- Preferências visuais e identidade do projeto -->
     <div id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title" aria-describedby="settings-description" class="modal-backdrop settings-modal no-print" hidden>
@@ -665,7 +671,7 @@
                 <div class="settings-choice-row"><div><strong>Menu lateral</strong><small>Inicia recolhido para ampliar a área útil de trabalho.</small></div><button type="button" id="btn-settings-sidebar" class="settings-choice-btn">Expandir menu</button></div>
             </div>
             <div class="settings-about">
-                <div class="settings-about-top"><span class="settings-about-icon"><i class="ph-bold ph-car-profile"></i></span><div><strong>Vistoria Veicular</strong><small>Checklist digital · PWA offline-first</small></div><span class="settings-version-pill">Versão 1.2.0</span></div>
+                <div class="settings-about-top"><span class="settings-about-icon"><i class="ph-bold ph-car-profile"></i></span><div><strong>Vistoria Veicular</strong><small>Checklist digital · PWA offline-first</small></div><span class="settings-version-pill">Versão 1.3.0</span></div>
                 <span class="settings-developer-label">DESENVOLVIDO POR</span>
                 <span class="settings-developer-pill"><i class="ph-bold ph-check-circle"></i> Hagliberto Alves de Oliveira</span>
                 <p>Os registros, fotografias e assinaturas são mantidos localmente, sem envio automático a servidores.</p>

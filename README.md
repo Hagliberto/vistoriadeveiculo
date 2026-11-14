@@ -102,7 +102,7 @@ git commit -m "feat: consolidar vistoria veicular profissional offline-first"
 git push origin main
 ```
 
-Se preferir revisar antes de publicar, permaneça na branch existente `feature/vistoria-profissional-v1.0.0` (ou crie uma branch específica `feature/vistoria-profissional-v1.2.0`) e abra um pull request após testar. O projeto foi entregue **sem executar commit ou push** no seu computador ou remoto.
+Se preferir revisar antes de publicar, permaneça na branch existente `feature/vistoria-profissional-v1.0.0` (ou crie uma branch específica `feature/vistoria-profissional-v1.3.0`) e abra um pull request após testar. O projeto foi entregue **sem executar commit ou push** no seu computador ou remoto.
 
 ## Limitações assumidas
 
@@ -122,3 +122,6 @@ python tests/test_static.py
 ```
 
 Veja [tests/QA_MANUAL.md](tests/QA_MANUAL.md) para a conferência visual de desktop, mobile, histórico, confirmações e impressão.
+
+### Atualizações da versão 1.3.0
+No desktop, a navegação usa ícones coloridos. Em telas até 1023px, o botão **Ações** da navegação inferior exibe os comandos de inspeção sem criar uma segunda linha no cabeçalho. O botão **Tudo conforme** de cada categoria alterna entre selecionar e desmarcar apenas os itens daquela categoria. Somente uma seção pode permanecer aberta.

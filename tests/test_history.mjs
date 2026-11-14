@@ -63,8 +63,13 @@ await ctx.confirmedAction();
 assert.equal(run("appState.checklist['doc_obrigatorios_2'].status"),'ok');
 assert.equal(run("appState.checklist['doc_obrigatorios_2'].obs"),'Risco no documento','Observações são preservadas');
 assert.equal(run("appState.checklist['exterior_lataria_0'].status"),null);
+// Segundo clique remove todos os status Conforme desta categoria (sem apagar as observações).
+run("markCategoryAsConforme('doc_obrigatorios')");
+assert.equal(run("CHECKLIST_SCHEMA[0].items.every((_,i)=>appState.checklist['doc_obrigatorios_'+i].status===null)"),true);
+assert.equal(run("appState.checklist['doc_obrigatorios_2'].obs"),'Risco no documento');
+assert.equal(run("appState.checklist['exterior_lataria_0'].status"),null);
 // Leitura de arquivo antigo sem ID de histórico continua suportada.
 const oldEntry=run('normalizeHistoryEntry({vehicle:{placa:"ABC1234"},meta:{id:"VST-OLD"}})');
 assert.ok(oldEntry.meta.archiveId?.startsWith('HST-'));
 assert.equal(oldEntry.meta.id,'VST-OLD');
-console.log('OK: 5 salvamentos do mesmo protocolo, IDs independentes, exclusão pontual, migração e ação por categoria.');
+console.log('OK: 5 salvamentos do mesmo protocolo, IDs independentes, exclusão pontual, migração e alternância por categoria.');

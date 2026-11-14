@@ -1,5 +1,5 @@
 /* Offline shell: mesma origem, sem armazenamento remoto ou CDN. */
-const CACHE_NAME = 'vistoria-veicular-shell-v1.2.0';
+const CACHE_NAME = 'vistoria-veicular-shell-v1.3.0';
 const APP_SHELL = [
   './', './index.html', './manifest.webmanifest', './service-worker.js',
   './assets/app.css', './assets/print-and-custom.css',

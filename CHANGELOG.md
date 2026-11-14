@@ -44,3 +44,10 @@
 ### Observações
 - A liberação final deve passar por inspeção visual manual em navegador e no pré-visualizador do PDF, especialmente com imagens e documentos grandes.
 - Nenhuma alteração foi aplicada diretamente no Git remoto.
+
+## v1.3.0 — Navegação e controle por categoria
+- Ícones coloridos na sidebar e navbar, preservando indicadores de seleção.
+- Apenas um expander aberto por vez (inclusive na grade desktop).
+- Ações reunidas no dock do celular; PDF não se repete na appbar.
+- Botão por categoria alterna Conforme ↔ Não verificado, mantendo observações e fotos.
+- Cache offline atualizado para v1.3.0.

@@ -589,3 +589,54 @@
     .category-header .expander-trigger {display:flex !important;width:100% !important;}
     .category-subtitle {display:none !important;}
 }
+
+/* 1.3.0 — navegação colorida, appbar em uma linha no mobile e ações compactas. */
+@media screen {
+    .sidebar-link .icon, .dock-btn .icon { color:var(--nav-icon,#0a67be); }
+    .sidebar-link[data-go="exp-identificacao"], .dock-btn[data-go="exp-identificacao"] { --nav-icon:#2563eb; }
+    .sidebar-link[data-go="checklist-sections"], .dock-btn[data-go="checklist-sections"] { --nav-icon:#0d9488; }
+    .sidebar-link[data-go="exp-croqui"], .dock-btn[data-go="exp-croqui"] { --nav-icon:#ea580c; }
+    .sidebar-link[data-go="exp-assinaturas"], .dock-btn[data-go="exp-assinaturas"] { --nav-icon:#7c3aed; }
+    .sidebar-link[data-command="history"], .dock-btn[data-command="history"] { --nav-icon:#4f46e5; }
+    .sidebar-link[data-command="print"], .dock-btn[data-command="print"] { --nav-icon:#0284c7; }
+    .sidebar-link[data-command="settings"], .dock-btn[data-command="settings"] { --nav-icon:#b45309; }
+    .dock-btn.dock-mobile-actions { --nav-icon:#db2777; }
+    .dock-btn.dock-primary .icon { color:#fff; }
+    .sidebar-link:hover .icon, .dock-btn:hover:not(.dock-primary) .icon,
+    .sidebar-link.is-active .icon,.dock-btn.is-active:not(.dock-primary) .icon { color:var(--nav-icon); }
+    .category-mark-ok.is-all-conforme { background:#ecfdf5; color:#047857; border-color:#6ee7b7; }
+    .mobile-actions-overlay[hidden] { display:none !important; }
+    .dock-mobile-actions {display:none;}
+}
+@media screen and (max-width:1023px) {
+    .header-inner { display:flex !important; flex-wrap:nowrap !important; align-items:center; }
+    #btn-sidebar-mobile,.header-brand,.header-status {grid-column:auto;grid-row:auto;}
+    .header-brand {flex:1 1 auto;min-width:0;}
+    .header-status {flex:0 0 auto;min-width:0;order:3;}
+    .appbar-actions {display:none !important;}
+    .dock-mobile-actions {display:flex;}
+    html {scroll-padding-top:85px;}
+    .mobile-actions-overlay {display:flex;position:fixed;inset:0;z-index:90;background:rgba(13,31,51,.48);align-items:flex-end;justify-content:center;padding:12px 12px calc(75px + env(safe-area-inset-bottom,0px));}
+    .mobile-actions-panel {width:min(100%,470px);background:white;border:1px solid #d9e6f2;border-radius:21px;box-shadow:0 20px 60px rgba(10,39,74,.25);padding:16px;}
+    .mobile-actions-heading {display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;color:#173659;}
+    .mobile-actions-heading button {height:36px;width:36px;border-radius:10px;background:#f1f5f9;color:#334155;display:grid;place-items:center;}
+    .mobile-actions-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
+    .mobile-actions-grid button {display:flex;align-items:center;gap:9px;text-align:left;border:1px solid #dbe6f2;background:#f7faff;color:#1e4267;padding:12px 10px;min-height:52px;border-radius:12px;font-weight:700;font-size:12px;}
+    .mobile-actions-grid button .icon {flex-shrink:0;width:21px;height:21px;color:#0072ce;}
+    .mobile-actions-grid button:nth-child(3) .icon {color:#059669;}
+    .mobile-actions-grid button:nth-child(4) .icon {color:#dc2626;}
+}
+@media screen and (max-width:599px) {
+    .bottom-dock-inner {gap:0;padding-left:2px;padding-right:2px;}
+    .dock-btn {font-size:8px;}
+    .dock-separator {display:none;}
+    .header-status .bg-slate-50 {gap:4px;}
+}
+@media print { .mobile-actions-overlay,.dock-mobile-actions {display:none !important;} }
+
+@media screen and (min-width:600px) and (max-width:1023px) {
+    .bottom-dock {width:calc(100% - 20px);}
+    .bottom-dock-inner {width:100%;gap:2px;}
+    .dock-btn {flex:1;min-width:0;}
+    .dock-credit-pill {display:none;}
+}

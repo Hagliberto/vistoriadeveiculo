@@ -294,6 +294,13 @@
 
             const willOpen = forceOpen !== null ? forceOpen : !card.classList.contains('is-open');
             if (willOpen) {
+                // Acordeão exclusivo: fecha as demais seções, inclusive em colunas.
+                document.querySelectorAll('.expander-card.is-open').forEach(other => {
+                    if (other === card || other.id === 'print-photo-section') return;
+                    other.classList.remove('is-open');
+                    const otherTrigger = other.querySelector('.expander-trigger') || other.querySelector('.expander-header[aria-expanded]');
+                    if (otherTrigger) otherTrigger.setAttribute('aria-expanded', 'false');
+                });
                 card.classList.add('is-open');
                 if (cardId === 'exp-assinaturas') {
                     setTimeout(() => {
@@ -308,10 +315,15 @@
         }
 
         function setAllExpanders(openState) {
-            document.querySelectorAll('.expander-card').forEach(card => {
-                if (card.id === 'print-photo-section') return;
-                toggleExpander(card.id, openState);
-            });
+            if (openState) {
+                // Compatível com a regra de somente uma seção aberta.
+                const first = document.querySelector('.expander-card:not(#print-photo-section)');
+                if (first) toggleExpander(first.id, true);
+            } else {
+                document.querySelectorAll('.expander-card.is-open').forEach(card => {
+                    if (card.id !== 'print-photo-section') toggleExpander(card.id, false);
+                });
+            }
         }
 
         /**
@@ -412,7 +424,7 @@
                                 <i class="ph-bold ph-caret-down text-slate-500 text-base expander-chevron"></i>
                             </span>
                         </button>
-                        <button type="button" onclick="markCategoryAsConforme('${section.id}')" class="category-mark-ok no-print" title="Marcar todos os itens de ${section.title} como Conforme" aria-label="Marcar todos os itens de ${section.title} como Conforme" style="--category-accent:${section.accentColor};--category-tint:${section.bgColor};">
+                        <button type="button" onclick="markCategoryAsConforme('${section.id}')" class="category-mark-ok no-print" data-section-id="${section.id}" aria-pressed="false" title="Marcar todos os itens de ${section.title} como Conforme" aria-label="Marcar todos os itens de ${section.title} como Conforme" style="--category-accent:${section.accentColor};--category-tint:${section.bgColor};">
                             <i class="ph-bold ph-checks"></i><span class="category-mark-text">Tudo conforme</span>
                         </button>
                     </div>
@@ -521,6 +533,23 @@
             saveToLocalStorage();
         }
 
+        /** Mantém o indicador do botão de categoria sincronizado com cada alteração individual. */
+        function updateCategoryToggleButtons() {
+            if (typeof document.querySelector !== 'function') return;
+            CHECKLIST_SCHEMA.forEach(section => {
+                const button = document.querySelector(`.category-mark-ok[data-section-id="${section.id}"]`);
+                if (!button) return;
+                const allOk = section.items.every((_, i) => appState.checklist[`${section.id}_${i}`]?.status === 'ok');
+                button.classList.toggle('is-all-conforme', allOk);
+                button.setAttribute('aria-pressed', String(allOk));
+                const label = allOk ? `Desmarcar todos os itens de ${section.title}` : `Marcar todos os itens de ${section.title} como Conforme`;
+                button.setAttribute('title', label);
+                button.setAttribute('aria-label', label);
+                const text = button.querySelector('.category-mark-text');
+                if (text) text.textContent = allOk ? 'Desmarcar todos' : 'Tudo conforme';
+            });
+        }
+
         /** Marca somente a categoria escolhida. Não altera notas, fotos ou outras seções. */
         function markCategoryAsConforme(sectionId) {
             const category = CHECKLIST_SCHEMA.find(section => section.id === sectionId);
@@ -529,19 +558,21 @@
             const countNok = keys.filter(key => appState.checklist[key].status === 'nok').length;
             const countNa = keys.filter(key => appState.checklist[key].status === 'na').length;
             const countPending = keys.filter(key => appState.checklist[key].status !== 'ok').length;
-            if (countPending === 0) {
-                showToast('Esta categoria já está totalmente Conforme.');
-                return;
-            }
+            const allConforme = countPending === 0;
             const apply = () => {
                 keys.forEach(itemId => {
-                    appState.checklist[itemId].status = 'ok';
+                    appState.checklist[itemId].status = allConforme ? null : 'ok';
                     applyItemVisualState(itemId);
                 });
                 updateAllBadgesAndStats();
+                updateCategoryToggleButtons();
                 saveToLocalStorage();
-                showToast(`${category.title.replace(/^\d+\.\s*/, '')}: ${keys.length} itens marcados como Conforme.`);
+                showToast(`${category.title.replace(/^\d+\.\s*/, '')}: ${allConforme ? 'marcação removida' : 'todos os itens marcados como Conforme'}.`);
             };
+            if (allConforme) {
+                apply();
+                return;
+            }
             // Não sobrescrever silenciosamente registros de avaria ou N/A.
             if (countNok || countNa) {
                 openConfirmModal('Sobrescrever status desta categoria?',
@@ -730,6 +761,8 @@
             } else {
                 badgeSig.textContent = 'Pendente';
             }
+        
+            updateCategoryToggleButtons();
         }
 
         /**
@@ -1476,6 +1509,29 @@
             catch (error) { console.warn('Preferência visual indisponível:', error); }
             setWorkspaceLayout(stored);
 
+            const actionSheet = document.getElementById('mobile-actions-sheet');
+            const actionSheetTrigger = document.getElementById('btn-mobile-actions');
+            const closeActionSheet = () => {
+                actionSheet.hidden = true;
+                actionSheetTrigger.setAttribute('aria-expanded', 'false');
+            };
+            actionSheetTrigger.addEventListener('click', () => {
+                const open = actionSheet.hidden;
+                actionSheet.hidden = !open;
+                actionSheetTrigger.setAttribute('aria-expanded', String(open));
+                if (open) actionSheet.querySelector('[data-action-target]')?.focus();
+            });
+            actionSheet.querySelectorAll('[data-action-target]').forEach(button => {
+                button.addEventListener('click', () => {
+                    closeActionSheet();
+                    document.getElementById(button.dataset.actionTarget)?.click();
+                });
+            });
+            document.getElementById('btn-close-actions').addEventListener('click', () => { closeActionSheet(); actionSheetTrigger.focus(); });
+            actionSheet.addEventListener('click', event => { if (event.target === actionSheet) closeActionSheet(); });
+            document.addEventListener('keydown', event => {
+                if (event.key === 'Escape' && !actionSheet.hidden) { closeActionSheet(); actionSheetTrigger.focus(); }
+            });
             document.getElementById('btn-sidebar-mobile').addEventListener('click', toggleSidebar);
             document.getElementById('btn-sidebar-collapse').addEventListener('click', toggleSidebar);
             document.getElementById('sidebar-backdrop').addEventListener('click', closeSidebar);

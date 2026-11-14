@@ -2,6 +2,8 @@
 (() => {
   'use strict';
   const paths = {
+    'squares-four':'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+    'arrows-in':'<path d="m7 7 5 5m0 0V7m0 5H7M17 17l-5-5m0 0v5m0-5h5"/>',
     'list':'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
     'columns':'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/>',
     'clipboard-text':'<rect x="4" y="5" width="16" height="16" rx="2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M8 12h8M8 16h6"/>',
