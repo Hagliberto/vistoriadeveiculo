@@ -122,3 +122,8 @@ Manter compatibilidade com a estrutura de dados central:
 - Compartilhar prioriza arquivo PDF A4 real. PNG só é utilizado se o dispositivo não puder compartilhar PDF.
 - PDF e PNG são gerados no dispositivo, sem CDN e sem backend, com limites explícitos de memória/páginas.
 - O diálogo de impressão existente permanece disponível.
+
+## Fidelidade do PDF — v1.4.5
+- A ação Salvar como PDF deve invocar `validateAndPrint()` (mesmo pipeline da impressão), não `generatePDF()` rasterizado.
+- O diálogo nativo exige que o usuário escolha Salvar como PDF; não afirmar download direto.
+- Compartilhamento de arquivos continua separado: o PDF compatível com Web Share é rasterizado e pode ter visual distinto.

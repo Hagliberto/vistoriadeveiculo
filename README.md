@@ -1,6 +1,6 @@
 # Vistoria Veicular — Checklist Digital
 
-> **Versão profissional 1.4.4 (14/11/2026)** · HTML + CSS + JavaScript puro · offline-first · sem servidor de dados
+> **Versão profissional 1.4.5 (14/11/2026)** · HTML + CSS + JavaScript puro · offline-first · sem servidor de dados
 
 Aplicação de inspeção de veículos com **47 verificações distribuídas em 6 categorias**, identificação, controle do nível de combustível, croqui interativo, registros fotográficos, assinaturas digitais e geração de laudo técnico em papel A4/PDF.
 
@@ -142,8 +142,11 @@ No celular (até 599px), o card de apresentação da área de trabalho é oculta
 A ordem das etapas na tela, na barra inferior e na sidebar é **Dados → Croqui → Checklist → Assinaturas**. A sidebar recolhida apresenta os ícones com cores de cada etapa; ao expandir, aparecem descrições curtas. A seção ativa acompanha o expander aberto.
 
 ### Exportar e compartilhar (v1.4.4)
-A opção **Exportar** abre um modal de quatro escolhas: **Baixar PDF** (gera diretamente PDF A4 com páginas rasterizadas em alta resolução), **Baixar PNG** (imagem 2x do relatório com croqui, fotos e assinaturas, ajustada ao limite do navegador), **Compartilhar** (prioriza PDF pela Web Share API e usa PNG apenas se o PDF não for aceito) e **Imprimir** (impressão A4). O PDF direto é gerado integralmente no navegador, sem bibliotecas de terceiros ou conexão externa. A opção Imprimir continua abrindo o diálogo nativo com o CSS A4 existente. Compartilhar depende do navegador e de contexto HTTPS; quando indisponível, o aplicativo oferece download do arquivo local, sem enviar dados a servidor.
+A opção **Exportar** abre um modal de quatro escolhas: **Salvar como PDF** (abre o mesmo laudo A4 da impressão; selecione “Salvar como PDF” no diálogo do navegador), **Baixar PNG** (imagem 2x do relatório com croqui, fotos e assinaturas, ajustada ao limite do navegador), **Compartilhar** (prioriza PDF pela Web Share API e usa PNG apenas se o PDF não for aceito) e **Imprimir** (impressão A4). O PDF direto é gerado integralmente no navegador, sem bibliotecas de terceiros ou conexão externa. A opção Imprimir continua abrindo o diálogo nativo com o CSS A4 existente. Compartilhar depende do navegador e de contexto HTTPS; quando indisponível, o aplicativo oferece download do arquivo local, sem enviar dados a servidor.
 
 
 ### Qualidade de exportação (v1.4.4)
 PDF direto com páginas A4 em JPEG de aproximadamente 200 dpi, gerado offline. O texto do PDF compartilhável é rasterizado; para imprimir com texto selecionável e layout CSS, use **Imprimir → Salvar como PDF**. Documentos muito grandes dependem dos limites de memória do navegador. Faça homologação com fotos e assinaturas em celular.
+
+### Fidelidade do PDF à impressão (v1.4.5)
+A opção **Salvar como PDF** usa o mesmo `validateAndPrint()` e `prepareAndPrint()` da impressão. Selecione **Destino → Salvar como PDF**, papel **A4**, escala **100%/padrão** e, se necessário, **Gráficos de fundo**. O arquivo PDF de **Compartilhar** continua sendo gerado como raster para a Web Share API e pode ter aparência diferente; os navegadores não expõem o PDF do diálogo de impressão ao JavaScript.

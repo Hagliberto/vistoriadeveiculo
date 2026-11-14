@@ -1,3 +1,10 @@
+## v1.4.5 — PDF visualmente idêntico ao laudo impresso
+
+- O comando Salvar como PDF reutiliza a renderização de impressão A4, sem redesenhar o laudo em canvas.
+- O navegador permite escolher Salvar como PDF e preserva a tipografia e a paginação da impressão.
+- Compartilhar continua priorizando o PDF rasterizado compatível com a Web Share API; sua apresentação pode divergir.
+- Versão e cache offline atualizados para 1.4.5.
+
 ## v1.4.4 — Compartilhamento PDF e imagens nítidas
 
 - Compartilhar prioriza PDF A4; utiliza PNG se o dispositivo não aceitar PDF; se não houver compartilhamento, baixa PDF.
