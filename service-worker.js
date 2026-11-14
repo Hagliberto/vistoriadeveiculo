@@ -2,11 +2,11 @@
  * O Pages pode redirecionar /index.html para /; nunca guardar
  * a resposta redirecionada como fallback de navegacao.
  */
-const CACHE_NAME = 'vistoria-veicular-shell-v1.4.2';
+const CACHE_NAME = 'vistoria-veicular-shell-v1.4.3';
 const APP_SHELL = [
   './', './manifest.webmanifest', './service-worker.js', './version.json',
   './assets/app.css', './assets/print-and-custom.css',
-  './assets/icons.js', './assets/app.js',
+  './assets/icons.js', './assets/app.js', './assets/export.js',
   './icons/icon-192.png', './icons/icon-512.png'
 ];
 

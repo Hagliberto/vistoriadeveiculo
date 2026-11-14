@@ -1,0 +1,252 @@
+/* Central de exportação offline-first · Vistoria Veicular 1.4.3.
+ * Nenhum dado é enviado a servidores; compartilhamento exige ação direta do usuário.
+ */
+(() => {
+    'use strict';
+    let returnFocus = null;
+    let busy = false;
+    const modal = document.getElementById('export-modal');
+    if (!modal) return;
+    const feedback = document.getElementById('export-feedback');
+    const options = [...modal.querySelectorAll('[data-export-format]')];
+    const closeButton = document.getElementById('btn-close-export');
+    const label = (value) => String(value ?? '').trim() || '—';
+    const statusText = {ok:'Conforme',nok:'Avaria',na:'N/A'};
+
+    function open() {
+        if (!modal.hidden) return;
+        const actionSheet = document.getElementById('mobile-actions-sheet');
+        if (actionSheet && !actionSheet.hidden) document.getElementById('btn-close-actions')?.click();
+        returnFocus = document.activeElement;
+        feedback.textContent = '';
+        modal.hidden = false;
+        document.body.classList.add('export-open');
+        closeButton.focus();
+    }
+    function close() {
+        if (busy) return;
+        modal.hidden = true;
+        document.body.classList.remove('export-open');
+        if (returnFocus?.isConnected) returnFocus.focus();
+        returnFocus = null;
+    }
+    window.openExportModal = open;
+    document.querySelectorAll('[data-open-export]').forEach(button => button.addEventListener('click', open));
+    closeButton.addEventListener('click', close);
+    modal.addEventListener('click', event => {if (event.target === modal) close();});
+    modal.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {event.stopPropagation(); close();}
+        if (event.key !== 'Tab') return;
+        const focusable = [closeButton, ...options];
+        const first = focusable[0], last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {event.preventDefault();last.focus();}
+        else if (!event.shiftKey && document.activeElement === last) {event.preventDefault();first.focus();}
+    });
+
+    function filename(extension) {
+        const plate = (appState.vehicle.placa || 'sem-placa').toUpperCase().replace(/[^A-Z0-9-]/g,'').slice(0,12);
+        const date = new Date().toLocaleDateString('en-CA');
+        return `vistoria_${plate}_${date}.${extension}`;
+    }
+    function download(blob, name) {
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url; anchor.download = name;
+        document.body.appendChild(anchor); anchor.click(); anchor.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 30000);
+    }
+    function imageFromData(data) {
+        return new Promise((resolve, reject) => {
+            const im = new Image();
+            im.onload = () => resolve(im);
+            im.onerror = () => reject(new Error('Não foi possível abrir uma imagem anexada.'));
+            im.src = data;
+        });
+    }
+    function breakWords(ctx,text,maxWidth) {
+        const output=[];
+        for(const paragraph of String(text ?? '').split(/\r?\n/)) {
+            if (!paragraph) { output.push('');continue; }
+            let line='';
+            for(const word of paragraph.split(/\s+/)) {
+                const candidate=line ? line+' '+word : word;
+                if(ctx.measureText(candidate).width <= maxWidth) {line=candidate;continue;}
+                if(line) output.push(line);
+                if(ctx.measureText(word).width <= maxWidth) {line=word;continue;}
+                let piece='';
+                for(const ch of word) {
+                    if(piece && ctx.measureText(piece+ch).width > maxWidth) {output.push(piece);piece=ch;}
+                    else piece+=ch;
+                }
+                line=piece;
+            }
+            if(line) output.push(line);
+        }
+        return output;
+    }
+    async function generatePNG() {
+        // Escreve a versão atual no dispositivo antes de gerar o relatório.
+        await flushSave();
+        await saveInFlight;
+        const photos = getAllAttachedPhotos();
+        const photoImages = await Promise.all(photos.map(p => imageFromData(p.src)));
+        const signKeys = ['sig-vistoriador','sig-motorista'];
+        const signatures = await Promise.all(signKeys.map(id => appState.signatures[id] ? imageFromData(appState.signatures[id]) : null));
+        const width=1100, margin=62, content=width-margin*2;
+        const canvas=document.createElement('canvas');
+        const context=canvas.getContext('2d');
+        if(!context) throw new Error('Seu navegador não permite criar imagens PNG.');
+        // A renderização em duas passagens calcula a altura real e evita recortes.
+        const paint=(draw) => {
+            const ctx=context;
+            let y=0;
+            const rect=(x,ry,w,h,color) => {if(draw){ctx.fillStyle=color;ctx.fillRect(x,ry,w,h);}};
+            const line=(x1,y1,x2,y2,color='#dce5f0',thick=1)=>{if(draw){ctx.strokeStyle=color;ctx.lineWidth=thick;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();}};
+            const text=(value,x,ty,size=18,color='#1d344f',bold=false,maxWidth=content)=>{
+                ctx.font=`${bold?'700':'400'} ${size}px Arial, sans-serif`;
+                const chunks=breakWords(ctx,value,maxWidth);
+                const height=size*1.38;
+                if(draw){ctx.fillStyle=color;ctx.textBaseline='top';chunks.forEach((chunk,i)=>ctx.fillText(chunk,x,ty+i*height));}
+                return Math.max(height,chunks.length*height);
+            };
+            const section=(heading)=>{
+                y+=24;rect(margin,y,5,35,'#0072ce');text(heading,margin+18,y+2,23,'#004b93',true);y+=48;
+                line(margin,y,width-margin,y);
+                y+=16;
+            };
+            const pair=(key,value)=>{
+                text(key,margin,y,15,'#61728b',true,210);
+                const h=text(label(value),margin+232,y,18,'#1b314b',false,content-232);
+                y+=Math.max(h,29)+8;
+            };
+            const image=(im,x,iy,w,h)=>{
+                if(!draw||!im)return;
+                const scale=Math.min(w/im.width,h/im.height);
+                const iw=im.width*scale,ih=im.height*scale;
+                ctx.drawImage(im,x+(w-iw)/2,iy+(h-ih)/2,iw,ih);
+            };
+            rect(0,0,width,124,'#004b93');
+            text('LAUDO DE VISTORIA VEICULAR',margin,36,32,'#ffffff',true);
+            text(`Protocolo: ${label(appState.meta.id)} · Emissão: ${new Date().toLocaleString('pt-BR')}`,margin,83,15,'#d8eafe');
+            y=145;
+            section('Identificação do veículo');
+            const v=appState.vehicle;
+            pair('Data / Tipo',`${v.data ? v.data.split('-').reverse().join('/') : '—'} · ${label(v.tipo)}`);
+            pair('Placa',v.placa);pair('Modelo',v.modelo);pair('Ano / Cor',`${label(v.ano)} / ${label(v.cor)}`);
+            pair('Quilometragem',v.km ? `${v.km} km` : '—');pair('Combustível',v.combustivel);
+            pair('Vistoriador',v.vistoriador);pair('Motorista',v.motorista);
+            if(appState.meta.gps?.lat != null) pair('GPS',`${appState.meta.gps.lat.toFixed(5)}, ${appState.meta.gps.lng.toFixed(5)}`);
+            section('Croqui de avarias');
+            const diagramX=margin+content/2-128, diagramY=y+10;
+            rect(diagramX,diagramY+40,256,345,'#f0f6fc');
+            if(draw){
+                ctx.strokeStyle='#7e9fbe';ctx.lineWidth=4;
+                ctx.beginPath();ctx.roundRect(diagramX+57,diagramY+52,142,313,36);ctx.stroke();
+                ctx.beginPath();ctx.roundRect(diagramX+71,diagramY+105,115,75,12);ctx.stroke();
+                ctx.beginPath();ctx.roundRect(diagramX+71,diagramY+217,115,72,12);ctx.stroke();
+            }
+            for(const [i,p] of appState.pins.entries()) {
+                const px=diagramX+256*(p.x/100),py=diagramY+40+345*(p.y/100);
+                if(draw){ctx.fillStyle='#cf293b';ctx.beginPath();ctx.arc(px,py,12,0,Math.PI*2);ctx.fill();}
+                text(String(i+1),px-5,py-9,14,'#ffffff',true,24);
+            }
+            y=diagramY+400;
+            if(appState.pins.length===0) y+=text('Nenhuma avaria marcada no croqui.',margin,y,16,'#6a7b90')+7;
+            for(const [i,p] of appState.pins.entries()) {
+                const h=text(`${i+1}. ${label(p.type)} — ${label(p.desc)}`,margin,y,17,'#334155');y+=h+9;
+            }
+            section('Checklist de inspeção');
+            for(const group of CHECKLIST_SCHEMA) {
+                const rowStart=y;
+                rect(margin,y,content,38,'#eaf2fb');
+                text(group.title,margin+12,y+8,19,'#004b93',true);y+=48;
+                for(let i=0;i<group.items.length;i++){
+                    const e=appState.checklist[`${group.id}_${i}`]||{};
+                    const item=group.items[i];
+                    ctx.font='17px Arial';
+                    const nameH=text(item,margin+7,y,17,'#263c57',false,content-185);
+                    const status=statusText[e.status]||'Não verificado';
+                    const color=e.status==='ok'?'#178052':e.status==='nok'?'#b42336':'#64748b';
+                    text(status,width-margin-167,y,15,color,true,165);
+                    y+=Math.max(30,nameH)+6;
+                    if(e.obs) y+=text(`Observação: ${e.obs}`,margin+20,y,15,'#56667a',false,content-30)+6;
+                    line(margin+8,y,width-margin-8,y,'#e5edf6');y+=8;
+                }
+                if(y===rowStart+48)y+=6;
+            }
+            section('Observações gerais');
+            y+=text(label(v.obsGerais),margin+8,y,17,'#293e58')+15;
+            section('Assinaturas');
+            const half=(content-22)/2;
+            for(let i=0;i<2;i++){
+                const x=margin+i*(half+22);
+                rect(x,y,half,120,'#f7f9fc');
+                if(draw && signatures[i]) image(signatures[i],x+6,y+5,half-12,102);
+                text(i===0?'Vistoriador':'Motorista',x+8,y+126,16,'#334155',true,half-16);
+            }
+            y+=163;
+            if(photos.length){
+                section(`Evidências fotográficas (${photos.length})`);
+                const gap=16,boxWidth=(content-gap)/2;
+                for(let i=0;i<photos.length;i+=2){
+                    for(let j=0;j<2 && i+j<photos.length;j++){
+                        const idx=i+j,x=margin+j*(boxWidth+gap);
+                        rect(x,y,boxWidth,300,'#f3f6fa');
+                        image(photoImages[idx],x+8,y+8,boxWidth-16,238);
+                        text(photos[idx].title,x+8,y+249,15,'#1d344f',true,boxWidth-16);
+                    }
+                    y+=316;
+                }
+            }
+            y+=25;
+            line(margin,y,width-margin,y,'#ccd9ea');
+            y+=15;text('Documento gerado localmente · Vistoria Veicular · v1.4.3',margin,y,15,'#687b91');
+            return y+65;
+        };
+        const height=Math.ceil(paint(false));
+        if(height>25000) throw new Error('O laudo tem muitas fotografias para um único PNG. Exporte o PDF A4 ou reduza as evidências.');
+        canvas.width=width;canvas.height=height;
+        const active=canvas.getContext('2d');
+        active.fillStyle='#ffffff';active.fillRect(0,0,width,height);
+        paint(true);
+        const blob=await new Promise((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(new Error('Falha ao preparar o arquivo PNG.')),'image/png'));
+        return new File([blob],filename('png'),{type:'image/png'});
+    }
+    async function execute(kind) {
+        if(busy) return;
+        busy=true;options.forEach(button=>button.disabled=true);
+        feedback.textContent='Preparando o documento...';
+        try {
+            if(kind==='pdf'||kind==='print') {
+                feedback.textContent=kind==='pdf'?'Na janela seguinte, escolha “Salvar como PDF” como destino.':'A janela de impressão será aberta.';
+                // A validação existente preserva os critérios de integridade e PDF A4.
+                busy=false;
+                close();
+                validateAndPrint();
+                busy=false;options.forEach(button=>button.disabled=false);
+                return;
+            }
+            const file=await generatePNG();
+            if(kind==='png') {
+                download(file,file.name);
+                feedback.textContent='Imagem PNG gerada com sucesso.';
+                showToast('Imagem PNG gerada com sucesso.');
+            } else if(kind==='share') {
+                if(navigator.share && navigator.canShare?.({files:[file]})) {
+                    try { await navigator.share({files:[file],title:'Laudo de vistoria veicular',text:'Relatório de vistoria veicular'}); feedback.textContent='Compartilhamento concluído.'; }
+                    catch(error) {if(error.name==='AbortError') feedback.textContent='Compartilhamento cancelado.';else throw error;}
+                } else {
+                    download(file,file.name);
+                    feedback.textContent='O compartilhamento de arquivos não está disponível neste navegador. O PNG foi baixado para você enviar manualmente.';
+                }
+            }
+        } catch (error) {
+            console.error('Exportação:',error);
+            feedback.textContent=error.message||'Não foi possível exportar o documento.';
+            showToast('Não foi possível concluir a exportação.');
+        } finally {
+            busy=false;options.forEach(button=>button.disabled=false);
+        }
+    }
+    options.forEach(button=>button.addEventListener('click',()=>execute(button.dataset.exportFormat)));
+})();

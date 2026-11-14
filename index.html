@@ -116,10 +116,10 @@
             <span class="sidebar-divider" role="separator"></span>
             <span class="sidebar-group-heading">FERRAMENTAS</span>
             <button type="button" class="sidebar-link" data-command="history" title="Histórico e backups" aria-label="Histórico e backups"><i class="ph-bold ph-folder-open"></i><span class="sidebar-label">Histórico e backups<small>Registros armazenados</small></span></button>
-            <button type="button" class="sidebar-link" data-command="print" title="Imprimir laudo" aria-label="Imprimir laudo"><i class="ph-bold ph-printer"></i><span class="sidebar-label">Gerar PDF<small>Laudo A4</small></span></button>
+            <button type="button" class="sidebar-link" data-command="export" title="Exportar laudo" aria-label="Exportar laudo"><i class="ph-bold ph-export"></i><span class="sidebar-label">Exportar laudo<small>PDF, PNG e mais</small></span></button>
             <button type="button" class="sidebar-link" data-command="settings" title="Configurações e informações" aria-label="Configurações e informações"><i class="ph-bold ph-gear"></i><span class="sidebar-label">Configurações<small>Preferências e versão</small></span></button>
         </nav>
-        <div class="sidebar-footer" title="Vistoria Veicular v1.4.2"><span class="sidebar-version-mark">1.4</span><span class="sidebar-label">v1.4.2 • Offline</span></div>
+        <div class="sidebar-footer" title="Vistoria Veicular v1.4.3"><span class="sidebar-version-mark">1.4</span><span class="sidebar-label">v1.4.3 • Offline</span></div>
     </aside>
 
     <!-- Barra Superior Fixa Compacta Mobile-First -->
@@ -170,34 +170,14 @@
             </div>
             <!-- Appbar de ações: ícones sem card, sempre acessíveis -->
             <div id="appbar-actions" class="appbar-actions no-print" role="toolbar" aria-label="Ações da vistoria">
-            <!-- Atalhos gerais: Expandir / Recolher / Histórico -->
+            <!-- Central de exportação e compartilhamento -->
             <div class="appbar-group">
-                <button type="button" id="btn-expand-all" title="Abrir primeira seção" aria-label="Abrir primeira seção"
-                    class="appbar-icon w-10 h-10 rounded-xl inline-flex items-center justify-center bg-[#f0f7ff] text-[#004b93] hover:bg-[#e6f2fc] border border-blue-200 transition active:scale-95">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="7 8 12 3 17 8"></polyline>
-                        <polyline points="7 16 12 21 17 16"></polyline>
-                        <line x1="4" y1="12" x2="20" y2="12"></line>
-                    </svg>
-                </button>
-                <button type="button" id="btn-collapse-all" title="Recolher Todas as Seções" aria-label="Recolher Todas as Seções"
-                    class="appbar-icon w-10 h-10 rounded-xl inline-flex items-center justify-center bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200 transition active:scale-95">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="7 4 12 9 17 4"></polyline>
-                        <polyline points="7 20 12 15 17 20"></polyline>
-                        <line x1="4" y1="12" x2="20" y2="12"></line>
-                    </svg>
-                </button>
-                <button type="button" onclick="openHistoryModal()" title="Histórico de Vistorias e Backup JSON" aria-label="Histórico de Vistorias e Backup JSON"
-                    class="appbar-icon w-10 h-10 rounded-xl inline-flex items-center justify-center bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition active:scale-95 relative">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    <span id="history-count-dot" class="hidden absolute -top-1 -right-1 min-w-4 h-4 px-0.5 rounded-full bg-indigo-600 text-white text-[9px] font-bold flex items-center justify-center">0</span>
+                <button type="button" class="appbar-icon export-action-trigger w-10 h-10 rounded-xl inline-flex items-center justify-center bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200 transition active:scale-95" data-open-export title="Exportar, compartilhar ou imprimir" aria-label="Exportar, compartilhar ou imprimir" aria-haspopup="dialog" aria-controls="export-modal">
+                    <i class="ph-bold ph-export text-xl" aria-hidden="true"></i>
                 </button>
             </div>
 
-            <!-- Atalhos gerais: Marcar Conforme / Reiniciar / PDF -->
+            <!-- Atalhos gerais: Marcar Conforme / Reiniciar -->
             <div class="appbar-group">
                 <button type="button" id="btn-mark-all-ok" title="Marcar Todos como Conforme" aria-label="Marcar Todos como Conforme"
                     class="appbar-icon w-10 h-10 rounded-xl inline-flex items-center justify-center bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition active:scale-95">
@@ -618,7 +598,7 @@
 
         <!-- Botão de Finalização Inferior Apenas com Ícone -->
         <div class="pt-1 flex justify-end no-print">
-            <button type="button" onclick="validateAndPrint()" title="Validar e Gerar Relatório PDF" aria-label="Validar e Gerar Relatório PDF"
+            <button type="button" data-open-export title="Exportar, compartilhar ou imprimir" aria-label="Abrir opções de exportação"
                 class="w-12 h-12 rounded-2xl inline-flex items-center justify-center bg-gradient-to-r from-[#004b93] to-[#0072ce] text-white hover:opacity-95 shadow-md transition active:scale-95">
                 <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="6 9 6 2 18 2 18 9"></polyline>
@@ -638,22 +618,38 @@
             <button type="button" class="dock-btn" data-go="exp-assinaturas" title="Assinaturas" aria-label="Abrir assinaturas"><i class="ph-bold ph-signature"></i><span>Assinar</span></button>
             <span class="dock-separator" role="separator"></span>
             <button type="button" class="dock-btn" data-command="history" title="Histórico e backup" aria-label="Abrir histórico de vistorias"><i class="ph-bold ph-folder-open"></i><span>Histórico</span></button>
-            <button type="button" class="dock-btn dock-primary" data-command="print" title="Gerar laudo PDF" aria-label="Validar e gerar laudo PDF"><i class="ph-bold ph-printer"></i><span>PDF</span></button>
+            <button type="button" class="dock-btn dock-primary" data-command="export" title="Exportar ou imprimir laudo" aria-label="Abrir opções para exportar e imprimir"><i class="ph-bold ph-export"></i><span>Exportar</span></button>
             <button type="button" id="btn-mobile-actions" class="dock-btn dock-mobile-actions" title="Ações da vistoria" aria-label="Abrir ações da vistoria" aria-controls="mobile-actions-sheet" aria-expanded="false"><i class="ph-bold ph-squares-four"></i><span>Ações</span></button>
             <button type="button" class="dock-btn" data-command="settings" title="Configurações e sobre" aria-label="Abrir configurações"><i class="ph-bold ph-gear"></i><span>Ajustes</span></button>
         </div>
     </nav>
 
-    <!-- Ações compactas para celular; o PDF permanece exclusivamente na navbar. -->
+    <!-- Ações compactas para celular; exportação na navbar inferior. -->
     <div id="mobile-actions-sheet" class="mobile-actions-overlay no-print" role="dialog" aria-modal="true" aria-label="Ações da vistoria" hidden>
         <div class="mobile-actions-panel">
             <div class="mobile-actions-heading"><strong>Ações da vistoria</strong><button id="btn-close-actions" type="button" title="Fechar ações" aria-label="Fechar ações"><i class="ph-bold ph-x"></i></button></div>
             <div class="mobile-actions-grid">
-                <button type="button" data-action-target="btn-expand-all"><i class="ph-bold ph-folder-open"></i><span>Abrir primeira seção</span></button>
-                <button type="button" data-action-target="btn-collapse-all"><i class="ph-bold ph-arrows-in"></i><span>Fechar seção</span></button>
                 <button type="button" data-action-target="btn-mark-all-ok"><i class="ph-bold ph-checks"></i><span>Tudo conforme</span></button>
                 <button type="button" data-action-target="btn-reset-form"><i class="ph-bold ph-trash"></i><span>Limpar formulário</span></button>
             </div>
+        </div>
+    </div>
+
+    <!-- Central de exportação: um único destino para PDF, PNG, compartilhar e imprimir -->
+    <div id="export-modal" class="export-modal no-print" role="dialog" aria-modal="true" aria-labelledby="export-title" aria-describedby="export-description" hidden>
+        <div class="export-panel" role="document">
+            <div class="export-heading">
+                <div class="export-heading-brand"><span class="export-heading-icon"><i class="ph-bold ph-export"></i></span><div><span class="export-eyebrow">DOCUMENTOS DA VISTORIA</span><h2 id="export-title">Exportar e compartilhar</h2></div></div>
+                <button id="btn-close-export" type="button" class="export-close" aria-label="Fechar opções de exportação" title="Fechar"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <p id="export-description" class="export-description">Escolha como deseja salvar ou enviar o laudo da vistoria atual.</p>
+            <div class="export-options">
+                <button type="button" data-export-format="pdf" class="export-option"><span class="export-option-icon export-pdf"><i class="ph-bold ph-file-pdf"></i></span><span><strong>Baixar em PDF</strong><small>Salvar como PDF na janela de impressão · A4</small></span><i class="ph-bold ph-caret-right export-option-arrow"></i></button>
+                <button type="button" data-export-format="png" class="export-option"><span class="export-option-icon export-png"><i class="ph-bold ph-file-image"></i></span><span><strong>Baixar em PNG</strong><small>Imagem do relatório com dados e evidências</small></span><i class="ph-bold ph-caret-right export-option-arrow"></i></button>
+                <button type="button" data-export-format="share" class="export-option"><span class="export-option-icon export-share"><i class="ph-bold ph-share-network"></i></span><span><strong>Compartilhar</strong><small>Enviar arquivo pelo compartilhamento do dispositivo</small></span><i class="ph-bold ph-caret-right export-option-arrow"></i></button>
+                <button type="button" data-export-format="print" class="export-option"><span class="export-option-icon export-print"><i class="ph-bold ph-printer"></i></span><span><strong>Imprimir</strong><small>Laudo técnico formatado para papel A4</small></span><i class="ph-bold ph-caret-right export-option-arrow"></i></button>
+            </div>
+            <p id="export-feedback" class="export-feedback" aria-live="polite" role="status"></p>
         </div>
     </div>
 
@@ -675,7 +671,7 @@
                 <div class="settings-choice-row"><div><strong>Atualização do aplicativo</strong><small id="app-update-settings-status" role="status" aria-live="polite">Verificação automática ao abrir o aplicativo.</small></div><button type="button" id="btn-check-updates" class="settings-choice-btn">Verificar agora</button></div>
             </div>
             <div class="settings-about">
-                <div class="settings-about-top"><span class="settings-about-icon"><i class="ph-bold ph-car-profile"></i></span><div><strong>Vistoria Veicular</strong><small>Checklist digital · PWA offline-first</small></div><span class="settings-version-pill">Versão 1.4.2</span></div>
+                <div class="settings-about-top"><span class="settings-about-icon"><i class="ph-bold ph-car-profile"></i></span><div><strong>Vistoria Veicular</strong><small>Checklist digital · PWA offline-first</small></div><span class="settings-version-pill">Versão 1.4.3</span></div>
                 <span class="settings-developer-label">DESENVOLVIDO POR</span>
                 <span class="settings-developer-pill"><i class="ph-bold ph-check-circle"></i> Hagliberto Alves de Oliveira</span>
                 <p>Os registros, fotografias e assinaturas são mantidos localmente, sem envio automático a servidores.</p>
@@ -693,5 +689,6 @@
 
     <script src="assets/icons.js" defer></script>
     <script src="assets/app.js" defer></script>
+    <script src="assets/export.js" defer></script>
 </body>
 </html>

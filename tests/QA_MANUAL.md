@@ -16,3 +16,14 @@ Faça a homologação preferencialmente em Chrome/Edge e Firefox, em desktop e c
 12. **Offline** — após visitar via HTTPS/localhost e instalar, desconectar rede e recarregar. Verificar se checklist, fotos/assinaturas e histórico continuam acessíveis.
 
 **Observação:** este checklist complementa os testes automatizados, não atesta conformidade jurídica/regulatória do laudo nem disponibilidade de armazenamento ilimitado.
+
+## v1.4.3 — Exportar, compartilhar e imprimir
+- [ ] Desktop: clicar no novo ícone da appbar; o modal exibe PDF, PNG, Compartilhar e Imprimir; Esc, clique no fundo e X fecham.
+- [ ] Mobile: appbar continua sem segunda linha; o atalho Exportar na navbar inferior abre o mesmo modal.
+- [ ] Sidebar: Exportar laudo abre modal; Histórico continua acessível na sidebar e navbar.
+- [ ] Abrir o histórico com 5+ registros; confirmar que a retirada do badge da appbar não interrompe a inicialização.
+- [ ] PDF: validar campos incompletos e escolher "Salvar como PDF" no destino da janela nativa de impressão. Conferir A4, quebras, fotos e assinaturas.
+- [ ] PNG: conferir download de arquivo com 47 itens, identificação, croqui com pontos, observações, assinaturas e todas as fotos.
+- [ ] Compartilhar: em Chrome Android via HTTPS, enviar arquivo; em navegador sem Web Share de arquivos, baixar o PNG como alternativa.
+- [ ] Após atualizar PWA, confirmar que export.js e os novos ícones SVG funcionam totalmente offline.
+- [ ] Verificar foco com teclado: Tab/Shift+Tab, Esc e retorno ao gatilho; testar novamente com o histórico fechado.

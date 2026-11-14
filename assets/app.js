@@ -37,7 +37,7 @@
          * Atualizações PWA: somente versões publicadas no mesmo host, com confirmação.
          * A verificação não acessa nem altera IndexedDB/localStorage de vistorias.
          */
-        const APP_VERSION = '1.4.2';
+        const APP_VERSION = '1.4.3';
         let updateRegistration = null;
         let availableUpdateVersion = null;
         let updateCheckInProgress = false;
@@ -1336,9 +1336,11 @@
         function updateHistoryCounterBadge() {
             const count = getHistoryList().length;
             const dot = document.getElementById('history-count-dot');
-            dot.textContent = count > 999 ? '999+' : String(count);
-            dot.classList.toggle('hidden', count === 0);
-            dot.setAttribute('aria-label', `${count} vistorias arquivadas`);
+            if (dot) {
+                dot.textContent = count > 999 ? '999+' : String(count);
+                dot.classList.toggle('hidden', count === 0);
+                dot.setAttribute('aria-label', `${count} vistorias arquivadas`);
+            }
             const total = document.getElementById('history-total-count');
             if (total) total.textContent = `${count} ${count === 1 ? 'registro arquivado' : 'registros arquivados'}`;
         }
@@ -1536,8 +1538,8 @@
          * 11. BOTÕES DE AÇÃO GLOBAL E MODAL
          */
         function setupActionButtons() {
-            document.getElementById('btn-expand-all').addEventListener('click', () => setAllExpanders(true));
-            document.getElementById('btn-collapse-all').addEventListener('click', () => setAllExpanders(false));
+            document.getElementById('btn-expand-all')?.addEventListener('click', () => setAllExpanders(true));
+            document.getElementById('btn-collapse-all')?.addEventListener('click', () => setAllExpanders(false));
 
             document.getElementById('btn-mark-all-ok').addEventListener('click', () => {
                 openConfirmModal(
@@ -1711,7 +1713,7 @@
                     const command = button.dataset.command;
                     closeSidebar();
                     if (command === 'history') openHistoryModal();
-                    else if (command === 'print') validateAndPrint();
+                    else if (command === 'export') window.openExportModal?.();
                     else if (command === 'settings') openSettingsModal();
                 });
             });

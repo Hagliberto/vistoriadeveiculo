@@ -1,6 +1,6 @@
 # Vistoria Veicular — Checklist Digital
 
-> **Versão profissional 1.4.2 (14/11/2026)** · HTML + CSS + JavaScript puro · offline-first · sem servidor de dados
+> **Versão profissional 1.4.3 (14/11/2026)** · HTML + CSS + JavaScript puro · offline-first · sem servidor de dados
 
 Aplicação de inspeção de veículos com **47 verificações distribuídas em 6 categorias**, identificação, controle do nível de combustível, croqui interativo, registros fotográficos, assinaturas digitais e geração de laudo técnico em papel A4/PDF.
 
@@ -138,5 +138,8 @@ Durante a primeira migração da versão 1.3.0, o service worker antigo pode ati
 ## Ajustes visuais v1.4.1
 No celular (até 599px), o card de apresentação da área de trabalho é ocultado. A identificação do desenvolvedor aparece somente em Configurações, acessível pela engrenagem.
 
-## Navegação v1.4.2
+## Navegação v1.4.3
 A ordem das etapas na tela, na barra inferior e na sidebar é **Dados → Croqui → Checklist → Assinaturas**. A sidebar recolhida apresenta os ícones com cores de cada etapa; ao expandir, aparecem descrições curtas. A seção ativa acompanha o expander aberto.
+
+### Exportar e compartilhar (v1.4.3)
+A opção **Exportar** abre um modal de quatro escolhas: **Baixar PDF** (abre a impressão do navegador; escolher *Salvar como PDF*), **Baixar PNG** (imagem do relatório com croqui, fotos e assinaturas), **Compartilhar** (arquivo PNG via Web Share API quando disponível) e **Imprimir** (impressão A4). PDF direto sem diálogo não é disponibilizado, pois a aplicação não depende de gerador PDF externo. Compartilhar depende do navegador e de contexto HTTPS; quando indisponível, o aplicativo oferece download do arquivo local, sem enviar dados a servidor.

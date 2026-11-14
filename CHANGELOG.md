@@ -1,4 +1,11 @@
-## v1.4.2 — Croqui após dados e navegação lateral
+## v1.4.3 — Central de exportação e compartilhamento
+- Appbar simplificada: retirados Abrir primeira seção, Fechar todas e Histórico. Histórico permanece no dock e sidebar.
+- Novo ícone Exportar com modal acessível: PDF (Salvar como PDF no navegador), PNG (imagem completa do relatório), compartilhamento nativo de arquivo e impressão A4.
+- Botão PDF do dock e ação de exportação da sidebar centralizados no modal; preservada validação do laudo e segurança de dados offline.
+- PNG contém identificação, checklist, croqui com pontos, observações, assinaturas e fotografias; erro explícito caso imagem exceda limites do navegador.
+- Atualizado cache de PWA e versão para 1.4.3.
+
+## v1.4.3 — Croqui após dados e navegação lateral
 - Croqui de avarias reposicionado imediatamente depois dos dados, antes das categorias de checklist, também no dock e na sidebar.
 - Sidebar refinada com grupos, detalhes contextuais, estado ativo sincronizado e foco acessível; permanece recolhida no desktop.
 - Nenhuma mudança nos dados persistidos ou nos campos da vistoria.
