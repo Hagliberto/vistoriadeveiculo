@@ -116,3 +116,9 @@ Manter compatibilidade com a estrutura de dados central:
 - Ordem de inspeção: Dados, Croqui, checklist (seis categorias) e Assinaturas.
 - Sidebar recolhida por padrão no desktop, gaveta sobreposta no mobile, rótulos descritivos na expansão e seção ativa sincronizada.
 - Preservar o fluxo de impressão e a compatibilidade de dados existentes.
+
+
+## Exportação v1.4.4
+- Compartilhar prioriza arquivo PDF A4 real. PNG só é utilizado se o dispositivo não puder compartilhar PDF.
+- PDF e PNG são gerados no dispositivo, sem CDN e sem backend, com limites explícitos de memória/páginas.
+- O diálogo de impressão existente permanece disponível.

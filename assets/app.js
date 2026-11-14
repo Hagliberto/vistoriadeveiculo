@@ -37,7 +37,7 @@
          * Atualizações PWA: somente versões publicadas no mesmo host, com confirmação.
          * A verificação não acessa nem altera IndexedDB/localStorage de vistorias.
          */
-        const APP_VERSION = '1.4.3';
+        const APP_VERSION = '1.4.4';
         let updateRegistration = null;
         let availableUpdateVersion = null;
         let updateCheckInProgress = false;

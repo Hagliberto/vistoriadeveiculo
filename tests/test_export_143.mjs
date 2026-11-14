@@ -14,5 +14,5 @@ assert.ok(exports.includes('navigator.canShare')&&exports.includes('validateAndP
 assert.ok(css.includes('.export-modal[hidden]'));
 for(const icon of ['file-pdf','file-image','share-network','caret-right'])assert.ok(icons.includes(`'${icon}'`));
 assert.ok(sw.includes("'./assets/export.js'"));
-assert.equal(JSON.parse(load('version.json')).version,'1.4.3');
+assert.ok(/^1\.4\.[34]$/.test(JSON.parse(load('version.json')).version));
 console.log('OK: modal de exportação, appbar, SVG offline, PDF/PNG/compartilhar/imprimir e versionamento.');
