@@ -125,3 +125,12 @@ Veja [tests/QA_MANUAL.md](tests/QA_MANUAL.md) para a conferência visual de desk
 
 ### Atualizações da versão 1.3.0
 No desktop, a navegação usa ícones coloridos. Em telas até 1023px, o botão **Ações** da navegação inferior exibe os comandos de inspeção sem criar uma segunda linha no cabeçalho. O botão **Tudo conforme** de cada categoria alterna entre selecionar e desmarcar apenas os itens daquela categoria. Somente uma seção pode permanecer aberta.
+
+
+## Atualizações (v1.4.0)
+Hospede os arquivos completos em HTTPS (GitHub Pages, Cloudflare Pages ou intranet HTTPS).
+Publique `version.json` com o número exato da nova versão (ex.: `1.5.0`), atualize `APP_VERSION` em `assets/app.js` e o nome `CACHE_NAME` no `service-worker.js` a cada release.
+**Importante:** todos os arquivos da nova versão devem estar publicados antes de atualizar `version.json`; recomenda-se publicar tudo na mesma implantação atômica.
+Ao abrir, voltar à aba ou retornar à conexão, o app verifica a versão. Quando houver uma versão mais nova, o botão **Atualizar** aparece acima da navbar.
+O botão salva o rascunho, ativa o service worker em espera e recarrega a página quando ele assumir o controle. Sem internet ou em `file://`, a verificação remota não funciona.
+Durante a primeira migração da versão 1.3.0, o service worker antigo pode ativar a v1.4.0 automaticamente; o novo fluxo de confirmação vale para as versões seguintes.

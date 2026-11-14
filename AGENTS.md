@@ -99,3 +99,10 @@ Manter compatibilidade com a estrutura de dados central:
 - **Operações concorrentes:** gravar inclusões/exclusões do histórico em fila para impedir perdas em cliques consecutivos. Excluir pelo identificador exclusivo do arquivo, não por índice que possa mudar durante uma gravação assíncrona.
 - **Modal sobre modal:** `confirm-modal` deve ficar acima dos demais, o modal anterior fica `inert` durante a confirmação, e o foco retorna ao controle de origem após cancelar ou confirmar. `Escape` deve operar apenas sobre o modal superior.
 - **Recursos locais:** todos os ícones utilizados devem existir no pacote `assets/icons.js`; manter o funcionamento offline após a primeira carga do PWA. A mídia `print` deve ocultar todas as ações novas.
+
+
+## Atualização sob demanda — v1.4.0
+- Requer `version.json` acessível na origem da aplicação, sem cache, para detectar versão mais recente.
+- `APP_VERSION` em `assets/app.js` deve coincidir com `version.json` e `CACHE_NAME` do service worker.
+- Não ativar automaticamente novas versões no evento `install`; apenas após clique do usuário e salvamento completo.
+- Preservar a compatibilidade de armazenamento local/IndexedDB e o funcionamento offline.

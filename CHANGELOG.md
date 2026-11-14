@@ -1,3 +1,11 @@
+## v1.4.0 — Atualização sob demanda
+- Verificação de `version.json` no servidor, com consulta sem cache e comparação semântica de versão.
+- Banner com botão **Atualizar** aparece apenas quando a versão publicada é mais recente.
+- Atualização opcional com salvamento do rascunho antes da troca do service worker.
+- Botão de verificação manual em Configurações; checagem ao abrir, ao reconectar, ao retornar à aba e periodicamente.
+- Service worker deixa versões futuras aguardando confirmação (não força reload) e não guarda `version.json` no cache.
+- Hospedagem HTTPS ou localhost necessária para atualização automática; modo `file://` continua disponível sem atualização remota.
+
 # Histórico de versões
 
 ## 1.2.0 — 14/11/2026
