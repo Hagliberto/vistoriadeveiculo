@@ -106,3 +106,8 @@ Manter compatibilidade com a estrutura de dados central:
 - `APP_VERSION` em `assets/app.js` deve coincidir com `version.json` e `CACHE_NAME` do service worker.
 - Não ativar automaticamente novas versões no evento `install`; apenas após clique do usuário e salvamento completo.
 - Preservar a compatibilidade de armazenamento local/IndexedDB e o funcionamento offline.
+
+## Ajustes de interface — v1.4.1
+- O crédito nominal do desenvolvedor deve aparecer somente no painel de Configurações, não na navbar inferior.
+- O card `#workspace-heading` deve permanecer visível em desktop e oculto em telas de até 599px.
+- Atualizar simultaneamente `version.json`, `APP_VERSION`, `service-worker.js` e rótulos de versão em novas releases.

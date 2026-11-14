@@ -134,3 +134,6 @@ Publique `version.json` com o número exato da nova versão (ex.: `1.5.0`), atua
 Ao abrir, voltar à aba ou retornar à conexão, o app verifica a versão. Quando houver uma versão mais nova, o botão **Atualizar** aparece acima da navbar.
 O botão salva o rascunho, ativa o service worker em espera e recarrega a página quando ele assumir o controle. Sem internet ou em `file://`, a verificação remota não funciona.
 Durante a primeira migração da versão 1.3.0, o service worker antigo pode ativar a v1.4.0 automaticamente; o novo fluxo de confirmação vale para as versões seguintes.
+
+## Ajustes visuais v1.4.1
+No celular (até 599px), o card de apresentação da área de trabalho é ocultado. A identificação do desenvolvedor aparece somente em Configurações, acessível pela engrenagem.
