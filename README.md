@@ -150,3 +150,8 @@ PDF direto com páginas A4 em JPEG de aproximadamente 200 dpi, gerado offline. O
 
 ### Fidelidade do PDF à impressão (v1.4.5)
 A opção **Salvar como PDF** usa o mesmo `validateAndPrint()` e `prepareAndPrint()` da impressão. Selecione **Destino → Salvar como PDF**, papel **A4**, escala **100%/padrão** e, se necessário, **Gráficos de fundo**. O arquivo PDF de **Compartilhar** continua sendo gerado como raster para a Web Share API e pode ter aparência diferente; os navegadores não expõem o PDF do diálogo de impressão ao JavaScript.
+
+
+### PDF oficial (v1.4.6)
+
+A única fonte do layout PDF é `@media print`: os botões **Salvar como PDF**, **Imprimir** e **Compartilhar PDF oficial** usam `validateAndPrint()` e `prepareAndPrint()`. Na janela de impressão do Chrome/Edge escolha **Salvar como PDF**, A4, 1 página por folha, gráficos de segundo plano ativados e cabeçalhos/rodapés desativados. Para compartilhar, anexe o PDF salvo no aplicativo de destino. A Web Share API não oferece acesso ao arquivo PDF gerado pelo diálogo nativo, portanto não há envio automático do PDF oficial.
