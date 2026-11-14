@@ -4,8 +4,10 @@
         let deferredInstallPrompt = null;
 
         function initPWA() {
+            document.getElementById('btn-check-updates').addEventListener('click', () => checkForAppUpdates({manual: true}));
             if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
                 navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+                    .then(registration => initUpdateManager(registration))
                     .catch(error => console.warn('PWA: instalação do service worker indisponível:', error));
             }
             const installBtn = document.getElementById('btn-install-pwa');
@@ -29,6 +31,157 @@
                 installBtn.classList.add('hidden');
                 deferredInstallPrompt = null;
             });
+        }
+
+        /**
+         * Atualizações PWA: somente versões publicadas no mesmo host, com confirmação.
+         * A verificação não acessa nem altera IndexedDB/localStorage de vistorias.
+         */
+        const APP_VERSION = '1.4.0';
+        let updateRegistration = null;
+        let availableUpdateVersion = null;
+        let updateCheckInProgress = false;
+        let applyingUpdate = false;
+        let updateCheckTimestamp = 0;
+
+        function isNewerVersion(candidate, installed = APP_VERSION) {
+            const parse = input => /^\d+\.\d+\.\d+$/.test(String(input))
+                ? String(input).split('.').map(Number) : null;
+            const a = parse(candidate), b = parse(installed);
+            if (!a || !b) return false;
+            for (let i = 0; i < 3; i++) {
+                if (a[i] !== b[i]) return a[i] > b[i];
+            }
+            return false;
+        }
+
+        function setUpdateSettingsMessage(message) {
+            const status = document.getElementById('app-update-settings-status');
+            if (status) status.textContent = message;
+        }
+
+        function showAvailableUpdate(version) {
+            if (!isNewerVersion(version)) return;
+            availableUpdateVersion = version;
+            const notice = document.getElementById('app-update-notice');
+            document.getElementById('app-update-description').textContent = `Versão ${version} disponível. Suas vistorias permanecem salvas.`;
+            notice.hidden = false;
+            setUpdateSettingsMessage(`Nova versão ${version} disponível. Clique em Atualizar.`);
+        }
+
+        async function checkForAppUpdates({manual = false} = {}) {
+            if (updateCheckInProgress) return;
+            if (!navigator.onLine) {
+                if (manual) setUpdateSettingsMessage('Sem conexão. Verifique novamente quando estiver online.');
+                return;
+            }
+            if (!(location.protocol === 'https:' || ['localhost', '127.0.0.1'].includes(location.hostname))) {
+                if (manual) setUpdateSettingsMessage('Atualização automática disponível na versão hospedada (HTTPS).');
+                return;
+            }
+            updateCheckInProgress = true;
+            if (manual) setUpdateSettingsMessage('Procurando versões publicadas...');
+            try {
+                // Cache-buster também contorna service workers antigos que guardavam JSONs.
+                const path = new URL('./version.json', location.href);
+                path.searchParams.set('check', String(Date.now()));
+                const response = await fetch(path, {cache: 'no-store'});
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const metadata = await response.json();
+                const latest = metadata && metadata.version;
+                if (!/^\d+\.\d+\.\d+$/.test(String(latest))) throw new Error('Manifesto de versão inválido');
+                if (isNewerVersion(latest)) {
+                    showAvailableUpdate(latest);
+                    // Instala a versão em espera, mas NÃO ativa sem ação do usuário.
+                    if (updateRegistration) await updateRegistration.update();
+                } else if (manual) {
+                    setUpdateSettingsMessage(`Versão ${APP_VERSION} atualizada.`);
+                    showToast('Você já está usando a versão mais recente.');
+                }
+                updateCheckTimestamp = Date.now();
+            } catch (error) {
+                if (manual) setUpdateSettingsMessage('Não foi possível verificar. Confira sua conexão e tente novamente.');
+                console.warn('Verificação de atualização indisponível:', error);
+            } finally {
+                updateCheckInProgress = false;
+            }
+        }
+
+        async function applyAppUpdate() {
+            if (applyingUpdate || !availableUpdateVersion || !updateRegistration) return;
+            const btn = document.getElementById('btn-apply-update');
+            applyingUpdate = true;
+            btn.disabled = true;
+            btn.textContent = 'Preparando...';
+            try {
+                // Evita trocar de versão com uma operação de salvamento ainda pendente.
+                await flushSave();
+                await saveInFlight;
+                if (document.getElementById('save-status-text').textContent.includes('Falha')) {
+                    throw new Error('Falha ao salvar a vistoria atual');
+                }
+                await updateRegistration.update();
+                let worker = updateRegistration.waiting;
+                if (!worker && updateRegistration.installing) {
+                    const installing = updateRegistration.installing;
+                    await new Promise((resolve, reject) => {
+                        if (installing.state === 'installed') return resolve();
+                        const listener = () => {
+                            if (installing.state === 'installed') { installing.removeEventListener('statechange', listener); resolve(); }
+                            else if (installing.state === 'redundant') { installing.removeEventListener('statechange', listener); reject(new Error('Falha ao preparar versão')); }
+                        };
+                        installing.addEventListener('statechange', listener);
+                    });
+                    worker = updateRegistration.waiting;
+                }
+                if (!worker) throw new Error('Versão ainda não pronta para instalação');
+                let switched = false;
+                const onControllerChange = () => {
+                    if (switched) return;
+                    switched = true;
+                    navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+                    // URL única: impede que a navegação reutilize um HTML anterior.
+                    const next = new URL('./index.html', location.href);
+                    next.searchParams.set('v', availableUpdateVersion);
+                    location.replace(next.href);
+                };
+                navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
+                worker.postMessage({type: 'SKIP_WAITING'});
+                setUpdateSettingsMessage('Instalando a atualização...');
+                // Sem reload forçado: só recarrega após confirmação do novo SW ativo.
+            } catch (error) {
+                console.warn('Não foi possível aplicar a atualização:', error);
+                setUpdateSettingsMessage('Atualização não concluída. Tente novamente com internet.');
+                showToast('Atualização não concluída. Suas vistorias foram mantidas.');
+                btn.disabled = false;
+                btn.textContent = 'Atualizar';
+                applyingUpdate = false;
+            }
+        }
+
+        function initUpdateManager(registration) {
+            updateRegistration = registration;
+            document.getElementById('btn-apply-update').addEventListener('click', applyAppUpdate);
+            document.getElementById('btn-dismiss-update').addEventListener('click', () => {
+                document.getElementById('app-update-notice').hidden = true;
+            });
+            // O navegador pode instalar o novo worker em segundo plano; nunca ativa sozinho.
+            registration.addEventListener('updatefound', () => {
+                const installing = registration.installing;
+                installing?.addEventListener('statechange', () => {
+                    if (installing.state === 'installed' && navigator.serviceWorker.controller && availableUpdateVersion) {
+                        showAvailableUpdate(availableUpdateVersion);
+                    }
+                });
+            });
+            checkForAppUpdates();
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible' && Date.now() - updateCheckTimestamp > 5 * 60_000) checkForAppUpdates();
+            });
+            window.addEventListener('online', () => checkForAppUpdates());
+            setInterval(() => {
+                if (document.visibilityState === 'visible') checkForAppUpdates();
+            }, 15 * 60_000);
         }
 
                 /**
