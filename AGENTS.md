@@ -89,3 +89,13 @@ Manter compatibilidade com a estrutura de dados central:
     "sig-motorista": "data:image/png;base64,..."
   }
 }
+---
+
+## 11. Regras de Interface e Histórico — v1.2.0
+
+- **Desktop:** checklist em duas colunas a partir de 1280 px (com opção de lista), navbar inferior de ícones e barra lateral recolhida ao iniciar. A barra superior concentra as ações globais, sem minicard redundante.
+- **Ações individuais de categoria:** as seis categorias oferecem um controle independente **Tudo conforme**; nunca modificar os itens de outras categorias. Antes de sobrescrever uma classificação `nok` (avaria) ou `na`, exigir confirmação customizada. Preservar observações e fotos existentes.
+- **Histórico de versões arquivadas:** cada clique em **Salvar Vistoria Atual no Histórico** cria um registro com `meta.archiveId` exclusivo e `meta.savedAt`, ainda que `meta.id` (protocolo original) se repita. Nunca substituir silenciosamente um arquivo anterior pelo mesmo protocolo. Migração de históricos antigos sem `archiveId` é obrigatória.
+- **Operações concorrentes:** gravar inclusões/exclusões do histórico em fila para impedir perdas em cliques consecutivos. Excluir pelo identificador exclusivo do arquivo, não por índice que possa mudar durante uma gravação assíncrona.
+- **Modal sobre modal:** `confirm-modal` deve ficar acima dos demais, o modal anterior fica `inert` durante a confirmação, e o foco retorna ao controle de origem após cancelar ou confirmar. `Escape` deve operar apenas sobre o modal superior.
+- **Recursos locais:** todos os ícones utilizados devem existir no pacote `assets/icons.js`; manter o funcionamento offline após a primeira carga do PWA. A mídia `print` deve ocultar todas as ações novas.

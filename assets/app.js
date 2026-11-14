@@ -161,6 +161,11 @@
             return `VST-${yr}${String(now.getTime()).slice(-7)}-${rnd}`;
         }
 
+        function generateHistoryEntryId() {
+            const unique = globalThis.crypto?.randomUUID?.();
+            return unique ? `HST-${unique}` : `HST-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
+        }
+
         function todayLocal() {
             const d = new Date();
             return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -183,6 +188,7 @@
             const g = meta.gps;
             if (g && Number.isFinite(g.lat) && Number.isFinite(g.lng) && Math.abs(g.lat) <= 90 && Math.abs(g.lng) <= 180) next.meta.gps = { lat: g.lat, lng: g.lng };
             if (meta.savedAt && typeof meta.savedAt === 'string') next.meta.savedAt = meta.savedAt;
+            if (typeof meta.archiveId === 'string' && /^[A-Za-z0-9-]{1,80}$/.test(meta.archiveId)) next.meta.archiveId = meta.archiveId;
             for (const key of Object.keys(next.vehicle)) {
                 if (typeof raw.vehicle[key] === 'string') next.vehicle[key] = raw.vehicle[key].slice(0, key === 'obsGerais' ? 8000 : 300);
             }
@@ -273,6 +279,7 @@
             updateHistoryCounterBadge();
             initPWA();
             setupModalAccessibility();
+            setupWorkspaceUI();
             saveToLocalStorage();
             document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSave(); });
             window.addEventListener('pagehide', flushSave);
@@ -296,8 +303,8 @@
             } else {
                 card.classList.remove('is-open');
             }
-            const header = card.querySelector('.expander-header');
-            if (header) header.setAttribute('aria-expanded', String(willOpen));
+            const trigger = card.querySelector('.expander-trigger') || card.querySelector('.expander-header[aria-expanded]');
+            if (trigger) trigger.setAttribute('aria-expanded', String(willOpen));
         }
 
         function setAllExpanders(openState) {
@@ -387,23 +394,28 @@
                 });
 
                 sectionEl.innerHTML = `
-                    <button type="button" onclick="toggleExpander('${expId}')" aria-expanded="false" aria-controls="content-${expId}" class="expander-header w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left transition" style="background-color: ${section.bgColor};">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-white shadow-2xs" style="color: ${section.accentColor};">
-                                <i class="ph-duotone ${section.icon} text-xl"></i>
+                    <div class="expander-header category-header w-full flex items-center gap-2 px-3 sm:px-4 py-2.5 transition" style="background-color: ${section.bgColor};">
+                        <button type="button" onclick="toggleExpander('${expId}')" aria-expanded="false" aria-controls="content-${expId}" class="expander-trigger flex-1 min-w-0 flex items-center justify-between gap-2 text-left rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-white shadow-2xs" style="color: ${section.accentColor};">
+                                    <i class="ph-duotone ${section.icon} text-xl"></i>
+                                </span>
+                                <div class="min-w-0">
+                                    <h2 class="font-bold text-slate-900 text-sm sm:text-base truncate">${section.title}</h2>
+                                    <span class="block text-[11px] text-slate-500 truncate category-subtitle">${section.subtitle}</span>
+                                </div>
                             </div>
-                            <div class="min-w-0">
-                                <h2 class="font-bold text-slate-900 text-sm sm:text-base truncate">${section.title}</h2>
-                                <p class="text-[11px] text-slate-500 truncate">${section.subtitle}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2 shrink-0">
-                            <span id="badge-sec-${section.id}" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-white border" style="color: ${section.accentColor}; border-color: ${section.borderColor};">
-                                0/${section.items.length} verificados
+                            <span class="category-header-status flex items-center gap-2 shrink-0">
+                                <span id="badge-sec-${section.id}" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-white border" style="color: ${section.accentColor}; border-color: ${section.borderColor};">
+                                    0/${section.items.length} verificados
+                                </span>
+                                <i class="ph-bold ph-caret-down text-slate-500 text-base expander-chevron"></i>
                             </span>
-                            <i class="ph-bold ph-caret-down text-slate-500 text-base expander-chevron"></i>
-                        </div>
-                    </button>
+                        </button>
+                        <button type="button" onclick="markCategoryAsConforme('${section.id}')" class="category-mark-ok no-print" title="Marcar todos os itens de ${section.title} como Conforme" aria-label="Marcar todos os itens de ${section.title} como Conforme" style="--category-accent:${section.accentColor};--category-tint:${section.bgColor};">
+                            <i class="ph-bold ph-checks"></i><span class="category-mark-text">Tudo conforme</span>
+                        </button>
+                    </div>
                     <div id="content-${expId}" class="expander-body border-t border-slate-100 divide-y divide-slate-100">
                         ${itemsHtml}
                     </div>
@@ -507,6 +519,37 @@
             appState.checklist[itemId].obs = value;
             applyItemVisualState(itemId);
             saveToLocalStorage();
+        }
+
+        /** Marca somente a categoria escolhida. Não altera notas, fotos ou outras seções. */
+        function markCategoryAsConforme(sectionId) {
+            const category = CHECKLIST_SCHEMA.find(section => section.id === sectionId);
+            if (!category) return;
+            const keys = category.items.map((_, i) => `${sectionId}_${i}`);
+            const countNok = keys.filter(key => appState.checklist[key].status === 'nok').length;
+            const countNa = keys.filter(key => appState.checklist[key].status === 'na').length;
+            const countPending = keys.filter(key => appState.checklist[key].status !== 'ok').length;
+            if (countPending === 0) {
+                showToast('Esta categoria já está totalmente Conforme.');
+                return;
+            }
+            const apply = () => {
+                keys.forEach(itemId => {
+                    appState.checklist[itemId].status = 'ok';
+                    applyItemVisualState(itemId);
+                });
+                updateAllBadgesAndStats();
+                saveToLocalStorage();
+                showToast(`${category.title.replace(/^\d+\.\s*/, '')}: ${keys.length} itens marcados como Conforme.`);
+            };
+            // Não sobrescrever silenciosamente registros de avaria ou N/A.
+            if (countNok || countNa) {
+                openConfirmModal('Sobrescrever status desta categoria?',
+                    `A categoria ${category.title} contém ${countNok} avaria(s) e ${countNa} item(ns) N/A. Todos os seus ${keys.length} itens serão marcados como Conforme. Observações e fotos serão preservadas.`,
+                    apply, 'Marcar categoria');
+                return;
+            }
+            apply();
         }
 
         /**
@@ -1103,52 +1146,67 @@
          */
 
 
-                function updateHistoryCounterBadge() {
+        function updateHistoryCounterBadge() {
             const count = getHistoryList().length;
             const dot = document.getElementById('history-count-dot');
-            if (count > 0) {
-                dot.textContent = count > 9 ? '9+' : count;
-                dot.classList.remove('hidden');
-            } else {
-                dot.classList.add('hidden');
-            }
+            dot.textContent = count > 999 ? '999+' : String(count);
+            dot.classList.toggle('hidden', count === 0);
+            dot.setAttribute('aria-label', `${count} vistorias arquivadas`);
+            const total = document.getElementById('history-total-count');
+            if (total) total.textContent = `${count} ${count === 1 ? 'registro arquivado' : 'registros arquivados'}`;
         }
 
+        let historyReturnFocus = null;
         function openHistoryModal() {
-            renderHistoryList();
             const modal = document.getElementById('history-modal');
+            if (modal.classList.contains('hidden')) historyReturnFocus = document.activeElement;
+            renderHistoryList();
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            modalReturnFocus = document.activeElement;
+            syncModalLayers();
             modal.querySelector('button[aria-label="Fechar histórico"]')?.focus();
         }
 
         function closeHistoryModal() {
             const modal = document.getElementById('history-modal');
+            if (modal.classList.contains('hidden') || !document.getElementById('confirm-modal').classList.contains('hidden')) return;
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-            modalReturnFocus?.focus?.();
+            syncModalLayers();
+            const focusTarget = historyReturnFocus;
+            historyReturnFocus = null;
+            if (focusTarget?.isConnected) focusTarget.focus();
+        }
+
+        /** Serializa operações de arquivo para não perder salvamentos rápidos. */
+        let historyMutationQueue = Promise.resolve();
+        function enqueueHistoryMutation(transform) {
+            const operation = historyMutationQueue.catch(() => {}).then(async () => {
+                const list = [...getHistoryList()];
+                return saveHistoryList(transform(list));
+            });
+            historyMutationQueue = operation;
+            return operation;
         }
 
         async function saveCurrentToHistory() {
-            const list = [...getHistoryList()];
+            const button = document.getElementById('btn-save-current-history');
+            if (button) button.disabled = true;
+            // Cada ação é um registro histórico, mesmo para o mesmo protocolo.
             const snapshot = JSON.parse(JSON.stringify(appState));
             snapshot.meta.savedAt = new Date().toISOString();
+            snapshot.meta.archiveId = generateHistoryEntryId();
             if (!snapshot.meta.id) snapshot.meta.id = generateProtocolId();
-
-            const existingIdx = list.findIndex(item => item.meta && item.meta.id === snapshot.meta.id);
-            if (existingIdx >= 0) {
-                list[existingIdx] = snapshot;
-            } else {
-                list.unshift(snapshot);
-            }
-
-            const saved = await saveHistoryList(list);
-            if (saved) {
-                renderHistoryList();
-                showToast(`Laudo #${snapshot.meta.id} salvo no histórico!`);
-            } else {
-                showToast('Falha ao arquivar: exporte um backup JSON e libere armazenamento.');
+            try {
+                const saved = await enqueueHistoryMutation(list => [snapshot, ...list]);
+                if (saved) {
+                    renderHistoryList();
+                    showToast(`Vistoria arquivada. ${getHistoryList().length} registro(s) salvos.`);
+                } else {
+                    showToast('Falha ao arquivar: exporte o backup JSON e libere armazenamento.');
+                }
+            } finally {
+                if (button) button.disabled = false;
             }
         }
 
@@ -1171,6 +1229,8 @@
                 const tipo = item.vehicle?.tipo || 'Vistoria';
                 const data = item.vehicle?.data ? item.vehicle.data.split('-').reverse().join('/') : '-';
                 const pinsCount = (item.pins || []).length;
+                const savedAt = item.meta?.savedAt ? new Date(item.meta.savedAt) : null;
+                const timestamp = savedAt && !Number.isNaN(savedAt.valueOf()) ? savedAt.toLocaleString('pt-BR', {dateStyle:'short',timeStyle:'short'}) : 'Arquivo antigo';
 
                 return `
                     <div class="bg-white border border-slate-200 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-blue-300 transition">
@@ -1182,6 +1242,7 @@
                             </div>
                             <p class="text-[11px] text-slate-500">
                                 Protocolo #${safeText(item.meta?.id || '-')} • Data: ${safeText(data)} • ${pinsCount} ponto(s) no croqui
+                                <span class="block mt-1 text-[10px] text-blue-700 font-semibold">Registro ${list.length - idx} · Salvo em ${safeText(timestamp)}</span>
                             </p>
                         </div>
                         <div class="flex items-center gap-1.5 shrink-0">
@@ -1218,20 +1279,24 @@
         }
 
 
-                function deleteHistoryItem(index) {
-            const list = [...getHistoryList()];
-            if (!list[index]) return;
+        function deleteHistoryItem(index) {
+            const chosen = getHistoryList()[index];
+            if (!chosen) return;
+            const archiveId = chosen.meta?.archiveId;
             openConfirmModal('Excluir vistoria do histórico?',
                 'O registro será removido do histórico deste dispositivo. Exporte um backup antes, se precisar preservá-lo.',
                 async () => {
-                    list.splice(index, 1);
-                    if (await saveHistoryList(list)) {
+                    const saved = await enqueueHistoryMutation(list => {
+                        const offset = list.findIndex(item => item.meta?.archiveId === archiveId);
+                        if (offset !== -1) list.splice(offset, 1);
+                        return list;
+                    });
+                    if (saved) {
                         renderHistoryList();
                         showToast('Vistoria excluída do histórico.');
                     } else showToast('Não foi possível excluir a vistoria no armazenamento.');
                 }, 'Excluir registro');
         }
-
 
                 function exportCurrentJSON() {
             const placa = (appState.vehicle.placa || 'veiculo').replace(/[^A-Z0-9]/gi, '');
@@ -1319,34 +1384,191 @@
             });
         }
 
-        let modalReturnFocus = null;
+        /**
+         * 11A. WORKSPACE RESPONSIVO — somente preferências da interface.
+         * Não modifica appState nem o esquema de armazenamento de vistorias.
+         */
+        const UI_LAYOUT_KEY = 'vistoria_veicular_ui_layout_v1';
+        let settingsReturnFocus = null;
+
+        function setWorkspaceLayout(mode) {
+            const selected = mode === 'list' ? 'list' : 'columns';
+            document.body.classList.toggle('layout-list', selected === 'list');
+            document.body.classList.toggle('layout-columns', selected === 'columns');
+            document.querySelectorAll('[data-layout], .layout-switch-btn').forEach(btn => {
+                const isSelected = btn.dataset.layout === selected || btn.id === `btn-layout-${selected}`;
+                btn.classList.toggle('is-selected', isSelected);
+                if (btn.classList.contains('layout-switch-btn')) btn.setAttribute('aria-pressed', String(isSelected));
+                if (btn.hasAttribute('data-layout')) {
+                    btn.setAttribute('aria-pressed', String(isSelected));
+                    btn.textContent = isSelected ? 'Selecionado' : selected === 'list' ? 'Usar colunas' : 'Usar lista';
+                    // O rótulo do botão representa sempre a ação que ele executa.
+                    if (!isSelected) btn.textContent = btn.dataset.layout === 'list' ? 'Usar lista' : 'Usar colunas';
+                }
+            });
+            try { localStorage.setItem(UI_LAYOUT_KEY, selected); }
+            catch (error) { console.warn('Preferência visual não persistida:', error); }
+        }
+
+        function isSmallSidebar() { return window.matchMedia('(max-width: 1023px)').matches; }
+
+        function updateSidebarButtons() {
+            const isOpen = isSmallSidebar() ? document.body.classList.contains('sidebar-open') : document.body.classList.contains('sidebar-expanded');
+            const toggle = document.getElementById('btn-sidebar-collapse');
+            const mobile = document.getElementById('btn-sidebar-mobile');
+            toggle.setAttribute('aria-expanded', String(isOpen));
+            mobile.setAttribute('aria-expanded', String(isOpen));
+            toggle.setAttribute('aria-label', isOpen ? 'Recolher menu lateral' : 'Expandir menu lateral');
+            toggle.title = isOpen ? 'Recolher menu lateral' : 'Expandir menu lateral';
+        }
+
+        function closeSidebar() {
+            document.body.classList.remove('sidebar-open');
+            updateSidebarButtons();
+        }
+
+        function toggleSidebar() {
+            if (isSmallSidebar()) document.body.classList.toggle('sidebar-open');
+            else document.body.classList.toggle('sidebar-expanded');
+            updateSidebarButtons();
+        }
+
+        function openSettingsModal() {
+            closeSidebar();
+            const modal = document.getElementById('settings-modal');
+            settingsReturnFocus = document.activeElement;
+            modal.hidden = false;
+            syncModalLayers();
+            document.getElementById('btn-close-settings').focus();
+        }
+
+        function closeSettingsModal() {
+            const modal = document.getElementById('settings-modal');
+            if (modal.hidden) return;
+            modal.hidden = true;
+            syncModalLayers();
+            settingsReturnFocus?.focus?.();
+            settingsReturnFocus = null;
+        }
+
+        function navigateWorkspaceTo(id) {
+            const target = id === 'checklist-sections'
+                ? document.querySelector('#checklist-sections .expander-card')
+                : document.getElementById(id);
+            if (!target) return;
+            if (target.classList.contains('expander-card')) toggleExpander(target.id, true);
+            closeSidebar();
+            document.querySelectorAll('[data-go]').forEach(btn => {
+                const active = btn.dataset.go === id;
+                btn.classList.toggle('is-active', active);
+                if (active) btn.setAttribute('aria-current', 'location');
+                else btn.removeAttribute('aria-current');
+            });
+            requestAnimationFrame(() => target.scrollIntoView({
+                behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+                block: 'start'
+            }));
+        }
+
+        function setupWorkspaceUI() {
+            let stored = 'columns';
+            try { stored = localStorage.getItem(UI_LAYOUT_KEY) || 'columns'; }
+            catch (error) { console.warn('Preferência visual indisponível:', error); }
+            setWorkspaceLayout(stored);
+
+            document.getElementById('btn-sidebar-mobile').addEventListener('click', toggleSidebar);
+            document.getElementById('btn-sidebar-collapse').addEventListener('click', toggleSidebar);
+            document.getElementById('sidebar-backdrop').addEventListener('click', closeSidebar);
+            window.addEventListener('resize', () => {
+                if (!isSmallSidebar()) closeSidebar();
+                updateSidebarButtons();
+            });
+            document.querySelectorAll('[data-go]').forEach(button => {
+                button.addEventListener('click', () => navigateWorkspaceTo(button.dataset.go));
+            });
+            document.querySelectorAll('[data-command]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const command = button.dataset.command;
+                    closeSidebar();
+                    if (command === 'history') openHistoryModal();
+                    else if (command === 'print') validateAndPrint();
+                    else if (command === 'settings') openSettingsModal();
+                });
+            });
+            document.getElementById('btn-layout-columns').addEventListener('click', () => setWorkspaceLayout('columns'));
+            document.getElementById('btn-layout-list').addEventListener('click', () => setWorkspaceLayout('list'));
+            document.querySelectorAll('[data-layout]').forEach(button => {
+                button.addEventListener('click', () => setWorkspaceLayout(button.dataset.layout));
+            });
+            document.getElementById('btn-settings-sidebar').addEventListener('click', () => {
+                closeSettingsModal();
+                toggleSidebar();
+            });
+            document.getElementById('btn-close-settings').addEventListener('click', closeSettingsModal);
+            document.getElementById('settings-modal').addEventListener('click', event => {
+                if (event.target.id === 'settings-modal') closeSettingsModal();
+            });
+            updateSidebarButtons();
+        }
+
+        let confirmReturnFocus = null;
+        /** Hierarquia explícita: a última confirmação sempre fica acima do histórico. */
+        function syncModalLayers() {
+            const confirmationVisible = !document.getElementById('confirm-modal').classList.contains('hidden');
+            const history = document.getElementById('history-modal');
+            history.inert = confirmationVisible;
+            const settings = document.getElementById('settings-modal');
+            settings.inert = confirmationVisible;
+            const hasActive = confirmationVisible || !history.classList.contains('hidden') || !settings.hidden;
+            document.body.classList.toggle('modal-lock', hasActive);
+        }
         function openConfirmModal(title, descHtml, onConfirm, confirmLabel = 'Confirmar', cancelLabel = 'Cancelar') {
             const modal = document.getElementById('confirm-modal');
-            modalReturnFocus = document.activeElement;
+            confirmReturnFocus = document.activeElement;
             document.getElementById('modal-title').textContent = title;
-            // descHtml é produzido exclusivamente pelo código da aplicação.
+            // Texto de confirmação produzido exclusivamente pela aplicação.
             document.getElementById('modal-desc').innerHTML = descHtml;
-            document.getElementById('modal-confirm').textContent = confirmLabel;
-            document.getElementById('modal-cancel').textContent = cancelLabel;
+            const confirmButton = document.getElementById('modal-confirm');
+            const cancelButton = document.getElementById('modal-cancel');
+            confirmButton.textContent = confirmLabel;
+            cancelButton.textContent = cancelLabel;
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+            syncModalLayers();
             const close = () => {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
-                modalReturnFocus?.focus?.();
+                syncModalLayers();
+                const focusTarget = confirmReturnFocus;
+                confirmReturnFocus = null;
+                if (focusTarget?.isConnected && !focusTarget.closest('[hidden]')) focusTarget.focus();
             };
-            document.getElementById('modal-cancel').onclick = close;
-            document.getElementById('modal-confirm').onclick = () => {close(); onConfirm();};
-            document.getElementById('modal-cancel').focus();
+            cancelButton.onclick = close;
+            confirmButton.onclick = () => {
+                close();
+                Promise.resolve().then(onConfirm).catch(error => {
+                    console.error('Falha na operação confirmada:', error);
+                    showToast('Não foi possível concluir esta operação.');
+                });
+            };
+            cancelButton.focus();
         }
 
         function setupModalAccessibility() {
             document.addEventListener('keydown', event => {
-                const modal = ['confirm-modal','history-modal'].map(id => document.getElementById(id)).find(el => !el.classList.contains('hidden'));
-                if (!modal) return;
+                const modal = ['confirm-modal','settings-modal','history-modal'].map(id => document.getElementById(id)).find(el => !el.classList.contains('hidden') && !el.hidden);
+                if (!modal) {
+                    if (event.key === 'Escape' && document.body.classList.contains('sidebar-open')) {
+                        event.preventDefault();
+                        closeSidebar();
+                        document.getElementById('btn-sidebar-mobile').focus();
+                    }
+                    return;
+                }
                 if (event.key === 'Escape') {
                     event.preventDefault();
                     if (modal.id === 'history-modal') closeHistoryModal();
+                    else if (modal.id === 'settings-modal') closeSettingsModal();
                     else document.getElementById('modal-cancel').click();
                 }
                 if (event.key === 'Tab') {
@@ -1403,7 +1625,7 @@
             try {
                 historyCache = JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY) || '[]');
                 if (!Array.isArray(historyCache)) historyCache = [];
-                historyCache = historyCache.slice(0, 500).map(entry => {try {return normalizeState(entry);} catch {return null;}}).filter(Boolean);
+                historyCache = historyCache.slice(0, 500).map(entry => {try {return normalizeHistoryEntry(entry);} catch {return null;}}).filter(Boolean);
             } catch {historyCache = [];}
             if (legacy) appState = legacy;
             if ('indexedDB' in window) {
@@ -1423,7 +1645,7 @@
                         else await dbPut('current', legacy);
                     } else if (legacy) await dbPut('current', legacy);
                     const archive = await dbGet('history');
-                    if (Array.isArray(archive)) historyCache = archive.map(entry => {try{return normalizeState(entry);}catch{return null;}}).filter(Boolean);
+                    if (Array.isArray(archive)) historyCache = archive.map(entry => {try{return normalizeHistoryEntry(entry);}catch{return null;}}).filter(Boolean);
                     else if (historyCache.length) await dbPut('history', historyCache);
                 } catch (err) {
                     console.warn('IndexedDB indisponível; usando armazenamento local:', err);
@@ -1474,6 +1696,12 @@
                 }
             });
             return saveInFlight;
+        }
+
+        function normalizeHistoryEntry(entry) {
+            const saved = normalizeState(entry);
+            if (!saved.meta.archiveId) saved.meta.archiveId = generateHistoryEntryId();
+            return saved;
         }
 
         function getHistoryList() {return historyCache;}

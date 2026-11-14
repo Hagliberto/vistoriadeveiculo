@@ -1,5 +1,28 @@
 # Histórico de versões
 
+## 1.2.0 — 14/11/2026
+
+### Evolução da interface
+- Checklist desktop em duas colunas ou lista, com alternância persistida; maior aproveitamento da largura e expanders independentes.
+- Navegação lateral recolhida por padrão, com abertura opcional; navbar inferior por ícones em desktop e mobile.
+- Central de configurações com **Versão 1.2.0** e identificação do desenvolvedor **Hagliberto Alves de Oliveira** em pill.
+- Seis ações **Tudo conforme**, uma por categoria, com proteção para status de avaria/N/A; observações e fotografias preservadas.
+- Ações globais (expandir, recolher, histórico, todos conformes, limpar, gerar PDF) movidas do minicard para a appbar.
+
+### Correções e estabilidade
+- Corrigida a sobreposição de modais: confirmações ficam acima do histórico, modal inferior fica inativo e o foco retorna ao controle correto.
+- Correção do histórico que sobrescrevia entradas com o mesmo protocolo: cada arquivamento gera um ID próprio e horário de registro; múltiplas versões coexistem.
+- Operações de gravação e exclusão de histórico enfileiradas para evitar perda por corrida assíncrona.
+- Histórico exibe contagem e data/hora de cada registro; exclusão identifica o arquivo, não somente o índice visual.
+- Ícones SVG novos empacotados para funcionar sem conexão; cache PWA atualizado.
+- Impressão A4 preservada em fluxo linear, sem elementos da appbar, dock, sidebar ou ações por categoria.
+- Teste adicional de regressão: cinco salvamentos da mesma vistoria, exclusão pontual, migração e ação individual de checklist.
+
+### Homologação
+- Testes automatizados de sintaxe, regras de negócio e integridade estática foram executados.
+- Validação visual em navegadores e prévia real de PDF devem ser conferidas no equipamento de destino: neste ambiente o navegador bloqueou o acesso a `file://` e `localhost`.
+
+
 ## 1.0.0 — 14/11/2026
 
 ### Consolidação

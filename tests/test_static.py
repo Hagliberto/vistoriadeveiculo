@@ -39,4 +39,13 @@ for selector in ('.expander-header','#exp-croqui','#exp-assinaturas','#print-off
 for key in ('vistoria_veicular_pwa_v2','vistoria_veicular_pwa_v3','indexedDB','prepareAndPrint','normalizeState','getAllAttachedPhotos'):
     assert key in js, f'Compatibilidade ausente: {key}'
 assert len(set(re.findall(r'(?<=id=")[^\"]+(?=")',html))) == len(re.findall(r'(?<=id=")[^\"]+(?=")',html))
-print('OK: HTML sem IDs duplicados, recursos locais, PWA, A4, acessibilidade e migração.')
+# Regressões de layout e de histórico corrigidas na versão 1.2.
+assert 'id="appbar-actions"' in html and html.index('id="appbar-actions"') < html.index('</header>')
+assert 'bg-white p-2.5 sm:px-3.5 sm:py-2.5 rounded-2xl' not in html, 'A antiga barra em minicard voltou'
+assert 'id="history-total-count"' in html
+assert all(key in js for key in ('markCategoryAsConforme','generateHistoryEntryId','normalizeHistoryEntry','enqueueHistoryMutation','syncModalLayers'))
+assert 'category-mark-ok' in js and 'category-mark-ok' in css
+assert '#confirm-modal { z-index: 110' in css, 'Confirmação deve ficar acima dos outros diálogos'
+assert 'history.inert = confirmationVisible' in js
+assert 'Each clique' not in html
+print('OK: HTML sem IDs duplicados, recursos locais, PWA, A4, acessibilidade, migração e layout 1.2.')

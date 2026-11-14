@@ -1,6 +1,6 @@
 # Vistoria Veicular — Checklist Digital
 
-> **Versão consolidada 1.0.0 (14/11/2026)** · HTML + CSS + JavaScript puro · offline-first · sem servidor de dados
+> **Versão profissional 1.2.0 (14/11/2026)** · HTML + CSS + JavaScript puro · offline-first · sem servidor de dados
 
 Aplicação de inspeção de veículos com **47 verificações distribuídas em 6 categorias**, identificação, controle do nível de combustível, croqui interativo, registros fotográficos, assinaturas digitais e geração de laudo técnico em papel A4/PDF.
 
@@ -11,6 +11,21 @@ Aplicação de inspeção de veículos com **47 verificações distribuídas em 
 **Instalação como aplicativo PWA:** publique a pasta em um endereço **HTTPS**, ou use `localhost` durante desenvolvimento. Ao acessar, o navegador compatível poderá oferecer **Instalar App**. Depois de uma primeira visita carregada por completo, o service worker mantém a interface disponível quando a internet não estiver acessível. Em `file://` o checklist também funciona, mas a instalação PWA e o service worker **não** estão disponíveis (restrição dos navegadores).
 
 **Hospedagem no GitHub Pages:** coloque todos os arquivos desta versão na raiz de seu repositório estático. Em *Settings → Pages*, publique a branch `main` usando a pasta `/ (root)`. O app não exige Cloudflare Workers, D1 ou outra API. O armazenamento permanece **local ao navegador/dispositivo** e não sincroniza automaticamente entre dispositivos.
+
+## Interface profissional no desktop e no celular
+
+- **Área de trabalho WIDE:** duas colunas de expanders a partir de 1280 px, com opção **Lista** para quem preferir blocos na largura total. A preferência fica salva no navegador.
+- **Appbar:** os seis ícones de ação ficam na barra superior, sem o antigo minicard. Ações: expandir/recolher, histórico, marcar tudo Conforme, limpar e imprimir.
+- **Navbar inferior:** atalhos para dados, checklist, croqui, assinaturas, histórico, impressão e configurações.
+- **Sidebar recolhida por padrão:** pode ser expandida no desktop ou aberta como menu sobreposto no celular.
+- **Configurações:** engrenagem no dock inferior e na sidebar, mostrando versão e pill **Hagliberto Alves de Oliveira**.
+- **Ação por categoria:** cada uma das seis categorias tem um ícone **Tudo conforme**. Caso exista uma avaria ou N/A, um diálogo solicita confirmação. A alteração nunca atinge outras categorias e preserva comentários e fotos.
+
+## Correção do histórico
+
+**Salvar Vistoria Atual no Histórico** cria uma **nova versão arquivada a cada salvamento**, mesmo quando o número de protocolo é igual. Cada arquivo recebe um identificador exclusivo e a data/hora do registro; o protocolo da vistoria é mantido. É possível guardar três, quatro, cinco ou mais versões, respeitando o espaço disponível no navegador. Ao apagar uma versão, as demais permanecem. O histórico antigo continua legível.
+
+Uma versão arquivada **não significa sincronização com a nuvem**. Para cópia de segurança externa, exporte o JSON e guarde-o em local seguro. Em dispositivos sem IndexedDB, o armazenamento reduzido do navegador pode restringir o número de arquivos com fotos.
 
 ## Funcionalidades
 
@@ -87,7 +102,7 @@ git commit -m "feat: consolidar vistoria veicular profissional offline-first"
 git push origin main
 ```
 
-Se preferir revisar antes de publicar, use uma branch de homologação: `git switch -c feature/vistoria-profissional-v1.0.0` e abra um pull request. O projeto foi entregue **sem executar commit ou push** no seu computador ou remoto.
+Se preferir revisar antes de publicar, permaneça na branch existente `feature/vistoria-profissional-v1.0.0` (ou crie uma branch específica `feature/vistoria-profissional-v1.2.0`) e abra um pull request após testar. O projeto foi entregue **sem executar commit ou push** no seu computador ou remoto.
 
 ## Limitações assumidas
 
@@ -96,3 +111,14 @@ Se preferir revisar antes de publicar, use uma branch de homologação: `git swi
 - Arquivos JSON não são criptografados. Mantenha backups protegidos.
 - Assinaturas desenhadas na tela não constituem, por si só, assinatura digital com certificado ICP-Brasil.
 - O histórico é local, sem sincronização na nuvem nem controle multiusuário.
+
+## Testes de regressão (Node.js e Python)
+
+```powershell
+node tests/test_state.mjs
+node tests/test_history.mjs
+node tests/test_modals.mjs
+python tests/test_static.py
+```
+
+Veja [tests/QA_MANUAL.md](tests/QA_MANUAL.md) para a conferência visual de desktop, mobile, histórico, confirmações e impressão.
