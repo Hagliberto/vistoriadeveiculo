@@ -1,3 +1,10 @@
+## v1.4.7 — Simplificação da central de exportação
+
+- Removida a ação redundante **Compartilhar PDF oficial**, idêntica a **Salvar como PDF**.
+- Central com três opções: **Salvar como PDF**, **Baixar em PNG** e **Imprimir**.
+- PDF oficial continua usando o layout A4 da impressão; após salvar, o arquivo pode ser enviado por WhatsApp/e-mail.
+- Atualizados versão do PWA e testes de regressão.
+
 ## v1.4.6 — PDF oficial único para salvar, imprimir e compartilhar
 
 - Salvar como PDF, Imprimir e Compartilhar PDF oficial utilizam o **mesmo laudo HTML/CSS A4** via impressão do navegador.

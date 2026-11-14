@@ -155,3 +155,7 @@ A opção **Salvar como PDF** usa o mesmo `validateAndPrint()` e `prepareAndPrin
 ### PDF oficial (v1.4.6)
 
 A única fonte do layout PDF é `@media print`: os botões **Salvar como PDF**, **Imprimir** e **Compartilhar PDF oficial** usam `validateAndPrint()` e `prepareAndPrint()`. Na janela de impressão do Chrome/Edge escolha **Salvar como PDF**, A4, 1 página por folha, gráficos de segundo plano ativados e cabeçalhos/rodapés desativados. Para compartilhar, anexe o PDF salvo no aplicativo de destino. A Web Share API não oferece acesso ao arquivo PDF gerado pelo diálogo nativo, portanto não há envio automático do PDF oficial.
+
+
+### Central de exportação simplificada (v1.4.7)
+O menu oferece **Salvar como PDF**, **Baixar em PNG** e **Imprimir**. A antiga opção Compartilhar PDF oficial foi retirada porque apenas repetia a ação Salvar como PDF. O PDF A4 é salvo pelo diálogo nativo de impressão e pode ser anexado depois a WhatsApp/e-mail. Não é possível compartilhar diretamente o PDF emitido pelo diálogo do navegador por JavaScript.
