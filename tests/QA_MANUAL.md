@@ -27,3 +27,9 @@ Faça a homologação preferencialmente em Chrome/Edge e Firefox, em desktop e c
 - [ ] Compartilhar: em Chrome Android via HTTPS, enviar arquivo; em navegador sem Web Share de arquivos, baixar o PNG como alternativa.
 - [ ] Após atualizar PWA, confirmar que export.js e os novos ícones SVG funcionam totalmente offline.
 - [ ] Verificar foco com teclado: Tab/Shift+Tab, Esc e retorno ao gatilho; testar novamente com o histórico fechado.
+
+## PDF visualmente idêntico (v1.4.5)
+- [ ] Abrir Exportar → Salvar como PDF e escolher Destino: Salvar como PDF.
+- [ ] Abrir Exportar → Imprimir, comparar prévias A4 lado a lado, sem mudar configurações de papel e escala.
+- [ ] Conferir quebra de páginas, tabela, croqui, fotos e assinaturas em ambos.
+- [ ] Verificar compartilhamento separadamente: PDF enviado por Share API ainda usa uma representação raster.

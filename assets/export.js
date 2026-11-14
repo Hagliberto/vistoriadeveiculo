@@ -1,4 +1,4 @@
-/* Central de exportação offline-first · Vistoria Veicular 1.4.4.
+/* Central de exportação offline-first · Vistoria Veicular 1.4.5.
  * Nenhum dado é enviado a servidores; compartilhamento exige ação direta do usuário.
  */
 (() => {
@@ -231,7 +231,7 @@
             }
             y+=25;
             line(margin,y,width-margin,y,'#ccd9ea');
-            y+=15;text('Documento gerado localmente · Vistoria Veicular · v1.4.4',margin,y,15,'#687b91');
+            y+=15;text('Documento gerado localmente · Vistoria Veicular · v1.4.5',margin,y,15,'#687b91');
             return y+65;
         };
         const height=Math.ceil(paint(false));
@@ -337,10 +337,13 @@
                 return;
             }
             if(kind==='pdf') {
-                const file=prebuiltPdf || await generatePDF();
-                download(file,file.name);
-                feedback.textContent='PDF A4 de alta qualidade baixado.';
-                showToast('PDF gerado com sucesso.');
+                // Reutiliza o MESMO mecanismo de impressão A4 do laudo aprovado.
+                // JavaScript em navegadores não pode salvar diretamente o PDF
+                // gerado pelo diálogo nativo nem selecionar o destino PDF.
+                // O usuário escolhe «Salvar como PDF» na janela do navegador.
+                busy=false;
+                close();
+                validateAndPrint();
                 return;
             }
             if(kind==='png') {
