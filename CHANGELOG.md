@@ -1,3 +1,8 @@
+## v1.4.1 — Ajustes de apresentação
+- Retirado o pill de crédito da navbar inferior; o desenvolvedor continua identificado no painel Configurações.
+- Ocultado o card introdutório "Uma vistoria completa" em telas de até 599px; permanece no desktop.
+- Incrementado o versionamento do PWA e preservada a correção de navegação Cloudflare Pages no Service Worker.
+
 ## v1.4.0 — Atualização sob demanda
 - Verificação de `version.json` no servidor, com consulta sem cache e comparação semântica de versão.
 - Banner com botão **Atualizar** aparece apenas quando a versão publicada é mais recente.

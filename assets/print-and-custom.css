@@ -656,3 +656,8 @@
 @media(min-width:1024px) { .app-update-notice { bottom:95px; } }
 @media(max-width:390px) { .app-update-notice { gap:7px; padding:10px; } .app-update-apply { padding:7px 9px; } }
 @media print { #app-update-notice { display:none !important; } }
+
+/* v1.4.1: card introdutório apenas no desktop; mobile inicia diretamente nas seções. */
+@media screen and (max-width: 599px) {
+    #workspace-heading { display: none !important; }
+}
