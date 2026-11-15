@@ -1,3 +1,7 @@
+### Correções da versão 1.5.7
+
+Cores do croqui vinculadas ao **tipo de avaria**: Amassado vermelho, Risco azul, Quebrado laranja, Faltando roxo. Com zoom ativo, toque curto marca; arraste reposiciona e pinça amplia/reduz. A versão no rodapé e em Configurações deve corresponder ao `version.json`.
+
 ### Gestos do croqui (v1.5.6)
 
 Pinça com dois dedos para ampliar/reduzir. Com zoom maior que 100%, arraste com um dedo para reposicionar a imagem; em 100%, arraste na horizontal para trocar de vista. O PDF oficial não herda o zoom, e mostra uma contagem discreta por vista.

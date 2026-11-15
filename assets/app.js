@@ -37,7 +37,19 @@
          * Atualizações PWA: somente versões publicadas no mesmo host, com confirmação.
          * A verificação não acessa nem altera IndexedDB/localStorage de vistorias.
          */
-        const APP_VERSION = '1.5.6';
+        const APP_VERSION = '1.5.7';
+        function syncDisplayedAppVersion() {
+            const footer = document.querySelector('.sidebar-footer');
+            if (footer) {
+                footer.title = `Vistoria Veicular v${APP_VERSION}`;
+                const mark = footer.querySelector('.sidebar-version-mark');
+                const label = footer.querySelector('.sidebar-label');
+                if (mark) mark.textContent = APP_VERSION.split('.').slice(0, 2).join('.');
+                if (label) label.textContent = `v${APP_VERSION} • Offline`;
+            }
+            const settings = document.querySelector('.settings-version-pill');
+            if (settings) settings.textContent = `Versão ${APP_VERSION}`;
+        }
         let updateRegistration = null;
         let availableUpdateVersion = null;
         let updateCheckInProgress = false;
@@ -517,6 +529,7 @@
          * INICIALIZAÇÃO GERAL
          */
         document.addEventListener('DOMContentLoaded', async () => {
+            syncDisplayedAppVersion();
             renderChecklistSections();
             await loadPersistence();
             setupVehicleInputs();
@@ -1315,12 +1328,11 @@
             document.querySelectorAll('.damage-type-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     selectedDamageType = btn.dataset.damageType;
-                    document.querySelectorAll('.damage-type-btn').forEach(b => {
-                        b.className = 'damage-type-btn touch-target-btn px-2 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition';
-                    });
-                    btn.className = 'damage-type-btn touch-target-btn px-2 py-2 rounded-xl text-xs font-semibold bg-rose-600 text-white shadow-xs transition';
+                    updateDamageTypeButtons();
                 });
             });
+
+            updateDamageTypeButtons();
 
             document.querySelectorAll('[data-croqui-view]').forEach(surface => {
                 const viewId = surface.dataset.croquiView || 'top';
@@ -1335,6 +1347,14 @@
                 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
                 const markGesture = () => {
                     suppressClickUntil = Date.now() + 900;
+                };
+                const markAtScreenPoint = (clientX, clientY) => {
+                    const stage = surface.querySelector('.croqui-zoom-stage');
+                    const rect = (stage || surface).getBoundingClientRect();
+                    if (!rect.width || !rect.height) return;
+                    const xPct = ((clientX - rect.left) / rect.width) * 100;
+                    const yPct = ((clientY - rect.top) / rect.height) * 100;
+                    addDamagePin(xPct, yPct, viewId);
                 };
                 surface.addEventListener('pointerdown', (event) => {
                     if (event.button !== undefined && event.button !== 0) return;
@@ -1404,6 +1424,15 @@
                             stepCroquiView(dx < 0 ? 1 : -1);
                         }
                     }
+                    // Com zoom, um toque curto e SEM deslocamento marca a avaria.
+                    // Arraste e pinça continuam exclusivamente para navegação.
+                    if (!canceled && touches.size === 0 && started?.kind === 'single' &&
+                        started.pointerId === event.pointerId && started.zoomAtStart > 1 && !started.moved &&
+                        Math.hypot(event.clientX - started.x, event.clientY - started.y) <= 8 &&
+                        activeCroquiView === viewId && !event.target?.closest?.('.damage-pin')) {
+                        markAtScreenPoint(event.clientX, event.clientY);
+                        markGesture(); // o click sintético subsequente não cria outro ponto
+                    }
                     if (started?.kind === 'pinch' || started?.moved) markGesture();
                     // Never promote the remaining finger to a tap or a swipe.
                     if (touches.size === 0) gesture = null;
@@ -1420,12 +1449,7 @@
                     if (Date.now() < suppressClickUntil) return;
                     if (e.target.closest('.damage-pin')) return;
                     if (activeCroquiView !== viewId) return;
-                    const stage = surface.querySelector('.croqui-zoom-stage');
-                    const rect = (stage || surface).getBoundingClientRect();
-                    if (!rect.width || !rect.height) return;
-                    const xPct = ((e.clientX - rect.left) / rect.width) * 100;
-                    const yPct = ((e.clientY - rect.top) / rect.height) * 100;
-                    addDamagePin(xPct, yPct, viewId);
+                    markAtScreenPoint(e.clientX, e.clientY);
                 });
                 surface.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
@@ -1529,29 +1553,28 @@
             renderDamagePins();
         }
 
-        // As cores seguem a posição atual, não o ID persistido.
-        // Ao excluir uma marcação, os pontos remanescentes recebem a nova cor
-        // correspondente à numeração, na tela e no laudo impresso.
-        const DAMAGE_PIN_COLORS = Object.freeze([
-            { fill: '#be123c', text: '#9f1239' }, // 1 vermelho
-            { fill: '#1d4ed8', text: '#1d4ed8' }, // 2 azul
-            { fill: '#15803d', text: '#166534' }, // 3 verde
-            { fill: '#c2410c', text: '#9a3412' }, // 4 laranja
-            { fill: '#7e22ce', text: '#6b21a8' }, // 5 roxo
-            { fill: '#be185d', text: '#9d174d' }, // 6 rosa
-            { fill: '#0f766e', text: '#115e59' }, // 7 turquesa
-            { fill: '#a16207', text: '#854d0e' }, // 8 ocre
-            { fill: '#4338ca', text: '#3730a3' }, // 9 índigo
-            { fill: '#0369a1', text: '#075985' }, // 10 ciano escuro
-            { fill: '#4d7c0f', text: '#3f6212' }, // 11 oliva
-            { fill: '#b91c1c', text: '#991b1b' }  // 12 escarlate
-        ]);
+        // Cores representam a CLASSIFICAÇÃO da avaria, nunca o número do ponto.
+        // O número continua sequencial e muda ao excluir itens, mas a cor não muda.
+        const DAMAGE_TYPE_COLORS = Object.freeze({
+            Amassado: { fill: '#be123c', text: '#9f1239' },
+            Risco: { fill: '#1d4ed8', text: '#1d4ed8' },
+            Quebrado: { fill: '#c2410c', text: '#9a3412' },
+            Faltando: { fill: '#7e22ce', text: '#6b21a8' }
+        });
 
-        function getDamagePinColor(index) {
-            if (index < DAMAGE_PIN_COLORS.length) return DAMAGE_PIN_COLORS[index];
-            // Até 300 pontos: espalhamento angular para ampliar a distinção.
-            const hue = Math.round((index * 137.508) % 360);
-            return { fill: `hsl(${hue} 72% 35%)`, text: `hsl(${hue} 72% 30%)` };
+        function getDamagePinColor(type) {
+            return DAMAGE_TYPE_COLORS[type] || DAMAGE_TYPE_COLORS.Risco;
+        }
+
+        function updateDamageTypeButtons() {
+            document.querySelectorAll('.damage-type-btn').forEach(btn => {
+                const selected = btn.dataset.damageType === selectedDamageType;
+                const color = getDamagePinColor(btn.dataset.damageType);
+                btn.className = 'damage-type-btn touch-target-btn px-2 py-2 rounded-xl text-xs font-semibold transition';
+                btn.style.backgroundColor = selected ? color.fill : '#f1f5f9';
+                btn.style.color = selected ? '#fff' : '#334155';
+                btn.setAttribute('aria-pressed', selected ? 'true' : 'false');
+            });
         }
 
         function getCroquiViewMeta(viewId) {
@@ -1625,7 +1648,7 @@
             if (listEl) listEl.innerHTML = '';
             appState.pins.forEach((pin, idx) => {
                 const num = idx + 1;
-                const color = getDamagePinColor(idx);
+                const color = getDamagePinColor(pin.type);
                 const view = getCroquiViewMeta(pin.view);
                 const targetLayer = pinsLayers[CROQUI_VIEW_IDS.has(pin.view) ? pin.view : 'top'];
 

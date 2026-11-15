@@ -1,3 +1,9 @@
+## Regras da versão 1.5.7
+
+- Cor do croqui é função do tipo, nunca da posição sequencial ou ID do ponto.
+- Toque sem movimento deve marcar mesmo ampliado; arraste/pinça não podem marcar.
+- Exibir a versão instalada correta na sidebar e em Configurações, sincronizada ao metadado/versionamento do PWA.
+
 ## Croqui v1.5.6 — gestos e impressão
 
 - Pinça com Pointer Events; zoom limitado a 100–300%, com pan limitado ao tamanho visível.

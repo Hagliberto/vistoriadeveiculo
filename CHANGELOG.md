@@ -1,3 +1,10 @@
+## v1.5.7 — Cores por tipo, toque com zoom e versão sincronizada
+
+- Marcadores do croqui e itens da lista usam a mesma cor para cada **tipo de avaria**, independentemente do número: Amassado (vermelho), Risco (azul), Quebrado (laranja), Faltando (roxo).
+- Com zoom ativo, **toque curto** marca ponto; arraste reposiciona; pinça amplia ou reduz; gesto não duplica marcações.
+- Versão exibida na sidebar e em Configurações sincronizada com `APP_VERSION` e `version.json`; cache PWA incrementado.
+- Mantidas nove vistas, histórico e laudo A4.
+
 ## v1.5.6 — Pinça para zoom, arraste e contagem discreta no PDF
 
 - Gestos de pinça (dois dedos) nas nove imagens do croqui, inclusive em tela cheia.

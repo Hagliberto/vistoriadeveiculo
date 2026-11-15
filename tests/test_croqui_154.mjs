@@ -19,7 +19,7 @@ assert.match(js,/addEventListener\('pointerup'/);
 assert.match(js,/suppressClickUntil/);
 assert.match(js,/Math\.abs\(dx\) >= 48/);
 assert.match(css,/@media print[\s\S]*croqui-views-grid[\s\S]*grid-template-columns:repeat\(2/);
-assert.equal(JSON.parse(read('version.json')).version,'1.5.6');
+assert.equal(JSON.parse(read('version.json')).version,'1.5.7');
 
 function makeEl() {
   const listeners={};
