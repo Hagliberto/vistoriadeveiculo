@@ -1,3 +1,10 @@
+## v1.5.3 — Croqui técnico e navegação limpa
+
+- Substituição do desenho por traçado técnico vetorial em preto e branco com vidros, painéis e rodas detalhados.
+- Remoção dos cartões redundantes de zoom, legenda e navegação; barra compacta única.
+- Correção do texto sobreposto dos indicadores de visão.
+- Mantidas cinco vistas, navegação por setas e deslizamento, marcas coloridas, PDF A4 e dados locais.
+
 ## v1.5.2 — Visualizador de cinco vistas com carro redesenhado
 
 - Croqui com **uma vista ativa por vez**; setas, pontos e gesto horizontal trocam a vista.

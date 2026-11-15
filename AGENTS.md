@@ -1,3 +1,7 @@
+## Interface de croqui v1.5.3
+
+Manter barra de navegação enxuta e sem rótulos sobrepostos. Desenhos SVG são traços técnicos; preservar camadas de avarias, vistas e impressão A4. Não anunciar rotação 3D onde há somente cinco vistas.
+
 ## Croqui 360° v1.5.1
 
 - O croqui agora possui navegação por visões usando um seletor 360° discreto.

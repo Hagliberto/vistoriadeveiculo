@@ -78,7 +78,7 @@ for (const id of ['btn-croqui-prev-view', 'btn-croqui-next-view', 'btn-croqui-zo
   assert.ok(html.includes(`id="${id}"`), `${id} precisa existir no HTML`);
 }
 assert.ok(!html.includes('id="croqui-region-select"'), 'seletor antigo de região não deve existir');
-assert.ok(html.includes('Croqui 360°'));
+assert.ok(html.includes('Navegar pelas vistas do veículo'));
 assert.ok(html.includes('Resumo do croqui por visão'));
 
 const normalized = run(`normalizeState({meta:{},vehicle:{data:'2026-11-15',tipo:'Entrada',vistoriador:'',motorista:'',placa:'',modelo:'',ano:'',cor:'',km:'',combustivel:'1/2',obsGerais:''},checklist:{},pins:[{id:7,x:22,y:24,view:'front',region:'Região inválida',type:'Quebrado',desc:'teste',photo:null}],signatures:{}})`);
@@ -110,6 +110,6 @@ assert.ok(get('damage-list').children[0].innerHTML.includes('Farol direito'));
 run(`updateAllBadgesAndStats = () => {}; updatePinRegion(201, 'Para-choque dianteiro')`);
 const updatedRegion = run(`appState.pins.find(p => p.id === 201).region`);
 assert.equal(updatedRegion, 'Para-choque dianteiro');
-assert.equal(JSON.parse(fs.readFileSync(new URL('../version.json', import.meta.url), 'utf8')).version, '1.5.2');
-assert.ok(fs.readFileSync(new URL('../service-worker.js', import.meta.url), 'utf8').includes('shell-v1.5.2'));
-console.log('OK: croqui 360° v1.5.2 com zoom discreto, detecção de região e resumo por visão.');
+assert.equal(JSON.parse(fs.readFileSync(new URL('../version.json', import.meta.url), 'utf8')).version, '1.5.3');
+assert.ok(fs.readFileSync(new URL('../service-worker.js', import.meta.url), 'utf8').includes('shell-v1.5.3'));
+console.log('OK: croqui 360° v1.5.3 com zoom discreto, detecção de região e resumo por visão.');

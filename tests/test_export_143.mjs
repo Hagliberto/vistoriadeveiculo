@@ -14,5 +14,5 @@ assert.ok(exports.includes('openOfficialPdf()')&&exports.includes('validateAndPr
 assert.ok(css.includes('.export-modal[hidden]'));
 for(const icon of ['file-pdf','file-image','caret-right'])assert.ok(icons.includes(`'${icon}'`));
 assert.ok(sw.includes("'./assets/export.js'"));
-assert.equal(JSON.parse(load('version.json')).version, '1.5.2');
+assert.equal(JSON.parse(load('version.json')).version, '1.5.3');
 console.log('OK: modal de exportação, appbar, SVG offline, PDF/PNG/imprimir e versionamento.');
