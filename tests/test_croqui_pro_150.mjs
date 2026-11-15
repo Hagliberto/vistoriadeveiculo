@@ -90,7 +90,7 @@ assert.equal(run(`detectCroquiRegion('rear', 50, 70)`), 'Placa traseira');
 assert.equal(run(`detectCroquiRegion('left', 20, 85)`), 'Roda dianteira esquerda');
 
 run(`setActiveCroquiView('rear')`);
-assert.equal(get('croqui-active-view-label').textContent, 'Traseira');
+assert.equal(get('croqui-active-view-label').textContent, 'Traseira (180°)');
 assert.match(get('croqui-active-view-desc').textContent, /lanternas|traseira/i);
 assert.equal(navDots.get('rear').attributes['aria-pressed'], 'true');
 
@@ -110,6 +110,6 @@ assert.ok(get('damage-list').children[0].innerHTML.includes('Farol direito'));
 run(`updateAllBadgesAndStats = () => {}; updatePinRegion(201, 'Para-choque dianteiro')`);
 const updatedRegion = run(`appState.pins.find(p => p.id === 201).region`);
 assert.equal(updatedRegion, 'Para-choque dianteiro');
-assert.equal(JSON.parse(fs.readFileSync(new URL('../version.json', import.meta.url), 'utf8')).version, '1.5.3');
-assert.ok(fs.readFileSync(new URL('../service-worker.js', import.meta.url), 'utf8').includes('shell-v1.5.3'));
-console.log('OK: croqui 360° v1.5.3 com zoom discreto, detecção de região e resumo por visão.');
+assert.equal(JSON.parse(fs.readFileSync(new URL('../version.json', import.meta.url), 'utf8')).version, '1.5.4');
+assert.ok(fs.readFileSync(new URL('../service-worker.js', import.meta.url), 'utf8').includes('shell-v1.5.4'));
+console.log('OK: croqui 360° v1.5.4 com zoom discreto, detecção de região e resumo por visão.');

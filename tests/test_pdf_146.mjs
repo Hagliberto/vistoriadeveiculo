@@ -11,5 +11,5 @@ assert.ok(!html.includes('Compartilhar PDF oficial'));
 assert.ok(html.includes('salve e compartilhe o arquivo depois'));
 assert.ok(app.includes('async function prepareAndPrint()'));
 assert.ok(app.includes('window.print()'));
-assert.equal(JSON.parse(read('version.json')).version,'1.5.3');
+assert.equal(JSON.parse(read('version.json')).version,'1.5.4');
 console.log('OK: os fluxos PDF e impressão usam exclusivamente a impressão nativa; PNG separado.');

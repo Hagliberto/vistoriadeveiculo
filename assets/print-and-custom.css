@@ -961,3 +961,29 @@ body.export-open {overflow:hidden}
   .croqui-views-grid .croqui-surface {background-color:white !important;background-image:none !important;border:1px solid #aeb9c5 !important}
   .croqui-views-grid > .croqui-view-card {border:1px solid #dde2e7 !important;box-shadow:none !important}
 }
+
+/* v1.5.4 — 8 vistas da prancha original, swipe horizontal e área única de desenho */
+@media screen {
+  .croqui-views-grid > .croqui-view-card { display:none !important; }
+  .croqui-views-grid > .croqui-view-card.is-active-view { display:block !important; }
+  .croqui-views-grid > .croqui-view-card { padding:0 !important; border:0 !important; background:transparent !important; box-shadow:none !important; }
+  .croqui-views-grid .croqui-surface {
+    aspect-ratio:16/9 !important; min-height:0 !important; padding:0 !important;
+    border:1px solid #cbd5e1 !important; border-radius:12px !important;
+    background:#fff !important; touch-action:pan-y !important;
+  }
+  .croqui-views-grid .croqui-drawing { display:block; width:100%; height:auto; aspect-ratio:16/9; user-select:none; -webkit-user-drag:none; }
+  .croqui-view-card .croqui-view-title { margin-top:2px; }
+  .croqui-zoom-stage { width:100%; aspect-ratio:16/9; transform-origin:center !important; }
+  .croqui-views-grid .damage-pin { touch-action:none; }
+  .croqui-view-center span { max-width:100%; }
+}
+@media print {
+  .croqui-views-grid { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:5mm !important; }
+  .croqui-views-grid > .croqui-view-card { display:block !important; grid-column:auto !important; break-inside:avoid !important; page-break-inside:avoid !important; }
+  .croqui-views-grid .croqui-surface { aspect-ratio:16/9 !important; padding:0 !important; background:#fff !important; border:1px solid #cbd5e1 !important; min-height:0 !important; }
+  .croqui-views-grid .croqui-drawing { display:block !important; width:100% !important; height:auto !important; aspect-ratio:16/9 !important; }
+  .croqui-zoom-stage { width:100% !important; aspect-ratio:16/9 !important; transform:none !important; }
+  .croqui-views-grid > .croqui-view-card .croqui-view-title span { font-size:7pt !important; }
+  .croqui-views-grid > .croqui-view-card .croqui-view-title span[id] { font-size:6pt !important; }
+}

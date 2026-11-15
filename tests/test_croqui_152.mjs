@@ -10,9 +10,9 @@ assert.match(css, /\.croqui-views-grid > \.croqui-view-card\s*\{display:none !im
 assert.match(css, /\.croqui-view-card\.is-active-view\s*\{display:block !important/);
 assert.match(css, /@media print\s*\{\s*\.croqui-views-grid > \.croqui-view-card\s*\{display:block !important/);
 assert.match(js, /function stepCroquiView\(direction = 1\)/);
-assert.match(js, /surface\.addEventListener\('touchend'/);
+assert.match(js, /surface\.addEventListener\('pointerup'/);
 assert.match(js, /const stage = surface\.querySelector\('\.croqui-zoom-stage'\)/);
 assert.match(html, /name="mobile-web-app-capable"/);
-assert.ok((html.match(/<svg\b/g)||[]).length >= 5 && (html.match(/<path\b/g)||[]).length >= 25, 'croquis técnicos vetoriais detalhados');
-assert.equal(JSON.parse(read('version.json')).version,'1.5.3');
-console.log('OK: uma vista por vez, navegação gestual, SVGs detalhados e todas as vistas no PDF.');
+assert.ok((html.match(/class="croqui-drawing/g)||[]).length === 8, 'oito vistas da prancha de referência');
+assert.equal(JSON.parse(read('version.json')).version,'1.5.4');
+console.log('OK: uma vista por vez, navegação gestual, oito vistas da prancha e todas as vistas no PDF.');

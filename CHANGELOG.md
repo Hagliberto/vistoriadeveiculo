@@ -1,3 +1,12 @@
+## v1.5.4 — Croqui fiel à prancha original, oito vistas e arraste
+
+- Utilização dos **recortes da prancha fornecida pelo usuário**, mantendo o estilo técnico do veículo em cada uma das oito vistas.
+- Vistas: frontal (0°), dianteira esquerda (45°), lateral esquerda (90°), traseira esquerda (135°), traseira (180°), lateral direita (270°), dianteira direita (315°) e superior (zênite).
+- **Arraste horizontal com mouse, caneta ou toque** para trocar de vista sem registrar avaria involuntariamente; setas preservadas.
+- Marcações antigas preservadas por ID de vista; novas vistas recebem pontos próprios com numeração e cores consistentes.
+- PDF/Impressão exibe todas as oito vistas. Imagens WebP locais incluídas no cache offline do PWA.
+- Não há rotação tridimensional contínua: trata-se de oito vistas discretas, exatamente como na prancha.
+
 ## v1.5.3 — Croqui técnico e navegação limpa
 
 - Substituição do desenho por traçado técnico vetorial em preto e branco com vidros, painéis e rodas detalhados.
