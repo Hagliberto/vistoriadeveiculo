@@ -75,5 +75,5 @@ assert.match(renderPart,/class="croqui-print-count/);
 assert.doesNotMatch(renderPart,/\$\{grouped\[view\.id\]\.length\} ponto\(s\)/);
 assert.match(css,/touch-action:none !important/);
 assert.match(css,/\.croqui-print-count/);
-assert.equal(JSON.parse(fs.readFileSync(new URL('../version.json',import.meta.url))).version,'1.5.7');
-console.log('OK: pinça, pan no zoom, proteção contra pontos involuntários e contagem discreta no PDF v1.5.7.');
+assert.equal(JSON.parse(fs.readFileSync(new URL('../version.json',import.meta.url))).version,'1.5.8');
+console.log('OK: pinça, pan no zoom, proteção contra pontos involuntários e contagem discreta no PDF v1.5.8.');

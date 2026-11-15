@@ -1051,3 +1051,38 @@ body.export-open {overflow:hidden}
     white-space:nowrap !important;
   }
 }
+
+/* v1.5.8 · Modal de seleção e filtragem temporária APENAS no documento impresso. */
+.export-selective-options {border:1px solid #dbe5f1;border-radius:13px;padding:12px;margin:12px 0;background:#fafcff;min-width:0}
+.export-selective-options legend {font-size:12px;font-weight:800;color:#1d4167;padding:0 5px}
+.export-fixed-note {display:flex;gap:7px;align-items:center;font-size:11px;color:#376087;margin:3px 0 10px}
+.export-selective-grid,.export-category-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.export-selective-grid label,.export-category-grid label,.export-row-toggle {display:flex;align-items:center;gap:8px;min-width:0;cursor:pointer;border-radius:8px;background:#fff;border:1px solid #e2e8f0;padding:8px;font-size:12px;color:#334155}
+.export-selective-grid input,.export-category-grid input,.export-row-toggle input {width:16px;height:16px;flex:none;accent-color:#0369a1}
+.export-selective-grid span,.export-category-grid span {overflow-wrap:anywhere}
+.export-detail-title {font-size:11px;text-transform:uppercase;font-weight:750;color:#64748b;margin:12px 0 7px}
+.export-row-toggle {margin-top:9px}
+.export-note {font-size:10.5px;color:#64748b;margin-top:9px}
+#export-checklist-detail[hidden] {display:none !important}
+@media(max-width:480px){.export-selective-grid,.export-category-grid {grid-template-columns:1fr}}
+@media print {
+  body.print-selective.print-omit-croqui #exp-croqui,
+  body.print-selective.print-omit-checklist #checklist-sections,
+  body.print-selective.print-omit-photos #print-photo-section,
+  body.print-selective #checklist-sections .print-exclude-category,
+  body.print-selective #checklist-sections .print-exclude-row {display:none !important}
+  body.print-selective.print-omit-signatures #content-exp-assinaturas > .grid,
+  body.print-selective.print-omit-signatures #content-exp-assinaturas > p,
+  body.print-selective.print-omit-signatures .sig-canvas-wrapper {display:none !important}
+  body.print-selective.print-omit-signatures #exp-assinaturas .expander-header h2 {font-size:0 !important}
+  body.print-selective.print-omit-signatures #exp-assinaturas .expander-header h2::after {content:'OBSERVAÇÕES GERAIS';font-size:9.5pt !important}
+}
+
+@media print {
+  /* Métricas omitidas não devem aparecer como se tivessem sido incluídas. */
+  body.print-selective.print-omit-checklist #print-official-header .grid.grid-cols-6 > div:nth-child(-n+4),
+  body.print-selective.print-omit-croqui #print-official-header .grid.grid-cols-6 > div:nth-child(5),
+  body.print-selective.print-omit-photos #print-official-header .grid.grid-cols-6 > div:nth-child(6) {display:none !important}
+  body.print-selective #print-official-header .grid.grid-cols-6 {display:flex !important;justify-content:center;align-items:center;}
+  body.print-selective #print-official-header .grid.grid-cols-6 > div {flex:1 1 auto;min-width:0;}
+}

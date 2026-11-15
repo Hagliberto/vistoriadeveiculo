@@ -1,3 +1,11 @@
+## Exportação v1.5.8
+
+- PDF e impressão usam somente o HTML/CSS nativo em A4; não implementar um PDF raster separado.
+- Identificação e observações são sempre impressas.
+- Croqui, checklist, fotos e assinaturas são opcionais no modal; checklist pode filtrar categorias e itens verificados.
+- Alterações de impressão não modificam `appState` nem o histórico.
+- PNG não deve ser reintroduzido.
+
 ## Regras da versão 1.5.7
 
 - Cor do croqui é função do tipo, nunca da posição sequencial ou ID do ponto.
