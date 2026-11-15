@@ -1,3 +1,11 @@
+## v1.5.6 — Pinça para zoom, arraste e contagem discreta no PDF
+
+- Gestos de pinça (dois dedos) nas nove imagens do croqui, inclusive em tela cheia.
+- Com zoom, arrastar move a imagem; em 100%, arrastar horizontalmente troca a vista.
+- Controle contra registro acidental de pontos durante arraste/pinça.
+- Posição das avarias acompanha a transformação da imagem e a impressão continua sem zoom.
+- No resumo por visão do PDF, apenas a contagem numérica discreta, sem pill nem "ponto(s)".
+
 ## v1.5.5 — Imagens do PDF de referência e tela cheia
 
 - Substituídas as imagens das vistas por arquivos extraídos diretamente do PDF do usuário, sem os quadros e setas da prancha.

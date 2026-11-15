@@ -1,3 +1,7 @@
+### Gestos do croqui (v1.5.6)
+
+Pinça com dois dedos para ampliar/reduzir. Com zoom maior que 100%, arraste com um dedo para reposicionar a imagem; em 100%, arraste na horizontal para trocar de vista. O PDF oficial não herda o zoom, e mostra uma contagem discreta por vista.
+
 ## v1.5.5 — Imagens do PDF de referência e tela cheia
 
 - Substituídas as imagens das vistas por arquivos extraídos diretamente do PDF do usuário, sem os quadros e setas da prancha.
