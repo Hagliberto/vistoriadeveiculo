@@ -161,6 +161,10 @@ A única fonte do layout PDF é `@media print`: os botões **Salvar como PDF**, 
 O menu oferece **Salvar como PDF**, **Baixar em PNG** e **Imprimir**. A antiga opção Compartilhar PDF oficial foi retirada porque apenas repetia a ação Salvar como PDF. O PDF A4 é salvo pelo diálogo nativo de impressão e pode ser anexado depois a WhatsApp/e-mail. Não é possível compartilhar diretamente o PDF emitido pelo diálogo do navegador por JavaScript.
 
 
+### Croqui profissional (v1.5.0)
+
+A versão 1.5.0 adiciona melhorias operacionais ao croqui: **zoom**, seleção de **região/peça** por visão, legenda visual das faces do veículo e um **resumo por visão no PDF**. Isso torna o laudo mais claro tanto na tela quanto na impressão.
+
 ### Croqui em várias visões (v1.4.9)
 
 O croqui agora exibe o veículo em **cinco ângulos**: visão superior, lateral esquerda, lateral direita, frontal e traseira. Cada ponto é salvo com a visão correspondente, e a lista de avarias indica em qual face do veículo o dano foi registrado. Isso melhora bastante a leitura do laudo quando há muitos danos espalhados.

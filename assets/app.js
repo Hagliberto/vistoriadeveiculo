@@ -37,7 +37,7 @@
          * Atualizações PWA: somente versões publicadas no mesmo host, com confirmação.
          * A verificação não acessa nem altera IndexedDB/localStorage de vistorias.
          */
-        const APP_VERSION = '1.4.9';
+        const APP_VERSION = '1.5.0';
         let updateRegistration = null;
         let availableUpdateVersion = null;
         let updateCheckInProgress = false;
@@ -358,13 +358,19 @@
                 };
             }
             if (Array.isArray(raw.pins)) {
-                next.pins = raw.pins.slice(0, 300).filter(p => p && Number.isFinite(p.x) && Number.isFinite(p.y)).map((p, i) => ({
-                    id: Number.isSafeInteger(p.id) ? p.id : Date.now() + i,
-                    x: Math.max(4, Math.min(96, p.x)), y: Math.max(6, Math.min(94, p.y)),
-                    view: CROQUI_VIEW_IDS.has(p.view) ? p.view : 'top',
-                    type: ['Amassado','Risco','Quebrado','Faltando'].includes(p.type) ? p.type : 'Risco',
-                    desc: typeof p.desc === 'string' ? p.desc.slice(0, 2000) : '', photo: validPhoto(p.photo)
-                }));
+                next.pins = raw.pins.slice(0, 300).filter(p => p && Number.isFinite(p.x) && Number.isFinite(p.y)).map((p, i) => {
+                    const view = CROQUI_VIEW_IDS.has(p.view) ? p.view : 'top';
+                    const regions = CROQUI_REGIONS[view] || CROQUI_REGIONS.top;
+                    const region = typeof p.region === 'string' && regions.includes(p.region) ? p.region : regions[0];
+                    return {
+                        id: Number.isSafeInteger(p.id) ? p.id : Date.now() + i,
+                        x: Math.max(4, Math.min(96, p.x)), y: Math.max(6, Math.min(94, p.y)),
+                        view,
+                        region,
+                        type: ['Amassado','Risco','Quebrado','Faltando'].includes(p.type) ? p.type : 'Risco',
+                        desc: typeof p.desc === 'string' ? p.desc.slice(0, 2000) : '', photo: validPhoto(p.photo)
+                    };
+                });
                 const used = new Set();
                 for (const pin of next.pins) { while (used.has(pin.id)) pin.id += 1; used.add(pin.id); }
             }
@@ -414,6 +420,8 @@
 
         let appState = createDefaultState();
         let selectedDamageType = 'Amassado';
+        let activeCroquiView = 'top';
+        let croquiZoom = 1;
         const CROQUI_VIEWS = Object.freeze([
             { id: 'top', label: 'Visão superior', shortLabel: 'Superior' },
             { id: 'left', label: 'Lateral esquerda', shortLabel: 'Lat. esquerda' },
@@ -422,6 +430,13 @@
             { id: 'rear', label: 'Traseira', shortLabel: 'Traseira' }
         ]);
         const CROQUI_VIEW_IDS = new Set(CROQUI_VIEWS.map(view => view.id));
+        const CROQUI_REGIONS = Object.freeze({
+            top: ['Capô', 'Teto', 'Para-brisa', 'Vidro traseiro', 'Porta-malas', 'Para-choque dianteiro', 'Para-choque traseiro', 'Lateral esquerda', 'Lateral direita', 'Retrovisor esquerdo', 'Retrovisor direito'],
+            left: ['Paralama dianteiro esquerdo', 'Porta dianteira esquerda', 'Porta traseira esquerda', 'Caixa de ar esquerda', 'Retrovisor esquerdo', 'Roda dianteira esquerda', 'Roda traseira esquerda', 'Paralama traseiro esquerdo', 'Vidro dianteiro esquerdo', 'Vidro traseiro esquerdo'],
+            right: ['Paralama dianteiro direito', 'Porta dianteira direita', 'Porta traseira direita', 'Caixa de ar direita', 'Retrovisor direito', 'Roda dianteira direita', 'Roda traseira direita', 'Paralama traseiro direito', 'Vidro dianteiro direito', 'Vidro traseiro direito'],
+            front: ['Capô', 'Grade dianteira', 'Para-brisa', 'Farol esquerdo', 'Farol direito', 'Para-choque dianteiro', 'Placa dianteira'],
+            rear: ['Porta-malas', 'Vidro traseiro', 'Lanterna esquerda', 'Lanterna direita', 'Para-choque traseiro', 'Placa traseira']
+        });
         const signaturePads = {};
         let pendingPhotoTarget = null; // { type: 'checklist' | 'pin', id: string | number }
 
@@ -852,7 +867,7 @@
                 if (pin.photo) {
                     photos.push({
                         title: `Ponto #${idx + 1} (${pin.type})`,
-                        subtitle: `${getCroquiViewMeta(pin.view).shortLabel} • ${pin.desc || 'Marcação no Croqui Visual'}`, 
+                        subtitle: `${getCroquiViewMeta(pin.view).shortLabel} • ${pin.region || 'Região não informada'}${pin.desc ? ` • ${pin.desc}` : ''}`, 
                         src: pin.photo
                     });
                 }
@@ -1114,6 +1129,63 @@
         /**
          * 8. CROQUI VISUAL INTERATIVO DE AVARIAS
          */
+        function getCroquiRegions(viewId) {
+            return CROQUI_REGIONS[CROQUI_VIEW_IDS.has(viewId) ? viewId : 'top'] || CROQUI_REGIONS.top;
+        }
+
+        function buildCroquiRegionOptionsHtml(viewId, selectedValue) {
+            const selected = getCroquiRegions(viewId).includes(selectedValue) ? selectedValue : getCroquiRegions(viewId)[0];
+            return getCroquiRegions(viewId).map(region => `<option value="${safeText(region)}"${region === selected ? ' selected' : ''}>${safeText(region)}</option>`).join('');
+        }
+
+        function populateCroquiRegionSelect(viewId = activeCroquiView, selectedValue = '') {
+            const select = document.getElementById('croqui-region-select');
+            if (!select) return;
+            const options = getCroquiRegions(viewId);
+            const selected = options.includes(selectedValue) ? selectedValue : options[0];
+            select.innerHTML = options.map(region => `<option value="${safeText(region)}">${safeText(region)}</option>`).join('');
+            select.value = selected;
+            const hint = document.getElementById('croqui-region-hint');
+            if (hint) hint.textContent = `Regiões sugeridas para ${getCroquiViewMeta(viewId).label.toLowerCase()}.`;
+        }
+
+        function setActiveCroquiView(viewId = 'top', preferredRegion = '') {
+            activeCroquiView = CROQUI_VIEW_IDS.has(viewId) ? viewId : 'top';
+            populateCroquiRegionSelect(activeCroquiView, preferredRegion);
+            if (document.querySelectorAll) {
+                document.querySelectorAll('[data-view-card]').forEach(card => {
+                    const isActive = card.dataset.viewCard === activeCroquiView;
+                    card.classList.toggle('is-active-view', isActive);
+                    card.style.transform = isActive ? 'translateY(-1px)' : '';
+                    card.style.borderColor = isActive ? '#60a5fa' : '';
+                    card.style.boxShadow = isActive ? '0 0 0 1px rgba(59,130,246,.18), 0 14px 24px rgba(15,23,42,.08)' : card.style.boxShadow;
+                });
+            }
+        }
+
+        function getSelectedCroquiRegion(viewId = activeCroquiView) {
+            const select = document.getElementById('croqui-region-select');
+            const options = getCroquiRegions(viewId);
+            return options.includes(select?.value) ? select.value : options[0];
+        }
+
+        function applyCroquiZoom() {
+            const zoomLabel = document.getElementById('croqui-zoom-level');
+            if (zoomLabel) zoomLabel.textContent = `${Math.round(croquiZoom * 100)}%`;
+            if (document.querySelectorAll) {
+                document.querySelectorAll('.croqui-zoom-stage').forEach(stage => {
+                    stage.style.transform = `scale(${croquiZoom})`;
+                    stage.style.transformOrigin = 'center center';
+                    stage.style.transition = 'transform .18s ease';
+                });
+            }
+        }
+
+        function setCroquiZoom(nextZoom) {
+            croquiZoom = Math.max(1, Math.min(2.25, Math.round(nextZoom * 100) / 100));
+            applyCroquiZoom();
+        }
+
         function setupDiagramInteractions() {
             document.querySelectorAll('.damage-type-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -1125,10 +1197,18 @@
                 });
             });
 
+            const regionSelect = document.getElementById('croqui-region-select');
+            if (regionSelect) {
+                regionSelect.addEventListener('focus', () => setActiveCroquiView(activeCroquiView, regionSelect.value));
+            }
+
             document.querySelectorAll('[data-croqui-view]').forEach(surface => {
                 const viewId = surface.dataset.croquiView || 'top';
+                surface.addEventListener('pointerenter', () => setActiveCroquiView(viewId));
+                surface.addEventListener('focus', () => setActiveCroquiView(viewId));
                 surface.addEventListener('click', (e) => {
                     if (e.target.closest('.damage-pin')) return;
+                    setActiveCroquiView(viewId);
                     const rect = surface.getBoundingClientRect();
                     const xPct = ((e.clientX - rect.left) / rect.width) * 100;
                     const yPct = ((e.clientY - rect.top) / rect.height) * 100;
@@ -1137,6 +1217,7 @@
                 surface.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
+                        setActiveCroquiView(viewId);
                         addDamagePin(50, 50, viewId);
                         showToast(`Ponto registrado no centro da ${getCroquiViewMeta(viewId).label.toLowerCase()}.`);
                     }
@@ -1148,11 +1229,14 @@
                     showToast('Limite de 300 marcações por vistoria.');
                     return;
                 }
+                const normalizedView = CROQUI_VIEW_IDS.has(viewId) ? viewId : 'top';
+                const region = getSelectedCroquiRegion(normalizedView);
                 appState.pins.push({
-                    id: Date.now() * 1000 + Math.floor(Math.random()*1000),
+                    id: Date.now() * 1000 + Math.floor(Math.random() * 1000),
                     x: Math.max(4, Math.min(96, xPct)),
                     y: Math.max(6, Math.min(94, yPct)),
-                    view: CROQUI_VIEW_IDS.has(viewId) ? viewId : 'top',
+                    view: normalizedView,
+                    region,
                     type: selectedDamageType,
                     desc: '',
                     photo: null
@@ -1162,6 +1246,13 @@
                 updateAllBadgesAndStats();
                 saveToLocalStorage();
             }
+
+            const zoomIn = document.getElementById('btn-croqui-zoom-in');
+            const zoomOut = document.getElementById('btn-croqui-zoom-out');
+            const zoomReset = document.getElementById('btn-croqui-zoom-reset');
+            if (zoomIn) zoomIn.addEventListener('click', () => setCroquiZoom(croquiZoom + 0.15));
+            if (zoomOut) zoomOut.addEventListener('click', () => setCroquiZoom(croquiZoom - 0.15));
+            if (zoomReset) zoomReset.addEventListener('click', () => setCroquiZoom(1));
 
             document.getElementById('btn-clear-pins').addEventListener('click', () => {
                 if (appState.pins.length === 0) return;
@@ -1174,6 +1265,8 @@
                 }, 'Remover pontos');
             });
 
+            setActiveCroquiView(activeCroquiView);
+            applyCroquiZoom();
             renderDamagePins();
         }
 
@@ -1208,6 +1301,7 @@
 
         function renderDamagePins() {
             const listEl = document.getElementById('damage-list');
+            const printMiniGrid = document.getElementById('print-croqui-miniatures-grid');
             const pinsLayers = {
                 top: document.getElementById('pins-layer'),
                 left: document.getElementById('pins-layer-left'),
@@ -1219,31 +1313,53 @@
                 if (layer) layer.innerHTML = '';
             }
 
-            const counts = { top: 0, left: 0, right: 0, front: 0, rear: 0 };
+            const grouped = { top: [], left: [], right: [], front: [], rear: [] };
             appState.pins.forEach(pin => {
                 const key = CROQUI_VIEW_IDS.has(pin.view) ? pin.view : 'top';
-                counts[key] += 1;
+                grouped[key].push(pin);
             });
             CROQUI_VIEWS.forEach(view => {
+                const count = grouped[view.id].length;
                 const badge = document.getElementById(`croqui-count-${view.id}`);
-                if (badge) badge.textContent = counts[view.id] ? `${counts[view.id]} ponto(s)` : '0 ponto(s)';
+                if (badge) badge.textContent = `${count} ponto(s)`;
                 const card = document.querySelector ? document.querySelector(`[data-view-card="${view.id}"]`) : null;
-                if (card && card.style) {
-                    card.style.boxShadow = counts[view.id] ? '0 0 0 1px rgba(0,114,206,.15), 0 10px 25px rgba(15,23,42,.05)' : '';
-                    card.style.borderColor = counts[view.id] ? '#93c5fd' : '';
+                if (card && card.style && view.id !== activeCroquiView) {
+                    card.style.boxShadow = count ? '0 0 0 1px rgba(0,114,206,.15), 0 10px 25px rgba(15,23,42,.05)' : '';
+                    card.style.borderColor = count ? '#93c5fd' : '';
+                    card.style.transform = '';
                 }
             });
 
+            if (printMiniGrid) {
+                printMiniGrid.innerHTML = CROQUI_VIEWS.map(view => {
+                    const items = grouped[view.id].map(pin => {
+                        const idx = appState.pins.findIndex(candidate => candidate.id === pin.id);
+                        const num = idx >= 0 ? idx + 1 : '?';
+                        return `<li><strong>#${num}</strong> ${safeText(pin.region || pin.type)}${pin.desc ? ` — ${safeText(pin.desc)}` : ''}</li>`;
+                    }).join('');
+                    return `
+                        <div class="print-croqui-mini-card border border-slate-300 rounded-lg p-2 bg-slate-50">
+                            <div class="flex items-center justify-between mb-1">
+                                <strong class="text-[8pt] text-slate-900">${safeText(view.label)}</strong>
+                                <span class="text-[7pt] px-1.5 py-0.5 rounded-full border border-slate-300 bg-white text-slate-600">${grouped[view.id].length} ponto(s)</span>
+                            </div>
+                            ${items ? `<ul class="text-[7pt] text-slate-700 pl-4 space-y-0.5">${items}</ul>` : `<div class="text-[7pt] text-slate-400">Sem registros nesta visão.</div>`}
+                        </div>`;
+                }).join('');
+            }
+
             if (appState.pins.length === 0) {
-                listEl.innerHTML = `
-                    <div class="text-center py-7 px-4 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-xs">
-                        Nenhuma avaria marcada no desenho.<br>Toque em qualquer visão para registrar.
-                    </div>
-                `;
+                if (listEl) {
+                    listEl.innerHTML = `
+                        <div class="text-center py-7 px-4 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-xs">
+                            Nenhuma avaria marcada no desenho.<br>Toque em qualquer visão para registrar.
+                        </div>
+                    `;
+                }
                 return;
             }
 
-            listEl.innerHTML = '';
+            if (listEl) listEl.innerHTML = '';
             appState.pins.forEach((pin, idx) => {
                 const num = idx + 1;
                 const color = getDamagePinColor(idx);
@@ -1254,12 +1370,13 @@
                 pinEl.className = 'damage-pin absolute w-6 h-6 rounded-full text-white font-bold text-xs flex items-center justify-center shadow-md border-2 border-white pointer-events-auto cursor-pointer';
                 pinEl.style.backgroundColor = color.fill;
                 pinEl.style.color = '#ffffff';
-                pinEl.title = `Ponto ${num} — ${pin.type} — ${view.label}`;
+                pinEl.title = `Ponto ${num} — ${pin.type} — ${view.label} — ${pin.region || 'Região não informada'}`;
                 pinEl.style.left = `${pin.x}%`;
                 pinEl.style.top = `${pin.y}%`;
                 pinEl.textContent = num;
                 pinEl.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    setActiveCroquiView(pin.view, pin.region);
                     const input = document.getElementById(`pin-desc-${pin.id}`);
                     if (input) input.focus();
                 });
@@ -1270,25 +1387,35 @@
                 itemEl.style.borderLeft = `4px solid ${color.fill}`;
                 itemEl.style.setProperty('--damage-pin-color', color.fill);
                 itemEl.innerHTML = `
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-start gap-2">
                         <span class="damage-list-number w-6 h-6 rounded-full text-white font-bold text-xs flex items-center justify-center shrink-0" style="background-color:${color.fill};color:#fff">${num}</span>
                         <div class="flex-1 min-w-0">
-                            <div class="flex flex-wrap items-center gap-1.5 mb-0.5">
+                            <div class="flex flex-wrap items-center gap-1.5 mb-1">
                                 <span class="damage-list-type block text-[11px] font-bold leading-tight" style="color:${color.text}">${safeText(pin.type)}</span>
                                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border" style="color:${color.text};border-color:${color.fill}55;background:${color.fill}11">${safeText(view.shortLabel)}</span>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border border-slate-300 bg-white text-slate-600">${safeText(pin.region || getCroquiRegions(pin.view)[0])}</span>
                             </div>
                             <input type="text" id="pin-desc-${pin.id}" value="${safeText(pin.desc)}" placeholder="Local / detalhe da avaria..."
+                                onfocus="setActiveCroquiView('${pin.view}', '${safeText(pin.region || '')}')"
                                 oninput="updatePinDesc(${pin.id}, this.value)"
                                 class="w-full text-xs bg-transparent border-b border-slate-300 focus:border-[#0072ce] outline-none py-1 text-slate-700">
+                            <div class="mt-2">
+                                <label class="block text-[10px] font-semibold uppercase tracking-wide text-slate-500 mb-1">Região / peça</label>
+                                <select onchange="updatePinRegion(${pin.id}, this.value)" class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-[11px] text-slate-700 focus:border-[#0072ce] outline-none">
+                                    ${buildCroquiRegionOptionsHtml(pin.view, pin.region)}
+                                </select>
+                            </div>
                         </div>
-                        <button type="button" onclick="triggerPhotoCapture('pin', ${pin.id})" title="Anexar Foto"
-                            class="p-2 ${pin.photo ? 'text-sky-600 bg-sky-100' : 'text-slate-500 hover:text-sky-600'} rounded-lg transition no-print">
-                            <i class="ph-bold ph-camera text-base"></i>
-                        </button>
-                        <button type="button" onclick="removePin(${pin.id})" title="Remover"
-                            class="p-2 text-slate-400 hover:text-rose-600 rounded-lg transition no-print">
-                            <i class="ph-bold ph-trash text-base"></i>
-                        </button>
+                        <div class="flex flex-col gap-1 no-print">
+                            <button type="button" onclick="setActiveCroquiView('${pin.view}', '${safeText(pin.region || '')}');triggerPhotoCapture('pin', ${pin.id})" title="Anexar Foto"
+                                class="p-2 ${pin.photo ? 'text-sky-600 bg-sky-100' : 'text-slate-500 hover:text-sky-600'} rounded-lg transition">
+                                <i class="ph-bold ph-camera text-base"></i>
+                            </button>
+                            <button type="button" onclick="removePin(${pin.id})" title="Remover"
+                                class="p-2 text-slate-400 hover:text-rose-600 rounded-lg transition">
+                                <i class="ph-bold ph-trash text-base"></i>
+                            </button>
+                        </div>
                     </div>
                     ${pin.photo ? `
                         <div class="flex items-center justify-between bg-white p-1.5 rounded-lg border border-slate-200 no-print">
@@ -1300,16 +1427,27 @@
                         </div>
                     ` : ''}
                 `;
-                listEl.appendChild(itemEl);
+                if (listEl) listEl.appendChild(itemEl);
             });
+            setActiveCroquiView(activeCroquiView, getSelectedCroquiRegion(activeCroquiView));
         }
 
         function updatePinDesc(pinId, val) {
             const pin = appState.pins.find(p => p.id === pinId);
             if (pin) {
-                pin.desc = val;
+                pin.desc = String(val ?? '').slice(0, 2000);
                 saveToLocalStorage();
             }
+        }
+
+        function updatePinRegion(pinId, value) {
+            const pin = appState.pins.find(p => p.id === pinId);
+            if (!pin) return;
+            const regions = getCroquiRegions(pin.view);
+            pin.region = regions.includes(value) ? value : regions[0];
+            renderDamagePins();
+            updateAllBadgesAndStats();
+            saveToLocalStorage();
         }
 
         function removePin(pinId) {

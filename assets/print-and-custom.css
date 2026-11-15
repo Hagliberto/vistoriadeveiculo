@@ -508,7 +508,7 @@
     #exp-croqui, #exp-assinaturas {break-inside:avoid-page !important;}
 }
 
-@media screen { #print-photo-section { display:none !important; } }
+@media screen { #print-photo-section, #print-croqui-miniatures { display:none !important; } }
 
 /* 1.2.0 — Appbar sem minicard, ações por categoria e modais empilhados corretamente. */
 @media screen {
@@ -723,7 +723,7 @@
 
 body.export-open {overflow:hidden}
 
-/* v1.4.9 — croqui com múltiplas visões e numeração cromática consistente na tela e no PDF A4. */
+/* v1.5.0 — croqui profissional com múltiplas visões, zoom, regiões e resumo por visão no PDF. */
 .damage-pin, .damage-list-number, .damage-list-type, .damage-list-item {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -786,5 +786,37 @@ body.export-open {overflow:hidden}
     .croqui-view-card span[id^="croqui-count-"] {
         border-color: #cbd5e1 !important;
         color: #475569 !important;
+    }
+}
+
+
+.croqui-zoom-stage {
+    transform-origin: center center;
+}
+.print-croqui-mini-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+#croqui-view-legend span {
+    white-space: nowrap;
+}
+#damage-list select {
+    min-height: 34px;
+}
+@media print {
+    #print-croqui-miniatures {
+        display: block !important;
+    }
+    #print-croqui-miniatures-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 6px !important;
+    }
+    .croqui-zoom-stage {
+        transform: none !important;
+    }
+    #damage-list select {
+        border-color: #cbd5e1 !important;
+        background: #fff !important;
     }
 }
