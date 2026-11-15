@@ -1,3 +1,12 @@
+## v1.5.1 — Croqui 360°, zoom discreto e visual refinado do veículo
+
+- Navegação **360°** por visões com setas discretas e pontos de seleção.
+- **Zoom do croqui** com ícones compactos e interface menos poluída.
+- Removida a seleção manual superior de região/peça; agora a **região é sugerida automaticamente** conforme o ponto clicado na visão ativa.
+- Lista de avarias ficou mais limpa, exibindo a **região detectada** de forma direta.
+- Ajustes visuais no croqui para um **veículo com aparência mais refinada**.
+- PDF continua com resumo por visão e compatibilidade com o fluxo de impressão oficial.
+
 ## v1.5.0 — Croqui profissional com região da peça, zoom e resumo por visão no PDF
 
 - Seleção guiada de **região / peça** conforme a visão ativa do veículo.

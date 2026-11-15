@@ -723,7 +723,7 @@
 
 body.export-open {overflow:hidden}
 
-/* v1.5.0 — croqui profissional com múltiplas visões, zoom, regiões e resumo por visão no PDF. */
+/* v1.5.1 — croqui com navegação 360°, zoom discreto e visual de veículo mais refinado. */
 .damage-pin, .damage-list-number, .damage-list-type, .damage-list-item {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -800,9 +800,6 @@ body.export-open {overflow:hidden}
 #croqui-view-legend span {
     white-space: nowrap;
 }
-#damage-list select {
-    min-height: 34px;
-}
 @media print {
     #print-croqui-miniatures {
         display: block !important;
@@ -815,8 +812,59 @@ body.export-open {overflow:hidden}
     .croqui-zoom-stage {
         transform: none !important;
     }
-    #damage-list select {
-        border-color: #cbd5e1 !important;
-        background: #fff !important;
+}
+
+
+#croqui-360-console {
+    background: linear-gradient(135deg, rgba(248,250,252,.94), rgba(241,245,249,.88));
+}
+.croqui-icon-btn {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    color: #475569;
+    background: transparent;
+    border: 0;
+    transition: color .18s ease, background-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.croqui-icon-btn:hover,
+.croqui-icon-btn:focus-visible {
+    color: #0f172a;
+    background: rgba(255,255,255,.9);
+    box-shadow: 0 0 0 1px rgba(148,163,184,.22);
+    outline: none;
+}
+.croqui-icon-btn:active { transform: scale(.96); }
+.croqui-nav-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 9999px;
+    background: #cbd5e1;
+    border: 0;
+    transition: transform .18s ease, background-color .18s ease, box-shadow .18s ease;
+}
+.croqui-nav-dot:hover,
+.croqui-nav-dot:focus-visible {
+    background: #94a3b8;
+    outline: none;
+    transform: scale(1.05);
+}
+.croqui-nav-dot.is-active {
+    background: #0ea5e9;
+    box-shadow: 0 0 0 4px rgba(14,165,233,.12);
+    transform: scale(1.1);
+}
+.croqui-surface svg {
+    filter: drop-shadow(0 8px 12px rgba(15, 23, 42, .08));
+}
+.croqui-view-card.is-active-view .croqui-surface {
+    border-color: rgba(96,165,250,.75) !important;
+}
+@media (max-width: 640px) {
+    #croqui-360-console .flex.items-center.gap-2.mb-1\.5 {
+        align-items: flex-start;
     }
 }

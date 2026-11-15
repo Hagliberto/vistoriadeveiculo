@@ -1,4 +1,11 @@
-## Croqui profissional v1.5.0
+## Croqui 360° v1.5.1
+
+- O croqui agora possui navegação por visões usando um seletor 360° discreto.
+- A região da avaria é inferida automaticamente a partir das coordenadas do clique na visão ativa.
+- O zoom deve permanecer compacto, com controles por ícones.
+- O laudo impresso/PDF continua exigindo resumo agrupado por visão.
+
+## Croqui profissional v1.5.1
 
 - O croqui possui cinco visões (superior, lateral esquerda, lateral direita, frontal e traseira).
 - Cada ponto salvo deve persistir com `view`, `region`, `type`, `desc` e `photo`.
