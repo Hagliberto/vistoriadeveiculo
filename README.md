@@ -1,3 +1,9 @@
+## Croqui com oito vistas — v1.5.4
+
+O veículo é exibido usando **imagens recortadas da prancha de referência enviada pelo usuário**: frontal 0°, dianteira esquerda 45°, lateral esquerda 90°, traseira esquerda 135°, traseira 180°, lateral direita 270°, dianteira direita 315° e superior (zênite). No desktop, clique e arraste horizontalmente; no celular, deslize lateralmente. As setas também trocam a vista. Ao tocar sem arrastar, uma avaria é registrada. O PDF mostra as oito vistas e suas marcações.
+
+O material é uma prancha de imagens técnicas, não um objeto 3D livremente rotacionável. As vistorias antigas continuam compatíveis.
+
 ### Croqui técnico v1.5.3
 
 Cinco vistas em desenho vetorial preto e branco inspirado em croqui de vistoria: controles integrados, sem cartões de zoom ou legenda. Os pontos permanecem associados à vista e preservados na impressão. Não se trata de 3D com rotação contínua.

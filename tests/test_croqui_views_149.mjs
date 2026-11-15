@@ -54,7 +54,7 @@ const run = code => vm.runInContext(code, ctx);
 for (const key of ['top','left','right','front','rear']) {
   assert.ok(html.includes(`data-croqui-view="${key}"`), `Visão ${key} precisa existir no HTML`);
 }
-assert.ok(html.includes('Visão superior'));
+assert.ok(html.includes('Superior (zênite)'));
 assert.ok(html.includes('Lateral esquerda'));
 assert.ok(html.includes('Lateral direita'));
 assert.ok(html.includes('Frontal'));
@@ -75,8 +75,8 @@ assert.equal(get('pins-layer-rear').children.length, 1);
 assert.equal(get('croqui-count-top').textContent, '1 ponto(s)');
 assert.equal(get('croqui-count-left').textContent, '1 ponto(s)');
 assert.equal(get('croqui-count-right').textContent, '0 ponto(s)');
-assert.ok(get('damage-list').children[1].innerHTML.includes('Lat. esquerda'));
+assert.ok(get('damage-list').children[1].innerHTML.includes('Lateral esq.'));
 assert.ok(get('damage-list').children[2].innerHTML.includes('Traseira'));
-assert.equal(JSON.parse(fs.readFileSync(new URL('../version.json', import.meta.url))).version, '1.5.3');
-assert.ok(fs.readFileSync(new URL('../service-worker.js', import.meta.url), 'utf8').includes('shell-v1.5.3'));
-console.log('OK: croqui em múltiplas visões, migração de view, contadores e versionamento v1.5.3.');
+assert.equal(JSON.parse(fs.readFileSync(new URL('../version.json', import.meta.url))).version, '1.5.4');
+assert.ok(fs.readFileSync(new URL('../service-worker.js', import.meta.url), 'utf8').includes('shell-v1.5.4'));
+console.log('OK: croqui em múltiplas visões, migração de view, contadores e versionamento v1.5.4.');

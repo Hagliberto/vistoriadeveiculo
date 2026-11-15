@@ -37,7 +37,7 @@
          * Atualizações PWA: somente versões publicadas no mesmo host, com confirmação.
          * A verificação não acessa nem altera IndexedDB/localStorage de vistorias.
          */
-        const APP_VERSION = '1.5.3';
+        const APP_VERSION = '1.5.4';
         let updateRegistration = null;
         let availableUpdateVersion = null;
         let updateCheckInProgress = false;
@@ -420,24 +420,32 @@
 
         let appState = createDefaultState();
         let selectedDamageType = 'Amassado';
-        let activeCroquiView = 'top';
+        let activeCroquiView = 'front';
         let croquiZoom = 1;
+        // Prancha de referência: sete ângulos ao redor do carro + vista superior.
+        // Mantemos os IDs legados para preservar os pontos salvos nas versões anteriores.
         const CROQUI_VIEWS = Object.freeze([
-            { id: 'top', label: 'Visão superior', shortLabel: 'Superior', description: 'Visão ampla para teto, capô, para-brisa e porta-malas.' },
-            { id: 'left', label: 'Lateral esquerda', shortLabel: 'Lat. esquerda', description: 'Lado do motorista com portas, paralamas e rodas.' },
-            { id: 'front', label: 'Frontal', shortLabel: 'Frente', description: 'Frente do veículo com faróis, grade e para-choque.' },
-            { id: 'right', label: 'Lateral direita', shortLabel: 'Lat. direita', description: 'Lado do passageiro com portas, paralamas e rodas.' },
-            { id: 'rear', label: 'Traseira', shortLabel: 'Traseira', description: 'Parte traseira com tampa, lanternas e para-choque.' }
+            { id:'front', label:'Frontal (0°)', shortLabel:'Frontal', description:'Faróis, grade e para-choque dianteiro' },
+            { id:'front-left', label:'Dianteira esquerda (45°)', shortLabel:'Dianteira esq.', description:'Frente e lateral do motorista' },
+            { id:'left', label:'Lateral esquerda (90°)', shortLabel:'Lateral esq.', description:'Portas, paralamas e rodas do motorista' },
+            { id:'rear-left', label:'Traseira esquerda (135°)', shortLabel:'Traseira esq.', description:'Traseira e lateral esquerda' },
+            { id:'rear', label:'Traseira (180°)', shortLabel:'Traseira', description:'Porta-malas, lanternas e para-choque' },
+            { id:'right', label:'Lateral direita (270°)', shortLabel:'Lateral dir.', description:'Portas, paralamas e rodas do passageiro' },
+            { id:'front-right', label:'Dianteira direita (315°)', shortLabel:'Dianteira dir.', description:'Frente e lateral do passageiro' },
+            { id:'top', label:'Superior (zênite)', shortLabel:'Superior', description:'Teto, capô, vidros e porta-malas' }
         ]);
         const CROQUI_VIEW_IDS = new Set(CROQUI_VIEWS.map(view => view.id));
         const CROQUI_REGIONS = Object.freeze({
-            top: ['Capô', 'Para-brisa', 'Teto', 'Vidro traseiro', 'Porta-malas', 'Lateral esquerda', 'Lateral direita', 'Para-choque dianteiro', 'Para-choque traseiro', 'Retrovisor esquerdo', 'Retrovisor direito'],
-            left: ['Paralama dianteiro esquerdo', 'Porta dianteira esquerda', 'Porta traseira esquerda', 'Caixa de ar esquerda', 'Retrovisor esquerdo', 'Roda dianteira esquerda', 'Roda traseira esquerda', 'Paralama traseiro esquerdo', 'Vidro dianteiro esquerdo', 'Vidro traseiro esquerdo'],
-            right: ['Paralama dianteiro direito', 'Porta dianteira direita', 'Porta traseira direita', 'Caixa de ar direita', 'Retrovisor direito', 'Roda dianteira direita', 'Roda traseira direita', 'Paralama traseiro direito', 'Vidro dianteiro direito', 'Vidro traseiro direito'],
-            front: ['Capô', 'Grade dianteira', 'Para-brisa', 'Farol esquerdo', 'Farol direito', 'Para-choque dianteiro', 'Placa dianteira'],
-            rear: ['Porta-malas', 'Vidro traseiro', 'Lanterna esquerda', 'Lanterna direita', 'Para-choque traseiro', 'Placa traseira']
+            top: ['Capô','Para-brisa','Teto','Vidro traseiro','Porta-malas','Lateral esquerda','Lateral direita','Para-choque dianteiro','Para-choque traseiro','Retrovisor esquerdo','Retrovisor direito'],
+            left: ['Paralama dianteiro esquerdo','Porta dianteira esquerda','Porta traseira esquerda','Caixa de ar esquerda','Retrovisor esquerdo','Roda dianteira esquerda','Roda traseira esquerda','Paralama traseiro esquerdo','Vidro dianteiro esquerdo','Vidro traseiro esquerdo'],
+            'front-left': ['Paralama dianteiro esquerdo','Porta dianteira esquerda','Porta traseira esquerda','Caixa de ar esquerda','Retrovisor esquerdo','Roda dianteira esquerda','Roda traseira esquerda','Paralama traseiro esquerdo','Vidro dianteiro esquerdo','Vidro traseiro esquerdo','Farol esquerdo','Capô','Para-choque dianteiro','Para-brisa'],
+            'rear-left': ['Paralama dianteiro esquerdo','Porta dianteira esquerda','Porta traseira esquerda','Caixa de ar esquerda','Retrovisor esquerdo','Roda dianteira esquerda','Roda traseira esquerda','Paralama traseiro esquerdo','Vidro dianteiro esquerdo','Vidro traseiro esquerdo','Lanterna esquerda','Porta-malas','Para-choque traseiro','Vidro traseiro'],
+            right: ['Paralama dianteiro direito','Porta dianteira direita','Porta traseira direita','Caixa de ar direita','Retrovisor direito','Roda dianteira direita','Roda traseira direita','Paralama traseiro direito','Vidro dianteiro direito','Vidro traseiro direito'],
+            'front-right': ['Paralama dianteiro direito','Porta dianteira direita','Porta traseira direita','Caixa de ar direita','Retrovisor direito','Roda dianteira direita','Roda traseira direita','Paralama traseiro direito','Vidro dianteiro direito','Vidro traseiro direito','Farol direito','Capô','Para-choque dianteiro','Para-brisa'],
+            front: ['Capô','Grade dianteira','Para-brisa','Farol esquerdo','Farol direito','Para-choque dianteiro','Placa dianteira'],
+            rear: ['Porta-malas','Vidro traseiro','Lanterna esquerda','Lanterna direita','Para-choque traseiro','Placa traseira']
         });
-        const CROQUI_REGION_MAP = Object.freeze({
+        const CROQUI_REGION_MAP = {
             top: [
                 { region: 'Para-choque dianteiro', x1: 2, y1: 32, x2: 11, y2: 68 },
                 { region: 'Capô', x1: 11, y1: 28, x2: 27, y2: 72 },
@@ -492,7 +500,11 @@
                 { region: 'Placa traseira', x1: 40, y1: 63, x2: 60, y2: 74 },
                 { region: 'Para-choque traseiro', x1: 18, y1: 69, x2: 83, y2: 90 }
             ]
-        });
+        };
+        // Para ângulos diagonais, as zonas usam aproximação da lateral correspondente.
+        CROQUI_REGION_MAP['front-left'] = Object.freeze(CROQUI_REGION_MAP.left.map(area => ({...area, region: area.region})));
+        CROQUI_REGION_MAP['rear-left'] = Object.freeze(CROQUI_REGION_MAP.left.map(area => ({...area, region: area.region})));
+        CROQUI_REGION_MAP['front-right'] = Object.freeze(CROQUI_REGION_MAP.right.map(area => ({...area, region: area.region})));
         const signaturePads = {};
         let pendingPhotoTarget = null; // { type: 'checklist' | 'pin', id: string | number }
 
@@ -1271,29 +1283,34 @@
                 const viewId = surface.dataset.croquiView || 'top';
                 surface.addEventListener('pointerenter', () => setActiveCroquiView(viewId));
                 surface.addEventListener('focus', () => setActiveCroquiView(viewId));
-                let swipeStart = null;
-                let swallowClick = false;
-                surface.addEventListener('touchstart', (event) => {
-                    const touch = event.changedTouches[0];
-                    if (touch) swipeStart = { x: touch.clientX, y: touch.clientY };
-                }, { passive: true });
-                surface.addEventListener('touchend', (event) => {
-                    if (!swipeStart) return;
-                    const touch = event.changedTouches[0];
-                    const dx = touch.clientX - swipeStart.x;
-                    const dy = touch.clientY - swipeStart.y;
-                    swipeStart = null;
-                    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.25) {
-                        swallowClick = true;
+                // Swipe: unificado com Pointer Events (mouse, toque e caneta).
+                let dragStart = null;
+                let suppressClickUntil = 0;
+                surface.addEventListener('pointerdown', (event) => {
+                    if (event.target.closest('.damage-pin')) return;
+                    if (event.button !== undefined && event.button !== 0) return;
+                    dragStart = { x:event.clientX, y:event.clientY, id:event.pointerId };
+                });
+                surface.addEventListener('pointerup', (event) => {
+                    if (!dragStart || dragStart.id !== event.pointerId) return;
+                    const dx = event.clientX - dragStart.x;
+                    const dy = event.clientY - dragStart.y;
+                    dragStart = null;
+                    if (Math.abs(dx) >= 48 && Math.abs(dx) > Math.abs(dy) * 1.25) {
+                        suppressClickUntil = Date.now() + 650;
+                        event.preventDefault();
                         stepCroquiView(dx < 0 ? 1 : -1);
                     }
-                }, { passive: true });
+                });
+                surface.addEventListener('pointercancel', () => { dragStart = null; });
+                surface.addEventListener('dragstart', event => event.preventDefault());
                 surface.addEventListener('click', (e) => {
-                    if (swallowClick) { swallowClick = false; return; }
+                    if (Date.now() < suppressClickUntil) return;
                     if (e.target.closest('.damage-pin')) return;
-                    setActiveCroquiView(viewId);
+                    if (activeCroquiView !== viewId) return; // não registrar em vista oculta
                     const stage = surface.querySelector('.croqui-zoom-stage');
                     const rect = (stage || surface).getBoundingClientRect();
+                    if (!rect.width || !rect.height) return;
                     const xPct = ((e.clientX - rect.left) / rect.width) * 100;
                     const yPct = ((e.clientY - rect.top) / rect.height) * 100;
                     addDamagePin(xPct, yPct, viewId);
@@ -1400,13 +1417,16 @@
                 left: document.getElementById('pins-layer-left'),
                 right: document.getElementById('pins-layer-right'),
                 front: document.getElementById('pins-layer-front'),
-                rear: document.getElementById('pins-layer-rear')
+                rear: document.getElementById('pins-layer-rear'),
+                'front-left': document.getElementById('pins-layer-front-left'),
+                'rear-left': document.getElementById('pins-layer-rear-left'),
+                'front-right': document.getElementById('pins-layer-front-right')
             };
             for (const layer of Object.values(pinsLayers)) {
                 if (layer) layer.innerHTML = '';
             }
 
-            const grouped = { top: [], left: [], right: [], front: [], rear: [] };
+            const grouped = Object.fromEntries(CROQUI_VIEWS.map(view => [view.id, []]));
             appState.pins.forEach(pin => {
                 const key = CROQUI_VIEW_IDS.has(pin.view) ? pin.view : 'top';
                 grouped[key].push(pin);

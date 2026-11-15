@@ -1,3 +1,11 @@
+## Croqui 8 vistas — v1.5.4
+
+- Croqui derivado de oito recortes WebP locais em `assets/croqui/`, retirados da imagem de referência enviada pelo usuário.
+- IDs: `front`, `front-left`, `left`, `rear-left`, `rear`, `right`, `front-right`, `top`.
+- A navegação por Pointer Events deve distinguir arraste horizontal de clique para marcação; deve funcionar em mouse e toque.
+- Todas as oito vistas devem aparecer no PDF oficial; somente uma fica visível no aplicativo.
+- Pontos existentes com IDs antigos `top`, `left`, `right`, `front`, `rear` não devem ser migrados para outras vistas.
+
 ## Interface de croqui v1.5.3
 
 Manter barra de navegação enxuta e sem rótulos sobrepostos. Desenhos SVG são traços técnicos; preservar camadas de avarias, vistas e impressão A4. Não anunciar rotação 3D onde há somente cinco vistas.
