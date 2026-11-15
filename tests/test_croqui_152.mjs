@@ -13,6 +13,6 @@ assert.match(js, /function stepCroquiView\(direction = 1\)/);
 assert.match(js, /surface\.addEventListener\('touchend'/);
 assert.match(js, /const stage = surface\.querySelector\('\.croqui-zoom-stage'\)/);
 assert.match(html, /name="mobile-web-app-capable"/);
-assert.ok((html.match(/<linearGradient/g)||[]).length >= 5, 'ilustrações vetoriais detalhadas');
-assert.equal(JSON.parse(read('version.json')).version,'1.5.2');
+assert.ok((html.match(/<svg\b/g)||[]).length >= 5 && (html.match(/<path\b/g)||[]).length >= 25, 'croquis técnicos vetoriais detalhados');
+assert.equal(JSON.parse(read('version.json')).version,'1.5.3');
 console.log('OK: uma vista por vez, navegação gestual, SVGs detalhados e todas as vistas no PDF.');

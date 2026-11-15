@@ -1,3 +1,7 @@
+### Croqui técnico v1.5.3
+
+Cinco vistas em desenho vetorial preto e branco inspirado em croqui de vistoria: controles integrados, sem cartões de zoom ou legenda. Os pontos permanecem associados à vista e preservados na impressão. Não se trata de 3D com rotação contínua.
+
 ## v1.5.2 — Croqui com vistas alternáveis
 
 Use as setas, indicadores ou deslize horizontalmente sobre o croqui para alternar as cinco vistas. A tela mostra uma vista por vez; o PDF inclui todas. O veículo é um desenho vetorial estilizado, não um modelo 3D contínuo.

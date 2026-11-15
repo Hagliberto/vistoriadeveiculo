@@ -894,3 +894,70 @@ body.export-open {overflow:hidden}
   .croqui-views-grid {display:grid !important}
 }
 @media (prefers-reduced-motion: reduce) { .croqui-views-grid > .croqui-view-card {animation:none !important} }
+
+/* v1.5.3: croqui técnico, interface mínima e sem controles sobrepostos. */
+@media screen {
+  #croqui-360-console.croqui-toolbar {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 7px !important;
+    min-height: 48px;
+    width: 100%;
+    padding: 5px 8px !important;
+    border: 0 !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+  }
+  .croqui-toolbar .croqui-view-center {
+    display: flex; flex: 1 1 auto; min-width: 0; flex-direction: column;
+    align-items: center; justify-content: center; gap: 1px; text-align: center;
+  }
+  .croqui-view-center strong {font-size: 12px; color: #1f2937; font-weight: 750; line-height: 1.25; white-space: nowrap;}
+  .croqui-view-center span {font-size: 10px; color: #64748b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;}
+  .croqui-toolbar .croqui-tool-icon {
+    appearance: none; border: 0; background: transparent; color: #4b5563;
+    min-width: 28px; width: 28px; height: 30px; padding: 0;
+    font: 500 21px/1 Arial,sans-serif; display: inline-flex;
+    justify-content: center; align-items: center; border-radius: 7px;
+    flex-shrink: 0; cursor: pointer;
+  }
+  .croqui-toolbar .croqui-tool-icon:hover, .croqui-toolbar .croqui-tool-icon:focus-visible {background:#e9eef4;outline:2px solid transparent;color:#1f2937}
+  .croqui-toolbar .croqui-tool-icon:focus-visible {outline-color:#1d75ce}
+  .croqui-toolbar .croqui-tool-icon.reset {font-size:17px}
+  .croqui-toolbar-separator {height:24px;width:1px;flex:0 0 1px;background:#e2e8f0}
+  .croqui-zoom-tools {display:flex;align-items:center;gap:0;flex-shrink:0}
+  .croqui-zoom-tools #croqui-zoom-level {display:inline-block;width:36px;text-align:center;font:600 10px Arial,sans-serif;color:#64748b;background:transparent;border:0;padding:0}
+  #croqui-360-nav.croqui-hidden-dots {display:none !important}
+  #croqui-view-legend.croqui-print-legend {display:none !important}
+  .croqui-views-grid {width:100%;min-width:0}
+  .croqui-views-grid > .croqui-view-card {padding:0 !important;border:0 !important;border-radius:0 !important;background:transparent !important;box-shadow:none !important}
+  .croqui-views-grid > .croqui-view-card > .flex.items-center.justify-between {padding:4px 2px 6px !important}
+  .croqui-views-grid > .croqui-view-card > .flex.items-center.justify-between span:not([id]) {display:none !important}
+  .croqui-views-grid .croqui-surface {
+    background-color:#fff !important;
+    background-image:linear-gradient(#edf1f5 1px,transparent 1px), linear-gradient(90deg,#edf1f5 1px,transparent 1px) !important;
+    background-size:18px 18px !important;
+    border:1px solid #d6dee7 !important;
+    border-radius:10px !important;
+    min-height:190px !important;
+    padding:5px !important;
+  }
+  .croqui-views-grid .croqui-surface svg {filter:none !important}
+  .croqui-view-card.is-active-view .croqui-surface {border-color:#a5b8ce !important}
+  .croqui-view-card.is-active-view {transform:none !important}
+}
+@media screen and (max-width:490px) {
+  #croqui-360-console.croqui-toolbar {gap:3px !important;padding:4px 0 !important}
+  .croqui-toolbar .croqui-tool-icon {width:25px;min-width:25px}
+  .croqui-view-center span {display:none}
+  .croqui-zoom-tools #croqui-zoom-level {width:29px;font-size:9px}
+  .croqui-zoom-tools .reset {display:none !important}
+}
+@media print {
+  .croqui-views-grid .croqui-surface {background-color:white !important;background-image:none !important;border:1px solid #aeb9c5 !important}
+  .croqui-views-grid > .croqui-view-card {border:1px solid #dde2e7 !important;box-shadow:none !important}
+}

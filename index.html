@@ -454,65 +454,31 @@
                             <button type="button" data-damage-type="Quebrado" class="damage-type-btn touch-target-btn px-2 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Quebrado</button>
                             <button type="button" data-damage-type="Faltando" class="damage-type-btn touch-target-btn px-2 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Faltando</button>
                         </div>
-                        <p class="w-full text-[11px] text-slate-500 mb-3 no-print">Selecione o tipo de avaria, escolha uma vista e toque na peça desejada. Deslize para trocar a vista.</p>
+                        <p class="w-full text-[11px] text-slate-500 mb-3 no-print">Selecione a avaria e toque no veículo. Use as setas para trocar a vista ou deslize lateralmente.</p>
 
-                        <div class="w-full grid grid-cols-1 gap-3 mb-3 no-print">
-                            <div id="croqui-360-console" class="rounded-2xl border border-slate-200 bg-slate-50/80 p-3">
-                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                                    <div class="min-w-0">
-                                        <div class="flex items-center gap-2 mb-1.5">
-                                            <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-sky-100 text-sky-600"><i class="ph-bold ph-arrow-arc-left-right text-lg"></i></span>
-                                            <div>
-                                                <span class="block text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Croqui 360°</span>
-                                                <strong id="croqui-active-view-label" class="block text-sm text-slate-800">Visão superior</strong>
-                                            </div>
-                                        </div>
-                                        <p id="croqui-active-view-desc" class="text-[11px] text-slate-500">Alterne as cinco vistas pelas setas ou deslize na imagem. Toque na peça para marcar a avaria.</p>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <button type="button" id="btn-croqui-prev-view" class="croqui-icon-btn" title="Visão anterior" aria-label="Visão anterior"><i class="ph-bold ph-caret-left text-lg"></i></button>
-                                        <div id="croqui-360-nav" class="flex items-center gap-1.5">
-                                            <button type="button" class="croqui-nav-dot" data-croqui-nav="top" title="Visão superior" aria-label="Visão superior"><span class="sr-only">Visão superior</span></button>
-                                            <button type="button" class="croqui-nav-dot" data-croqui-nav="left" title="Lateral esquerda" aria-label="Lateral esquerda"><span class="sr-only">Lateral esquerda</span></button>
-                                            <button type="button" class="croqui-nav-dot" data-croqui-nav="front" title="Frontal" aria-label="Frontal"><span class="sr-only">Frontal</span></button>
-                                            <button type="button" class="croqui-nav-dot" data-croqui-nav="right" title="Lateral direita" aria-label="Lateral direita"><span class="sr-only">Lateral direita</span></button>
-                                            <button type="button" class="croqui-nav-dot" data-croqui-nav="rear" title="Traseira" aria-label="Traseira"><span class="sr-only">Traseira</span></button>
-                                        </div>
-                                        <button type="button" id="btn-croqui-next-view" class="croqui-icon-btn" title="Próxima visão" aria-label="Próxima visão"><i class="ph-bold ph-caret-right text-lg"></i></button>
-                                    </div>
-                                </div>
+                        <div id="croqui-360-console" class="croqui-toolbar no-print" role="group" aria-label="Navegar pelas vistas do veículo">
+                            <button type="button" id="btn-croqui-prev-view" class="croqui-tool-icon" aria-label="Vista anterior" title="Vista anterior">&#8249;</button>
+                            <div class="croqui-view-center" aria-live="polite">
+                                <strong id="croqui-active-view-label">Visão superior</strong>
+                                <span id="croqui-active-view-desc">Teto e capô</span>
                             </div>
-                            <div class="grid grid-cols-1 gap-3">
-                                <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-3">
-                                    <div class="flex items-center justify-between gap-2">
-                                        <div class="flex items-center gap-2">
-                                            <i class="ph-bold ph-magnifying-glass-plus text-emerald-600 text-base"></i>
-                                            <span class="text-xs font-bold uppercase tracking-wide text-slate-700">Zoom do croqui</span>
-                                        </div>
-                                        <div id="croqui-zoom-toolbar" class="flex items-center gap-1.5">
-                                            <button type="button" id="btn-croqui-zoom-out" class="croqui-icon-btn" title="Reduzir zoom" aria-label="Reduzir zoom"><i class="ph-bold ph-minus text-base"></i></button>
-                                            <span id="croqui-zoom-level" class="text-[11px] font-bold px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600">100%</span>
-                                            <button type="button" id="btn-croqui-zoom-reset" class="croqui-icon-btn" title="Resetar zoom" aria-label="Resetar zoom"><i class="ph-bold ph-corners-out text-base"></i></button>
-                                            <button type="button" id="btn-croqui-zoom-in" class="croqui-icon-btn" title="Aumentar zoom" aria-label="Aumentar zoom"><i class="ph-bold ph-plus text-base"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="croqui-view-legend" class="rounded-2xl border border-slate-200 bg-slate-50/80 p-3">
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <i class="ph-bold ph-squares-four text-violet-600 text-base"></i>
-                                        <span class="text-xs font-bold uppercase tracking-wide text-slate-700">Legenda das visões</span>
-                                    </div>
-                                    <div class="flex flex-wrap gap-2 text-[11px]">
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600"><span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>Superior</span>
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Lateral esquerda</span>
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Lateral direita</span>
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>Frontal</span>
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600"><span class="w-2.5 h-2.5 rounded-full bg-violet-500"></span>Traseira</span>
-                                    </div>
-                                </div>
+                            <button type="button" id="btn-croqui-next-view" class="croqui-tool-icon" aria-label="Próxima vista" title="Próxima vista">&#8250;</button>
+                            <div class="croqui-toolbar-separator"></div>
+                            <div id="croqui-zoom-toolbar" class="croqui-zoom-tools" aria-label="Zoom">
+                                <button type="button" id="btn-croqui-zoom-out" class="croqui-tool-icon" title="Reduzir" aria-label="Reduzir zoom">−</button>
+                                <span id="croqui-zoom-level" aria-live="polite">100%</span>
+                                <button type="button" id="btn-croqui-zoom-in" class="croqui-tool-icon" title="Ampliar" aria-label="Aumentar zoom">+</button>
+                                <button type="button" id="btn-croqui-zoom-reset" class="croqui-tool-icon reset" title="Restaurar" aria-label="Restaurar zoom">⤢</button>
+                            </div>
+                            <div id="croqui-360-nav" class="croqui-hidden-dots" aria-hidden="true">
+                                <button type="button" data-croqui-nav="top" aria-label="Superior"></button>
+                                <button type="button" data-croqui-nav="left" aria-label="Esquerda"></button>
+                                <button type="button" data-croqui-nav="front" aria-label="Frontal"></button>
+                                <button type="button" data-croqui-nav="right" aria-label="Direita"></button>
+                                <button type="button" data-croqui-nav="rear" aria-label="Traseira"></button>
                             </div>
                         </div>
-
+                        <div id="croqui-view-legend" class="croqui-print-legend print-only">Superior · Lateral esquerda · Frontal · Lateral direita · Traseira</div>
                         <div class="w-full croqui-views-grid grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div class="croqui-view-card sm:col-span-2 rounded-2xl border border-slate-200 bg-slate-50/70 p-2.5" data-view-card="top">
                                 <div class="flex items-center justify-between px-1 pb-2">
@@ -524,23 +490,20 @@
                                 </div>
                                 <div id="car-diagram-container" data-croqui-view="top" role="button" tabindex="0" aria-label="Croqui do veículo em visão superior: clique para marcar uma avaria; pressione Enter ou Espaço para inserir um ponto no centro" class="croqui-surface w-full bg-white border-2 border-dashed border-slate-300 rounded-2xl p-3 cursor-crosshair relative overflow-hidden">
                                     <div class="croqui-zoom-stage relative w-full">
-                                    <svg id="car-svg" viewBox="0 0 500 260" class="w-full h-auto block pointer-events-none">
-<defs><linearGradient id="bodyT" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#fff"/><stop offset=".48" stop-color="#e8eff7"/><stop offset="1" stop-color="#c7d6e7"/></linearGradient><linearGradient id="glassT" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#b8e3f5"/><stop offset=".5" stop-color="#edf9ff"/><stop offset="1" stop-color="#6da9d5"/></linearGradient></defs>
-<text x="15" y="130" fill="#64748b" font-size="12" font-weight="700" transform="rotate(-90 15 130)" text-anchor="middle">FRENTE</text><text x="485" y="130" fill="#64748b" font-size="12" font-weight="700" transform="rotate(90 485 130)" text-anchor="middle">TRASEIRA</text>
-<rect x="79" y="55" width="62" height="15" rx="5" fill="#1d2939"/><rect x="355" y="55" width="62" height="15" rx="5" fill="#1d2939"/><rect x="79" y="190" width="62" height="15" rx="5" fill="#1d2939"/><rect x="355" y="190" width="62" height="15" rx="5" fill="#1d2939"/>
-<path d="M70 65 Q46 65 43 88 L38 106 Q35 130 38 154 L43 172 Q46 195 70 195 L427 195 Q452 195 456 170 L462 154 Q466 130 462 106 L456 88 Q452 65 427 65Z" fill="url(#bodyT)" stroke="#26394f" stroke-width="3.2"/>
-<path d="M65 82 Q50 91 52 130 Q50 170 65 178 M432 82 Q449 94 446 130 Q449 166 432 178" fill="none" stroke="#9db4c7" stroke-width="2"/>
-<path d="M68 76 Q99 83 145 81 L145 179 Q99 177 68 184Z" fill="#f3f7fb" stroke="#8ca6bc" stroke-width="2"/><path d="M78 91 Q112 96 134 94 M78 169 Q112 163 134 166" fill="none" stroke="#fff" stroke-width="3"/>
-<path d="M143 74 Q168 70 192 75 L194 185 Q168 189 143 186 L143 74Z" fill="url(#glassT)" stroke="#3b779f" stroke-width="2.2"/>
-<path d="M193 82 Q201 69 217 69 H325 Q343 69 348 85 L348 175 Q341 191 325 191 H217 Q201 191 193 178Z" fill="#e4edf5" stroke="#59758f" stroke-width="2.4"/><path d="M209 90 Q216 80 229 80 H314 Q326 80 331 91 V168 Q326 181 314 181 H229 Q215 181 209 168Z" fill="#f8fbff" stroke="#d5e0e9" stroke-width="1.3"/>
-<path d="M348 75 Q371 70 396 74 L396 186 Q371 190 348 185Z" fill="url(#glassT)" stroke="#3b779f" stroke-width="2.2"/>
-<path d="M398 81 Q428 79 437 90 V170 Q425 180 398 178Z" fill="#e8eff7" stroke="#8ca6bc" stroke-width="2"/>
-<path d="M169 64 L172 48 L185 48 L189 68Z M169 196 L172 212 L185 212 L189 192Z" fill="#e8f0f8" stroke="#26394f" stroke-width="2"/>
-<path d="M219 66 V76 M302 66 V76 M219 184 V194 M302 184 V194" stroke="#7892ad" stroke-width="2"/>
-<path d="M44 80 L61 85 L58 101 L39 99Z M44 180 L61 175 L58 159 L39 161Z" fill="#fff3a7" stroke="#c98a17" stroke-width="1.8"/>
-<path d="M456 80 L438 85 L440 100 L460 99Z M456 180 L438 175 L440 160 L460 161Z" fill="#ff9b98" stroke="#bd3131" stroke-width="1.8"/>
-<path d="M74 67 H427" stroke="#fff" stroke-width="2.2" opacity=".85"/>
-</svg>
+                                    <svg id="car-svg" viewBox="0 0 500 260" class="w-full h-auto block pointer-events-none" aria-label="Desenho técnico do veículo em vista superior">
+ <path d="M80 52 H125 V64 H80Z M365 52 H414 V64 H365Z M80 196 H125 V208 H80Z M365 196 H414 V208 H365Z" fill="#fafafa" stroke="#343a40" stroke-width="2"/>
+ <path d="M55 69 Q40 73 37 98 L35 156 Q37 189 58 192 H441 Q460 188 463 157 L463 101 Q462 72 442 69Z" fill="#fff" stroke="#303943" stroke-width="2.6"/>
+ <path d="M54 82 Q47 130 54 180 M444 82 Q453 130 444 180" stroke="#8c949b" stroke-width="1.5" fill="none"/>
+ <path d="M66 82 L139 83 L140 177 L66 178Z M399 83 L439 82 L439 178 L399 177Z" fill="#fafafa" stroke="#6b747b" stroke-width="1.2"/>
+ <path d="M141 76 L195 84 L195 176 L141 184Z" fill="#f6f8fa" stroke="#596671" stroke-width="1.5"/>
+ <path d="M201 84 L347 84 L347 176 L201 176Z" fill="#fff" stroke="#596671" stroke-width="1.6"/>
+ <path d="M352 84 L397 76 L397 184 L352 176Z" fill="#f6f8fa" stroke="#596671" stroke-width="1.5"/>
+ <path d="M198 71 V84 M198 176 V189 M275 70 V84 M275 176 V190 M348 71 V84 M348 176 V189" stroke="#6c757d" stroke-width="1.1"/>
+ <path d="M64 73 H440 M64 187 H440" stroke="#a5adb4" stroke-width="1"/>
+ <path d="M165 66 L170 48 L180 48 L186 66Z M165 194 L170 212 L180 212 L186 194Z" fill="#fff" stroke="#303943" stroke-width="1.3"/>
+ <path d="M49 85 L61 89 L57 104 L44 102Z M49 175 L61 171 L57 156 L44 158Z M451 85 L439 89 L443 104 L456 102Z M451 175 L439 171 L443 156 L456 158Z" fill="none" stroke="#333" stroke-width="1.4"/>
+ <path d="M78 96 H125 M78 164 H125 M408 94 H432 M408 166 H432" stroke="#aeb5bc" stroke-width=".8"/>
+ </svg>
                                     <div id="pins-layer" class="absolute inset-0 pointer-events-none"></div>
                                     </div>
                                 </div>
@@ -553,18 +516,17 @@
                                 </div>
                                 <div id="croqui-view-left" data-croqui-view="left" role="button" tabindex="0" aria-label="Croqui do veículo em visão lateral esquerda" class="croqui-surface aspect-[16/7] bg-white border-2 border-dashed border-slate-300 rounded-2xl p-2 cursor-crosshair relative overflow-hidden">
                                     <div class="croqui-zoom-stage relative w-full h-full">
-                                    <svg viewBox="0 0 320 140" class="w-full h-full block pointer-events-none">
-<defs><linearGradient id="bodyL" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#fafcff"/><stop offset="1" stop-color="#cddbe9"/></linearGradient><linearGradient id="winL" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#80c1e4"/><stop offset=".65" stop-color="#dff7ff"/><stop offset="1" stop-color="#468bb6"/></linearGradient></defs>
-<ellipse cx="160" cy="122" rx="130" ry="8" fill="#b8c6d6" opacity=".25"/>
-<path d="M22 91 Q28 80 52 77 L82 74 L112 42 Q122 30 144 30 H201 Q219 30 231 44 L258 77 L286 83 Q303 89 302 103 V114 H22Z" fill="url(#bodyL)" stroke="#26394f" stroke-width="2.7"/>
-<path d="M118 45 Q123 38 143 38 H164 V74 H92Z M172 38 H200 Q217 38 225 50 L242 74 H172Z" fill="url(#winL)" stroke="#36769a" stroke-width="2"/>
-<path d="M165 36 V108 M222 78 V111 M89 76 L250 76" stroke="#6d879e" stroke-width="1.8"/><path d="M88 82 H253" stroke="#fff" stroke-width="2"/>
-<rect x="175" y="85" width="19" height="4" rx="2" fill="#475569"/><rect x="128" y="85" width="19" height="4" rx="2" fill="#475569"/>
-<path d="M95 67 L108 65 L109 76 H96Z" fill="#c2d6e5" stroke="#26394f" stroke-width="1.4"/>
-<path d="M22 93 H40 V101 H22 M288 92 H302 V102 H289" fill="#fff1a6" stroke="#c98a17" stroke-width="1.6"/><path d="M292 89 H304 V104 H292" fill="#ff9996" stroke="#b91c1c" stroke-width="1.6"/>
-<path d="M33 112 H288" stroke="#7993ab" stroke-width="2"/><circle cx="81" cy="111" r="23" fill="#172235"/><circle cx="81" cy="111" r="14" fill="#dde6ef" stroke="#8ea2b6" stroke-width="2"/><circle cx="81" cy="111" r="5" fill="#9aaec1"/><circle cx="244" cy="111" r="23" fill="#172235"/><circle cx="244" cy="111" r="14" fill="#dde6ef" stroke="#8ea2b6" stroke-width="2"/><circle cx="244" cy="111" r="5" fill="#9aaec1"/>
-<path d="M44 81 Q66 76 83 77 M266 81 Q284 82 293 89" fill="none" stroke="#fff" stroke-width="2" opacity=".9"/>
-</svg>
+                                    <svg viewBox="0 0 320 140" class="w-full h-full block pointer-events-none" aria-label="Desenho técnico de carro visto de lado"><path d="M19 104 L20 87 Q24 76 38 73 L64 68 Q76 65 86 57 L113 27 Q119 21 134 20 L196 21 Q209 22 216 30 L252 66 L280 72 Q299 76 301 90 L302 106 L293 110 L266 110 Q263 91 243 91 Q223 91 219 110 L105 110 Q101 91 81 91 Q60 91 57 110 L30 110 Q22 109 19 104 Z" fill="#fff" stroke="#262e36" stroke-width="2.2"/>
+ <path d="M83 59 L116 29 Q124 25 137 25 L157 25 L157 66 L77 66 Z" fill="#f9fbfc" stroke="#485864" stroke-width="1.8"/>
+ <path d="M163 25 L194 26 Q205 26 212 35 L239 66 L163 66 Z" fill="#fbfcfd" stroke="#485864" stroke-width="1.8"/>
+ <path d="M86 64 L119 34 M169 33 L195 33 Q202 33 208 40" fill="none" stroke="#c1cbd2" stroke-width="1"/>
+ <path d="M159 22 L159 109 M222 68 L221 104 M76 66 L260 66" fill="none" stroke="#3d474e" stroke-width="1.25"/>
+ <path d="M105 78 L221 78 M106 89 L221 89 M32 101 L58 101 M265 101 H298" stroke="#989fa4" fill="none" stroke-width="1"/>
+ <path d="M112 76 H128 M178 76 H194" stroke="#262e36" stroke-width="2.1" stroke-linecap="round"/>
+ <path d="M95 61 L102 56 L111 56 L111 65 L98 66 Z" fill="#fff" stroke="#333" stroke-width="1.2"/>
+ <path d="M29 83 Q48 77 67 76 M252 74 Q273 75 284 81" stroke="#606970" stroke-width="1.3" fill="none"/>
+ <path d="M20 89 L38 89 L39 99 L20 98 M288 89 L302 91 L301 101 L289 100" fill="none" stroke="#343b42" stroke-width="1.2"/>
+ <path d="M46 107 H58 M106 108 H218 M265 108 H292" stroke="#333" stroke-width="1.5"/><circle cx="81" cy="112" r="22" fill="#fff" stroke="#29323a" stroke-width="3"/><circle cx="81" cy="112" r="16" fill="none" stroke="#6b747b" stroke-width="1"/><circle cx="81" cy="112" r="11" fill="none" stroke="#7d858b" stroke-width="1"/><path d="M85.0 112.0 L95.0 112.0" stroke="#626a71" stroke-width="1.1"/><path d="M84.5 114.0 L93.1 119.0" stroke="#626a71" stroke-width="1.1"/><path d="M83.0 115.5 L88.0 124.1" stroke="#626a71" stroke-width="1.1"/><path d="M81.0 116.0 L81.0 126.0" stroke="#626a71" stroke-width="1.1"/><path d="M79.0 115.5 L74.0 124.1" stroke="#626a71" stroke-width="1.1"/><path d="M77.5 114.0 L68.9 119.0" stroke="#626a71" stroke-width="1.1"/><path d="M77.0 112.0 L67.0 112.0" stroke="#626a71" stroke-width="1.1"/><path d="M77.5 110.0 L68.9 105.0" stroke="#626a71" stroke-width="1.1"/><path d="M79.0 108.5 L74.0 99.9" stroke="#626a71" stroke-width="1.1"/><path d="M81.0 108.0 L81.0 98.0" stroke="#626a71" stroke-width="1.1"/><path d="M83.0 108.5 L88.0 99.9" stroke="#626a71" stroke-width="1.1"/><path d="M84.5 110.0 L93.1 105.0" stroke="#626a71" stroke-width="1.1"/><circle cx="81" cy="112" r="4" fill="#f7f8f9" stroke="#333" stroke-width="1.2"/><circle cx="243" cy="112" r="22" fill="#fff" stroke="#29323a" stroke-width="3"/><circle cx="243" cy="112" r="16" fill="none" stroke="#6b747b" stroke-width="1"/><circle cx="243" cy="112" r="11" fill="none" stroke="#7d858b" stroke-width="1"/><path d="M247.0 112.0 L257.0 112.0" stroke="#626a71" stroke-width="1.1"/><path d="M246.5 114.0 L255.1 119.0" stroke="#626a71" stroke-width="1.1"/><path d="M245.0 115.5 L250.0 124.1" stroke="#626a71" stroke-width="1.1"/><path d="M243.0 116.0 L243.0 126.0" stroke="#626a71" stroke-width="1.1"/><path d="M241.0 115.5 L236.0 124.1" stroke="#626a71" stroke-width="1.1"/><path d="M239.5 114.0 L230.9 119.0" stroke="#626a71" stroke-width="1.1"/><path d="M239.0 112.0 L229.0 112.0" stroke="#626a71" stroke-width="1.1"/><path d="M239.5 110.0 L230.9 105.0" stroke="#626a71" stroke-width="1.1"/><path d="M241.0 108.5 L236.0 99.9" stroke="#626a71" stroke-width="1.1"/><path d="M243.0 108.0 L243.0 98.0" stroke="#626a71" stroke-width="1.1"/><path d="M245.0 108.5 L250.0 99.9" stroke="#626a71" stroke-width="1.1"/><path d="M246.5 110.0 L255.1 105.0" stroke="#626a71" stroke-width="1.1"/><circle cx="243" cy="112" r="4" fill="#f7f8f9" stroke="#333" stroke-width="1.2"/><path d="M33 110 L20 110 M292 109 H305" stroke="#333" stroke-width="1"/><path d="M14 120 H310" stroke="#acb5bd" stroke-width=".8" stroke-dasharray="3 3"/></svg>
                                     <div id="pins-layer-left" class="absolute inset-0 pointer-events-none"></div>
                                     </div>
                                 </div>
@@ -577,18 +539,17 @@
                                 </div>
                                 <div id="croqui-view-right" data-croqui-view="right" role="button" tabindex="0" aria-label="Croqui do veículo em visão lateral direita" class="croqui-surface aspect-[16/7] bg-white border-2 border-dashed border-slate-300 rounded-2xl p-2 cursor-crosshair relative overflow-hidden">
                                     <div class="croqui-zoom-stage relative w-full h-full">
-                                    <svg viewBox="0 0 320 140" class="w-full h-full block pointer-events-none">
-<defs><linearGradient id="bodyR" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#fafcff"/><stop offset="1" stop-color="#cddbe9"/></linearGradient><linearGradient id="winR" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#80c1e4"/><stop offset=".65" stop-color="#dff7ff"/><stop offset="1" stop-color="#468bb6"/></linearGradient></defs>
-<ellipse cx="160" cy="122" rx="130" ry="8" fill="#b8c6d6" opacity=".25"/>
-<g transform="translate(320 0) scale(-1 1)">
-<path d="M22 91 Q28 80 52 77 L82 74 L112 42 Q122 30 144 30 H201 Q219 30 231 44 L258 77 L286 83 Q303 89 302 103 V114 H22Z" fill="url(#bodyR)" stroke="#26394f" stroke-width="2.7"/>
-<path d="M118 45 Q123 38 143 38 H164 V74 H92Z M172 38 H200 Q217 38 225 50 L242 74 H172Z" fill="url(#winR)" stroke="#36769a" stroke-width="2"/>
-<path d="M165 36 V108 M222 78 V111 M89 76 L250 76" stroke="#6d879e" stroke-width="1.8"/><path d="M88 82 H253" stroke="#fff" stroke-width="2"/>
-<rect x="175" y="85" width="19" height="4" rx="2" fill="#475569"/><rect x="128" y="85" width="19" height="4" rx="2" fill="#475569"/>
-<path d="M95 67 L108 65 L109 76 H96Z" fill="#c2d6e5" stroke="#26394f" stroke-width="1.4"/>
-<path d="M22 93 H40 V101 H22" fill="#fff1a6" stroke="#c98a17" stroke-width="1.6"/><path d="M292 89 H304 V104 H292" fill="#ff9996" stroke="#b91c1c" stroke-width="1.6"/>
-<path d="M33 112 H288" stroke="#7993ab" stroke-width="2"/><circle cx="81" cy="111" r="23" fill="#172235"/><circle cx="81" cy="111" r="14" fill="#dde6ef" stroke="#8ea2b6" stroke-width="2"/><circle cx="81" cy="111" r="5" fill="#9aaec1"/><circle cx="244" cy="111" r="23" fill="#172235"/><circle cx="244" cy="111" r="14" fill="#dde6ef" stroke="#8ea2b6" stroke-width="2"/><circle cx="244" cy="111" r="5" fill="#9aaec1"/>
-</g></svg>
+                                    <svg viewBox="0 0 320 140" class="w-full h-full block pointer-events-none" aria-label="Desenho técnico de carro visto de lado"><g transform="translate(320 0) scale(-1 1)"><path d="M19 104 L20 87 Q24 76 38 73 L64 68 Q76 65 86 57 L113 27 Q119 21 134 20 L196 21 Q209 22 216 30 L252 66 L280 72 Q299 76 301 90 L302 106 L293 110 L266 110 Q263 91 243 91 Q223 91 219 110 L105 110 Q101 91 81 91 Q60 91 57 110 L30 110 Q22 109 19 104 Z" fill="#fff" stroke="#262e36" stroke-width="2.2"/>
+ <path d="M83 59 L116 29 Q124 25 137 25 L157 25 L157 66 L77 66 Z" fill="#f9fbfc" stroke="#485864" stroke-width="1.8"/>
+ <path d="M163 25 L194 26 Q205 26 212 35 L239 66 L163 66 Z" fill="#fbfcfd" stroke="#485864" stroke-width="1.8"/>
+ <path d="M86 64 L119 34 M169 33 L195 33 Q202 33 208 40" fill="none" stroke="#c1cbd2" stroke-width="1"/>
+ <path d="M159 22 L159 109 M222 68 L221 104 M76 66 L260 66" fill="none" stroke="#3d474e" stroke-width="1.25"/>
+ <path d="M105 78 L221 78 M106 89 L221 89 M32 101 L58 101 M265 101 H298" stroke="#989fa4" fill="none" stroke-width="1"/>
+ <path d="M112 76 H128 M178 76 H194" stroke="#262e36" stroke-width="2.1" stroke-linecap="round"/>
+ <path d="M95 61 L102 56 L111 56 L111 65 L98 66 Z" fill="#fff" stroke="#333" stroke-width="1.2"/>
+ <path d="M29 83 Q48 77 67 76 M252 74 Q273 75 284 81" stroke="#606970" stroke-width="1.3" fill="none"/>
+ <path d="M20 89 L38 89 L39 99 L20 98 M288 89 L302 91 L301 101 L289 100" fill="none" stroke="#343b42" stroke-width="1.2"/>
+ <path d="M46 107 H58 M106 108 H218 M265 108 H292" stroke="#333" stroke-width="1.5"/><circle cx="81" cy="112" r="22" fill="#fff" stroke="#29323a" stroke-width="3"/><circle cx="81" cy="112" r="16" fill="none" stroke="#6b747b" stroke-width="1"/><circle cx="81" cy="112" r="11" fill="none" stroke="#7d858b" stroke-width="1"/><path d="M85.0 112.0 L95.0 112.0" stroke="#626a71" stroke-width="1.1"/><path d="M84.5 114.0 L93.1 119.0" stroke="#626a71" stroke-width="1.1"/><path d="M83.0 115.5 L88.0 124.1" stroke="#626a71" stroke-width="1.1"/><path d="M81.0 116.0 L81.0 126.0" stroke="#626a71" stroke-width="1.1"/><path d="M79.0 115.5 L74.0 124.1" stroke="#626a71" stroke-width="1.1"/><path d="M77.5 114.0 L68.9 119.0" stroke="#626a71" stroke-width="1.1"/><path d="M77.0 112.0 L67.0 112.0" stroke="#626a71" stroke-width="1.1"/><path d="M77.5 110.0 L68.9 105.0" stroke="#626a71" stroke-width="1.1"/><path d="M79.0 108.5 L74.0 99.9" stroke="#626a71" stroke-width="1.1"/><path d="M81.0 108.0 L81.0 98.0" stroke="#626a71" stroke-width="1.1"/><path d="M83.0 108.5 L88.0 99.9" stroke="#626a71" stroke-width="1.1"/><path d="M84.5 110.0 L93.1 105.0" stroke="#626a71" stroke-width="1.1"/><circle cx="81" cy="112" r="4" fill="#f7f8f9" stroke="#333" stroke-width="1.2"/><circle cx="243" cy="112" r="22" fill="#fff" stroke="#29323a" stroke-width="3"/><circle cx="243" cy="112" r="16" fill="none" stroke="#6b747b" stroke-width="1"/><circle cx="243" cy="112" r="11" fill="none" stroke="#7d858b" stroke-width="1"/><path d="M247.0 112.0 L257.0 112.0" stroke="#626a71" stroke-width="1.1"/><path d="M246.5 114.0 L255.1 119.0" stroke="#626a71" stroke-width="1.1"/><path d="M245.0 115.5 L250.0 124.1" stroke="#626a71" stroke-width="1.1"/><path d="M243.0 116.0 L243.0 126.0" stroke="#626a71" stroke-width="1.1"/><path d="M241.0 115.5 L236.0 124.1" stroke="#626a71" stroke-width="1.1"/><path d="M239.5 114.0 L230.9 119.0" stroke="#626a71" stroke-width="1.1"/><path d="M239.0 112.0 L229.0 112.0" stroke="#626a71" stroke-width="1.1"/><path d="M239.5 110.0 L230.9 105.0" stroke="#626a71" stroke-width="1.1"/><path d="M241.0 108.5 L236.0 99.9" stroke="#626a71" stroke-width="1.1"/><path d="M243.0 108.0 L243.0 98.0" stroke="#626a71" stroke-width="1.1"/><path d="M245.0 108.5 L250.0 99.9" stroke="#626a71" stroke-width="1.1"/><path d="M246.5 110.0 L255.1 105.0" stroke="#626a71" stroke-width="1.1"/><circle cx="243" cy="112" r="4" fill="#f7f8f9" stroke="#333" stroke-width="1.2"/><path d="M33 110 L20 110 M292 109 H305" stroke="#333" stroke-width="1"/><path d="M14 120 H310" stroke="#acb5bd" stroke-width=".8" stroke-dasharray="3 3"/></g></svg>
                                     <div id="pins-layer-right" class="absolute inset-0 pointer-events-none"></div>
                                     </div>
                                 </div>
@@ -601,18 +562,14 @@
                                 </div>
                                 <div id="croqui-view-front" data-croqui-view="front" role="button" tabindex="0" aria-label="Croqui do veículo em visão frontal" class="croqui-surface aspect-[4/3] bg-white border-2 border-dashed border-slate-300 rounded-2xl p-2 cursor-crosshair relative overflow-hidden">
                                     <div class="croqui-zoom-stage relative w-full h-full">
-                                    <svg viewBox="0 0 220 170" class="w-full h-full block pointer-events-none">
-<defs><linearGradient id="bodyF" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#cddce9"/></linearGradient><linearGradient id="winF" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#5d9ec9"/><stop offset=".5" stop-color="#d9f4ff"/><stop offset="1" stop-color="#84b7d6"/></linearGradient></defs>
-<ellipse cx="110" cy="147" rx="88" ry="9" fill="#c7d2df" opacity=".35"/>
-<path d="M40 64 Q49 58 57 56 L68 31 Q73 19 91 19 H129 Q147 19 152 31 L163 56 Q173 58 180 64 L190 88 Q194 103 188 120 L180 138 H40 L32 120 Q26 103 30 88Z" fill="url(#bodyF)" stroke="#253a50" stroke-width="3.2"/>
-<path d="M71 54 L79 33 Q82 28 92 28 H128 Q138 28 141 33 L149 54Z" fill="url(#winF)" stroke="#367ca6" stroke-width="2.1"/>
-<path d="M53 66 Q110 78 167 66" fill="none" stroke="#fff" stroke-width="2.2"/>
-<path d="M38 82 L77 84 L69 102 L37 100Z M182 82 L143 84 L151 102 L183 100Z" fill="#fff1a7" stroke="#c99723" stroke-width="2"/>
-<path d="M78 104 Q110 99 142 104 L140 116 Q110 124 80 116Z" fill="#475c70" stroke="#26394f" stroke-width="1.5"/><path d="M82 109 H138" stroke="#a6bdcf" stroke-width="2"/>
-<rect x="94" y="121" width="32" height="9" rx="2.5" fill="#e9eef5" stroke="#8ca3b8" stroke-width="1.5"/>
-<path d="M40 135 L57 140 H163 L180 135" stroke="#678299" stroke-width="2.4" fill="none"/>
-<rect x="35" y="133" width="27" height="16" rx="5" fill="#182235"/><rect x="158" y="133" width="27" height="16" rx="5" fill="#182235"/>
-</svg>
+                                    <svg viewBox="0 0 220 170" class="w-full h-full block pointer-events-none" aria-label="Desenho técnico de carro visto de frente"><path d="M35 101 Q39 64 59 57 L67 37 Q73 25 93 23 L128 23 Q148 25 154 37 L162 57 Q179 64 185 101 L181 125 Q178 134 165 135 H54 Q41 134 38 125Z" fill="#fff" stroke="#29323a" stroke-width="2.1"/>
+ <path d="M70 58 L78 39 Q83 33 94 32 H126 Q137 33 142 39 L150 58 Z" fill="#f7fafc" stroke="#56646d" stroke-width="1.6"/>
+ <path d="M52 75 Q108 69 169 75 M54 105 Q111 111 165 105" fill="none" stroke="#69757c" stroke-width="1"/>
+ <path d="M39 99 Q46 112 46 125 M181 99 Q173 112 173 125" fill="none" stroke="#606a73" stroke-width="1.5"/>
+ <rect x="43" y="126" width="25" height="15" rx="4" fill="#f8f9fa" stroke="#333" stroke-width="1.4"/>
+ <rect x="152" y="126" width="25" height="15" rx="4" fill="#f8f9fa" stroke="#333" stroke-width="1.4"/><path d="M42 81 L76 83 L70 96 L41 96Z M179 81 L144 83 L149 96 L179 96Z" fill="#fff" stroke="#3c454b" stroke-width="1.5"/>
+ <path d="M76 101 Q110 98 145 101 L143 115 Q110 120 77 115Z" fill="#fff" stroke="#343d44" stroke-width="1.5"/>
+ <path d="M85 105 H136 M85 109 H136 M86 113 H135" stroke="#757f86" stroke-width=".9"/><rect x="96" y="120" width="29" height="9" rx="2" fill="#fff" stroke="#555"/></svg>
                                     <div id="pins-layer-front" class="absolute inset-0 pointer-events-none"></div>
                                     </div>
                                 </div>
@@ -625,17 +582,13 @@
                                 </div>
                                 <div id="croqui-view-rear" data-croqui-view="rear" role="button" tabindex="0" aria-label="Croqui do veículo em visão traseira" class="croqui-surface aspect-[4/3] bg-white border-2 border-dashed border-slate-300 rounded-2xl p-2 cursor-crosshair relative overflow-hidden">
                                     <div class="croqui-zoom-stage relative w-full h-full">
-                                    <svg viewBox="0 0 220 170" class="w-full h-full block pointer-events-none">
-<defs><linearGradient id="bodyB" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#cddce9"/></linearGradient><linearGradient id="winB" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#5d9ec9"/><stop offset=".5" stop-color="#d9f4ff"/><stop offset="1" stop-color="#84b7d6"/></linearGradient></defs>
-<ellipse cx="110" cy="147" rx="88" ry="9" fill="#c7d2df" opacity=".35"/>
-<path d="M39 64 Q49 58 57 56 L69 32 Q74 19 91 19 H129 Q146 19 151 32 L163 56 Q173 58 181 64 L190 87 Q194 103 188 121 L180 138 H40 L32 121 Q26 103 30 87Z" fill="url(#bodyB)" stroke="#253a50" stroke-width="3.2"/>
-<path d="M71 55 L80 33 Q82 28 92 28 H128 Q138 28 140 33 L149 55Z" fill="url(#winB)" stroke="#367ca6" stroke-width="2.1"/>
-<path d="M51 66 Q110 72 169 66" fill="none" stroke="#fff" stroke-width="2.2"/>
-<path d="M37 82 L76 85 L70 103 L37 100Z M183 82 L144 85 L150 103 L183 100Z" fill="#ff9698" stroke="#b72831" stroke-width="2"/>
-<path d="M75 87 H145" stroke="#92a7b9" stroke-width="2"/><rect x="94" y="107" width="32" height="12" rx="2.5" fill="#e9eef5" stroke="#8ca3b8" stroke-width="1.5"/>
-<path d="M48 126 Q110 134 172 126" fill="none" stroke="#668299" stroke-width="2.5"/>
-<rect x="35" y="133" width="27" height="16" rx="5" fill="#182235"/><rect x="158" y="133" width="27" height="16" rx="5" fill="#182235"/>
-</svg>
+                                    <svg viewBox="0 0 220 170" class="w-full h-full block pointer-events-none" aria-label="Desenho técnico de carro visto de trás"><path d="M35 101 Q39 64 59 57 L67 37 Q73 25 93 23 L128 23 Q148 25 154 37 L162 57 Q179 64 185 101 L181 125 Q178 134 165 135 H54 Q41 134 38 125Z" fill="#fff" stroke="#29323a" stroke-width="2.1"/>
+ <path d="M70 58 L78 39 Q83 33 94 32 H126 Q137 33 142 39 L150 58 Z" fill="#f7fafc" stroke="#56646d" stroke-width="1.6"/>
+ <path d="M52 75 Q108 69 169 75 M54 105 Q111 111 165 105" fill="none" stroke="#69757c" stroke-width="1"/>
+ <path d="M39 99 Q46 112 46 125 M181 99 Q173 112 173 125" fill="none" stroke="#606a73" stroke-width="1.5"/>
+ <rect x="43" y="126" width="25" height="15" rx="4" fill="#f8f9fa" stroke="#333" stroke-width="1.4"/>
+ <rect x="152" y="126" width="25" height="15" rx="4" fill="#f8f9fa" stroke="#333" stroke-width="1.4"/><path d="M46 80 L68 80 Q73 80 72 89 L69 97 H45Z M151 80 L174 80 V97 H152 L148 89 Q147 80 151 80Z" fill="#f7f7f7" stroke="#39434b" stroke-width="1.5"/>
+ <path d="M77 84 H143 M78 92 H142" stroke="#667078" stroke-width="1"/><rect x="93" y="110" width="35" height="11" rx="2" fill="#fff" stroke="#555"/><path d="M65 129 H155" stroke="#444" stroke-width="1"/></svg>
                                     <div id="pins-layer-rear" class="absolute inset-0 pointer-events-none"></div>
                                     </div>
                                 </div>
