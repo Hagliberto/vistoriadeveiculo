@@ -37,7 +37,7 @@
          * Atualizações PWA: somente versões publicadas no mesmo host, com confirmação.
          * A verificação não acessa nem altera IndexedDB/localStorage de vistorias.
          */
-        const APP_VERSION = '1.4.8';
+        const APP_VERSION = '1.4.9';
         let updateRegistration = null;
         let availableUpdateVersion = null;
         let updateCheckInProgress = false;
@@ -361,6 +361,7 @@
                 next.pins = raw.pins.slice(0, 300).filter(p => p && Number.isFinite(p.x) && Number.isFinite(p.y)).map((p, i) => ({
                     id: Number.isSafeInteger(p.id) ? p.id : Date.now() + i,
                     x: Math.max(4, Math.min(96, p.x)), y: Math.max(6, Math.min(94, p.y)),
+                    view: CROQUI_VIEW_IDS.has(p.view) ? p.view : 'top',
                     type: ['Amassado','Risco','Quebrado','Faltando'].includes(p.type) ? p.type : 'Risco',
                     desc: typeof p.desc === 'string' ? p.desc.slice(0, 2000) : '', photo: validPhoto(p.photo)
                 }));
@@ -413,6 +414,14 @@
 
         let appState = createDefaultState();
         let selectedDamageType = 'Amassado';
+        const CROQUI_VIEWS = Object.freeze([
+            { id: 'top', label: 'Visão superior', shortLabel: 'Superior' },
+            { id: 'left', label: 'Lateral esquerda', shortLabel: 'Lat. esquerda' },
+            { id: 'right', label: 'Lateral direita', shortLabel: 'Lat. direita' },
+            { id: 'front', label: 'Frontal', shortLabel: 'Frente' },
+            { id: 'rear', label: 'Traseira', shortLabel: 'Traseira' }
+        ]);
+        const CROQUI_VIEW_IDS = new Set(CROQUI_VIEWS.map(view => view.id));
         const signaturePads = {};
         let pendingPhotoTarget = null; // { type: 'checklist' | 'pin', id: string | number }
 
@@ -843,7 +852,7 @@
                 if (pin.photo) {
                     photos.push({
                         title: `Ponto #${idx + 1} (${pin.type})`,
-                        subtitle: pin.desc || 'Marcação no Croqui Visual',
+                        subtitle: `${getCroquiViewMeta(pin.view).shortLabel} • ${pin.desc || 'Marcação no Croqui Visual'}`, 
                         src: pin.photo
                     });
                 }
@@ -1116,23 +1125,25 @@
                 });
             });
 
-            const diagram = document.getElementById('car-diagram-container');
-            diagram.addEventListener('click', (e) => {
-                if (e.target.closest('.damage-pin')) return;
-                const rect = diagram.getBoundingClientRect();
-                const xPct = ((e.clientX - rect.left) / rect.width) * 100;
-                const yPct = ((e.clientY - rect.top) / rect.height) * 100;
-                addDamagePin(xPct, yPct);
-            });
-            diagram.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    addDamagePin(50, 50);
-                    showToast('Ponto registrado no centro do croqui. Edite a descrição ao lado.');
-                }
+            document.querySelectorAll('[data-croqui-view]').forEach(surface => {
+                const viewId = surface.dataset.croquiView || 'top';
+                surface.addEventListener('click', (e) => {
+                    if (e.target.closest('.damage-pin')) return;
+                    const rect = surface.getBoundingClientRect();
+                    const xPct = ((e.clientX - rect.left) / rect.width) * 100;
+                    const yPct = ((e.clientY - rect.top) / rect.height) * 100;
+                    addDamagePin(xPct, yPct, viewId);
+                });
+                surface.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        addDamagePin(50, 50, viewId);
+                        showToast(`Ponto registrado no centro da ${getCroquiViewMeta(viewId).label.toLowerCase()}.`);
+                    }
+                });
             });
 
-            function addDamagePin(xPct, yPct) {
+            function addDamagePin(xPct, yPct, viewId = 'top') {
                 if (appState.pins.length >= 300) {
                     showToast('Limite de 300 marcações por vistoria.');
                     return;
@@ -1141,6 +1152,7 @@
                     id: Date.now() * 1000 + Math.floor(Math.random()*1000),
                     x: Math.max(4, Math.min(96, xPct)),
                     y: Math.max(6, Math.min(94, yPct)),
+                    view: CROQUI_VIEW_IDS.has(viewId) ? viewId : 'top',
                     type: selectedDamageType,
                     desc: '',
                     photo: null
@@ -1190,15 +1202,42 @@
             return { fill: `hsl(${hue} 72% 35%)`, text: `hsl(${hue} 72% 30%)` };
         }
 
+        function getCroquiViewMeta(viewId) {
+            return CROQUI_VIEWS.find(view => view.id === viewId) || CROQUI_VIEWS[0];
+        }
+
         function renderDamagePins() {
-            const pinsLayer = document.getElementById('pins-layer');
             const listEl = document.getElementById('damage-list');
-            pinsLayer.innerHTML = '';
+            const pinsLayers = {
+                top: document.getElementById('pins-layer'),
+                left: document.getElementById('pins-layer-left'),
+                right: document.getElementById('pins-layer-right'),
+                front: document.getElementById('pins-layer-front'),
+                rear: document.getElementById('pins-layer-rear')
+            };
+            for (const layer of Object.values(pinsLayers)) {
+                if (layer) layer.innerHTML = '';
+            }
+
+            const counts = { top: 0, left: 0, right: 0, front: 0, rear: 0 };
+            appState.pins.forEach(pin => {
+                const key = CROQUI_VIEW_IDS.has(pin.view) ? pin.view : 'top';
+                counts[key] += 1;
+            });
+            CROQUI_VIEWS.forEach(view => {
+                const badge = document.getElementById(`croqui-count-${view.id}`);
+                if (badge) badge.textContent = counts[view.id] ? `${counts[view.id]} ponto(s)` : '0 ponto(s)';
+                const card = document.querySelector ? document.querySelector(`[data-view-card="${view.id}"]`) : null;
+                if (card && card.style) {
+                    card.style.boxShadow = counts[view.id] ? '0 0 0 1px rgba(0,114,206,.15), 0 10px 25px rgba(15,23,42,.05)' : '';
+                    card.style.borderColor = counts[view.id] ? '#93c5fd' : '';
+                }
+            });
 
             if (appState.pins.length === 0) {
                 listEl.innerHTML = `
                     <div class="text-center py-7 px-4 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-xs">
-                        Nenhuma avaria marcada no desenho.<br>Toque no croqui para registrar.
+                        Nenhuma avaria marcada no desenho.<br>Toque em qualquer visão para registrar.
                     </div>
                 `;
                 return;
@@ -1208,12 +1247,14 @@
             appState.pins.forEach((pin, idx) => {
                 const num = idx + 1;
                 const color = getDamagePinColor(idx);
+                const view = getCroquiViewMeta(pin.view);
+                const targetLayer = pinsLayers[CROQUI_VIEW_IDS.has(pin.view) ? pin.view : 'top'];
 
                 const pinEl = document.createElement('div');
                 pinEl.className = 'damage-pin absolute w-6 h-6 rounded-full text-white font-bold text-xs flex items-center justify-center shadow-md border-2 border-white pointer-events-auto cursor-pointer';
                 pinEl.style.backgroundColor = color.fill;
                 pinEl.style.color = '#ffffff';
-                pinEl.title = `Ponto ${num} — ${pin.type}`;
+                pinEl.title = `Ponto ${num} — ${pin.type} — ${view.label}`;
                 pinEl.style.left = `${pin.x}%`;
                 pinEl.style.top = `${pin.y}%`;
                 pinEl.textContent = num;
@@ -1222,7 +1263,7 @@
                     const input = document.getElementById(`pin-desc-${pin.id}`);
                     if (input) input.focus();
                 });
-                pinsLayer.appendChild(pinEl);
+                if (targetLayer) targetLayer.appendChild(pinEl);
 
                 const itemEl = document.createElement('div');
                 itemEl.className = 'damage-list-item bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-2';
@@ -1232,7 +1273,10 @@
                     <div class="flex items-center gap-2">
                         <span class="damage-list-number w-6 h-6 rounded-full text-white font-bold text-xs flex items-center justify-center shrink-0" style="background-color:${color.fill};color:#fff">${num}</span>
                         <div class="flex-1 min-w-0">
-                            <span class="damage-list-type block text-[11px] font-bold leading-tight" style="color:${color.text}">${safeText(pin.type)}</span>
+                            <div class="flex flex-wrap items-center gap-1.5 mb-0.5">
+                                <span class="damage-list-type block text-[11px] font-bold leading-tight" style="color:${color.text}">${safeText(pin.type)}</span>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border" style="color:${color.text};border-color:${color.fill}55;background:${color.fill}11">${safeText(view.shortLabel)}</span>
+                            </div>
                             <input type="text" id="pin-desc-${pin.id}" value="${safeText(pin.desc)}" placeholder="Local / detalhe da avaria..."
                                 oninput="updatePinDesc(${pin.id}, this.value)"
                                 class="w-full text-xs bg-transparent border-b border-slate-300 focus:border-[#0072ce] outline-none py-1 text-slate-700">
