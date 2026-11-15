@@ -722,3 +722,18 @@
 @media print {.export-modal,.export-action-trigger{display:none!important}}
 
 body.export-open {overflow:hidden}
+
+/* v1.4.8 — numeração cromática consistente na tela e no PDF A4. */
+.damage-pin, .damage-list-number, .damage-list-type, .damage-list-item {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+@media print {
+    .damage-pin, .damage-list-number {
+        color: #fff !important;
+        border-color: #fff !important;
+    }
+    #damage-list .damage-list-item {
+        border-left: 4px solid var(--damage-pin-color) !important;
+    }
+}
