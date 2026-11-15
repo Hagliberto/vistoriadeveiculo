@@ -1,3 +1,11 @@
+## v1.5.2 — Visualizador de cinco vistas com carro redesenhado
+
+- Croqui com **uma vista ativa por vez**; setas, pontos e gesto horizontal trocam a vista.
+- Ilustrações SVG mais detalhadas: carroceria, iluminação, vidros, frisos, rodas e profundidade.
+- Controles de rotação e zoom mais legíveis no desktop e mobile; sem sobreposição.
+- Todas as cinco vistas continuam disponíveis na impressão/PDF A4.
+- Metatag mobile-web-app-capable adicionada.
+
 ## v1.5.1 — Croqui 360°, zoom discreto e visual refinado do veículo
 
 - Navegação **360°** por visões com setas discretas e pontos de seleção.

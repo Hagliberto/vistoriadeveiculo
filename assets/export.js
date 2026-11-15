@@ -1,4 +1,4 @@
-/* Central de exportação offline-first · Vistoria Veicular 1.5.1.
+/* Central de exportação offline-first · Vistoria Veicular 1.5.2.
  * Nenhum dado é enviado a servidores; compartilhamento exige ação direta do usuário.
  */
 (() => {
@@ -206,7 +206,7 @@
             }
             y+=25;
             line(margin,y,width-margin,y,'#ccd9ea');
-            y+=15;text('Documento gerado localmente · Vistoria Veicular · v1.5.1',margin,y,15,'#687b91');
+            y+=15;text('Documento gerado localmente · Vistoria Veicular · v1.5.2',margin,y,15,'#687b91');
             return y+65;
         };
         const height=Math.ceil(paint(false));

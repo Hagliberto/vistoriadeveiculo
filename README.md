@@ -1,3 +1,7 @@
+## v1.5.2 — Croqui com vistas alternáveis
+
+Use as setas, indicadores ou deslize horizontalmente sobre o croqui para alternar as cinco vistas. A tela mostra uma vista por vez; o PDF inclui todas. O veículo é um desenho vetorial estilizado, não um modelo 3D contínuo.
+
 # Vistoria Veicular — Checklist Digital
 
 > **Versão profissional 1.4.5 (14/11/2026)** · HTML + CSS + JavaScript puro · offline-first · sem servidor de dados
