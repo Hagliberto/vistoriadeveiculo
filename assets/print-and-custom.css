@@ -987,3 +987,43 @@ body.export-open {overflow:hidden}
   .croqui-views-grid > .croqui-view-card .croqui-view-title span { font-size:7pt !important; }
   .croqui-views-grid > .croqui-view-card .croqui-view-title span[id] { font-size:6pt !important; }
 }
+
+/* v1.5.5 — Prancha PDF original, 9 vistas e marcação em tela cheia */
+@media screen {
+  .croqui-fullscreen-controls { display:none; }
+  #croqui-fullscreen-stage:fullscreen,
+  #croqui-fullscreen-stage.croqui-fallback-fullscreen {
+    display:flex !important; flex-direction:column !important; gap:0 !important;
+    background:#f8fafc !important; padding:8px !important;
+    width:100vw !important; height:100dvh !important; overflow:auto !important;
+    box-sizing:border-box !important;
+  }
+  #croqui-fullscreen-stage.croqui-fallback-fullscreen { position:fixed !important; inset:0 !important; z-index:99999 !important; }
+  body.croqui-fullscreen-open { overflow:hidden !important; }
+  #croqui-fullscreen-stage:fullscreen .croqui-fullscreen-controls,
+  #croqui-fullscreen-stage.croqui-fallback-fullscreen .croqui-fullscreen-controls {
+    display:flex !important; align-items:center; justify-content:center; gap:8px;
+    min-height:48px; flex:0 0 auto; padding:4px 8px; color:#0f172a;
+  }
+  .croqui-fullscreen-controls strong {font-size:13px;min-width:0;flex:1;text-align:center}
+  .croqui-fullscreen-controls button {border:0;background:transparent;min-width:36px;min-height:36px;border-radius:10px;font-size:22px;cursor:pointer}
+  .croqui-fullscreen-controls button:hover,.croqui-fullscreen-controls button:focus-visible {background:#e2e8f0}
+  #croqui-fullscreen-stage:fullscreen > .croqui-view-card.is-active-view,
+  #croqui-fullscreen-stage.croqui-fallback-fullscreen > .croqui-view-card.is-active-view { flex:1 1 auto; display:flex !important; flex-direction:column; min-height:0; }
+  #croqui-fullscreen-stage:fullscreen .croqui-view-title,
+  #croqui-fullscreen-stage.croqui-fallback-fullscreen .croqui-view-title { flex:0 0 auto; }
+  #croqui-fullscreen-stage:fullscreen .croqui-surface,
+  #croqui-fullscreen-stage.croqui-fallback-fullscreen .croqui-surface {
+    flex:1 1 auto; display:flex; align-items:center; justify-content:center; min-height:0 !important;
+    background:#fff !important;
+  }
+  #croqui-fullscreen-stage:fullscreen .croqui-zoom-stage,
+  #croqui-fullscreen-stage.croqui-fallback-fullscreen .croqui-zoom-stage {
+    width:min(100%, calc((100dvh - 120px) * 16 / 9)) !important; max-width:100%; height:auto !important;
+    aspect-ratio:16/9 !important; flex:0 1 auto;
+  }
+}
+@media print {
+  .croqui-fullscreen-controls {display:none !important}
+  #croqui-fullscreen-stage {display:grid !important}
+}

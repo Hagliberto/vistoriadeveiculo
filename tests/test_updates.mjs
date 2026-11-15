@@ -21,7 +21,7 @@ assert.ok(app.includes('await saveInFlight'));
 const fn = app.slice(app.indexOf('function isNewerVersion('), app.indexOf('function setUpdateSettingsMessage('));
 assert.ok(fn);
 const compare = vm.runInNewContext(`${fn}; isNewerVersion`);
-assert.equal(compare('1.5.4', '1.4.0'), true);
+assert.equal(compare('1.5.5', '1.4.0'), true);
 assert.equal(compare('1.4.1', '1.4.0'), true);
 assert.equal(compare('1.4.0', '1.4.0'), false);
 assert.equal(compare('1.3.9', '1.4.0'), false);

@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 const read = path => fs.readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const html=read('index.html'), js=read('assets/app.js'), css=read('assets/print-and-custom.css');
-const views=['front','front-left','left','rear-left','rear','right','front-right','top'];
+const views=['front','front-left','left','rear-left','rear','rear-right','right','front-right','top'];
 for (const key of views) {
   assert.match(html,new RegExp(`data-view-card="${key}"`), `Vista ${key} presente`);
   assert.match(html,new RegExp(`data-croqui-view="${key}"`), `Vista ${key} interativa`);
@@ -13,13 +13,13 @@ for (const key of views) {
   assert.ok(fs.statSync(f).size>5000,`Referência incorporada: ${key}`);
   assert.match(read('service-worker.js'),new RegExp(`croqui/${key}\\.webp`), `Cache offline: ${key}`);
 }
-assert.equal((html.match(/data-view-card=/g)||[]).length,8);
+assert.equal((html.match(/data-view-card=/g)||[]).length,9);
 assert.match(js,/addEventListener\('pointerdown'/);
 assert.match(js,/addEventListener\('pointerup'/);
 assert.match(js,/suppressClickUntil/);
 assert.match(js,/Math\.abs\(dx\) >= 48/);
 assert.match(css,/@media print[\s\S]*croqui-views-grid[\s\S]*grid-template-columns:repeat\(2/);
-assert.equal(JSON.parse(read('version.json')).version,'1.5.4');
+assert.equal(JSON.parse(read('version.json')).version,'1.5.5');
 
 function makeEl() {
   const listeners={};
@@ -59,4 +59,4 @@ surface45.fire('pointerup',{pointerId:4,clientX:350,clientY:121,preventDefault()
 assert.equal(run('activeCroquiView'),'front','Arraste direita retorna à frontal');
 const legacy=run(`normalizeState({pins:[{id:1,x:10,y:15,view:'top',type:'Risco',desc:''},{id:2,x:25,y:45,view:'left',type:'Quebrado',desc:''}],checklist:{},vehicle:{},signatures:{},meta:{}})`);
 assert.deepEqual(Array.from(legacy.pins,p=>p.view),['top','left']);
-console.log('OK: oito vistas da prancha, WebP offline, swipe com mouse/toque, proteção contra marcação e compatibilidade de dados.');
+console.log('OK: nove vistas da prancha, WebP offline, swipe com mouse/toque, proteção contra marcação e compatibilidade de dados.');

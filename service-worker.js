@@ -2,13 +2,13 @@
  * O Pages pode redirecionar /index.html para /; nunca guardar
  * a resposta redirecionada como fallback de navegacao.
  */
-const CACHE_NAME = 'vistoria-veicular-shell-v1.5.4';
+const CACHE_NAME = 'vistoria-veicular-shell-v1.5.5';
 const APP_SHELL = [
   './', './manifest.webmanifest', './service-worker.js', './version.json',
   './assets/app.css', './assets/print-and-custom.css',
   './assets/icons.js', './assets/app.js', './assets/export.js',
   './icons/icon-192.png', './icons/icon-512.png',
-  './assets/croqui/front.webp', './assets/croqui/front-left.webp', './assets/croqui/left.webp', './assets/croqui/rear-left.webp', './assets/croqui/rear.webp', './assets/croqui/right.webp', './assets/croqui/front-right.webp', './assets/croqui/top.webp'
+  './assets/croqui/front.webp', './assets/croqui/front-left.webp', './assets/croqui/left.webp', './assets/croqui/rear-left.webp', './assets/croqui/rear.webp', './assets/croqui/rear-right.webp', './assets/croqui/right.webp', './assets/croqui/front-right.webp', './assets/croqui/top.webp'
 ];
 
 self.addEventListener('install', event => {

@@ -14,10 +14,10 @@ assert.match(css,/\.croqui-toolbar \.croqui-view-center/);
 assert.match(css,/\.croqui-views-grid > \.croqui-view-card\.is-active-view\s*\{display:block !important/);
 assert.match(css,/@media print\s*\{\s*\.croqui-views-grid > \.croqui-view-card\s*\{display:block !important/);
 assert.match(js,/function stepCroquiView\(direction = 1\)/);
-for (const view of ['front','front-left','left','rear-left','rear','right','front-right','top']) {
+for (const view of ['front','front-left','left','rear-left','rear','rear-right','right','front-right','top']) {
   const block=html.match(new RegExp(`data-view-card="${view}"[\\s\\S]*?assets/croqui/${view}\\.webp`));
   assert.ok(block,`vista ${view} deve conter recorte técnico da prancha`);
 }
-assert.equal(JSON.parse(r('version.json')).version,'1.5.4');
-assert.match(r('service-worker.js'),/shell-v1\.5\.4/);
-console.log('OK: interface mínima, oito vistas técnicas, navegabilidade e impressão v1.5.4.');
+assert.equal(JSON.parse(r('version.json')).version,'1.5.5');
+assert.match(r('service-worker.js'),/shell-v1\.5\.5/);
+console.log('OK: interface mínima, nove vistas técnicas, navegabilidade e impressão v1.5.5.');

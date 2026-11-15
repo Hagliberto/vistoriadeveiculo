@@ -470,10 +470,19 @@
                                 <button type="button" id="btn-croqui-zoom-in" class="croqui-tool-icon" title="Ampliar" aria-label="Aumentar zoom">+</button>
                                 <button type="button" id="btn-croqui-zoom-reset" class="croqui-tool-icon reset" title="Restaurar" aria-label="Restaurar zoom">⤢</button>
                             </div>
-                            <div id="croqui-360-nav" class="croqui-hidden-dots" aria-hidden="true"><button type="button" tabindex="-1" data-croqui-nav="front" aria-label="Frontal (0°)"></button><button type="button" tabindex="-1" data-croqui-nav="front-left" aria-label="Dianteira esquerda (45°)"></button><button type="button" tabindex="-1" data-croqui-nav="left" aria-label="Lateral esquerda (90°)"></button><button type="button" tabindex="-1" data-croqui-nav="rear-left" aria-label="Traseira esquerda (135°)"></button><button type="button" tabindex="-1" data-croqui-nav="rear" aria-label="Traseira (180°)"></button><button type="button" tabindex="-1" data-croqui-nav="right" aria-label="Lateral direita (270°)"></button><button type="button" tabindex="-1" data-croqui-nav="front-right" aria-label="Dianteira direita (315°)"></button><button type="button" tabindex="-1" data-croqui-nav="top" aria-label="Superior (zênite)"></button></div>
+                            <button type="button" id="btn-croqui-fullscreen" class="croqui-tool-icon reset" aria-label="Ampliar croqui em tela cheia" title="Tela cheia">⛶</button>
+                            <div id="croqui-360-nav" class="croqui-hidden-dots" aria-hidden="true"><button type="button" tabindex="-1" data-croqui-nav="front" aria-label="Frontal (0°)"></button><button type="button" tabindex="-1" data-croqui-nav="front-left" aria-label="Dianteira esquerda (45°)"></button><button type="button" tabindex="-1" data-croqui-nav="left" aria-label="Lateral esquerda (90°)"></button><button type="button" tabindex="-1" data-croqui-nav="rear-left" aria-label="Traseira esquerda (135°)"></button><button type="button" tabindex="-1" data-croqui-nav="rear" aria-label="Traseira (180°)"></button><button type="button" tabindex="-1" data-croqui-nav="rear-right" aria-label="Traseira direita (225°)"></button><button type="button" tabindex="-1" data-croqui-nav="right" aria-label="Lateral direita (270°)"></button><button type="button" tabindex="-1" data-croqui-nav="front-right" aria-label="Dianteira direita (315°)"></button><button type="button" tabindex="-1" data-croqui-nav="top" aria-label="Superior (zênite)"></button></div>
                         </div>
-                        <div id="croqui-view-legend" class="croqui-print-legend print-only">Frontal · Dianteira esquerda · Lateral esquerda · Traseira esquerda · Traseira · Lateral direita · Dianteira direita · Superior</div>
-                        <div class="w-full croqui-views-grid grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div id="croqui-view-legend" class="croqui-print-legend print-only">Frontal · Dianteira esquerda · Lateral esquerda · Traseira esquerda · Traseira · Traseira direita · Lateral direita · Dianteira direita · Superior</div>
+                        <div id="croqui-fullscreen-stage" class="w-full croqui-views-grid grid grid-cols-1 sm:grid-cols-2 gap-3" aria-label="Croqui ampliado do veículo">
+                            <div class="croqui-fullscreen-controls no-print" aria-label="Navegação em tela cheia">
+                                <button type="button" id="btn-croqui-full-prev" aria-label="Vista anterior" title="Vista anterior">‹</button>
+                                <strong id="croqui-fullscreen-label">Frontal (0°)</strong>
+                                <button type="button" id="btn-croqui-full-next" aria-label="Próxima vista" title="Próxima vista">›</button>
+                                <button type="button" id="btn-croqui-full-zoom-out" aria-label="Reduzir zoom" title="Reduzir zoom">−</button>
+                                <button type="button" id="btn-croqui-full-zoom-in" aria-label="Aumentar zoom" title="Aumentar zoom">+</button>
+                                <button type="button" id="btn-croqui-full-close" aria-label="Fechar tela cheia" title="Fechar tela cheia">✕</button>
+                            </div>
                             <div class="croqui-view-card rounded-xl border border-slate-200 bg-white p-2" data-view-card="front">
                                 <div class="croqui-view-title flex items-center justify-between gap-2 px-1 pb-1.5">
                                     <div class="min-w-0"><span class="block text-[11px] font-bold uppercase tracking-wide text-slate-700">Frontal (0°)</span><span class="block text-[10px] text-slate-500">Vista frontal, faróis e para-choque.</span></div>
@@ -531,6 +540,18 @@
                                     <div class="croqui-zoom-stage relative w-full">
                                         <img class="croqui-drawing block w-full h-auto pointer-events-none select-none" src="assets/croqui/rear.webp" draggable="false" alt="Desenho técnico de veículo: Traseira (180°)" width="960" height="540" loading="eager" decoding="async">
                                         <div id="pins-layer-rear" class="absolute inset-0 pointer-events-none"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="croqui-view-card rounded-xl border border-slate-200 bg-white p-2" data-view-card="rear-right">
+                                <div class="croqui-view-title flex items-center justify-between gap-2 px-1 pb-1.5">
+                                    <div class="min-w-0"><span class="block text-[11px] font-bold uppercase tracking-wide text-slate-700">Traseira direita (225°)</span><span class="block text-[10px] text-slate-500">Tampa traseira, lanternas e para-choque.</span></div>
+                                    <span id="croqui-count-rear-right" class="shrink-0 text-[10px] font-bold text-slate-600">0 ponto(s)</span>
+                                </div>
+                                <div id="croqui-view-rear-right" data-croqui-view="rear-right" role="button" tabindex="0" aria-label="Croqui Traseira direita (225°): toque ou clique para registrar uma avaria; arraste horizontalmente para trocar de vista" class="croqui-surface relative overflow-hidden rounded-xl border border-slate-200 bg-white cursor-crosshair">
+                                    <div class="croqui-zoom-stage relative w-full">
+                                        <img class="croqui-drawing block w-full h-auto pointer-events-none select-none" src="assets/croqui/rear-right.webp" draggable="false" alt="Desenho técnico de veículo: Traseira direita (225°)" width="960" height="540" loading="eager" decoding="async">
+                                        <div id="pins-layer-rear-right" class="absolute inset-0 pointer-events-none"></div>
                                     </div>
                                 </div>
                             </div>
