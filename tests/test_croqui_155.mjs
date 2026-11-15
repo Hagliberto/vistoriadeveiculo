@@ -19,5 +19,5 @@ assert.match(js,/function stepCroquiView/);
 assert.match(js,/suppressClickUntil/);
 assert.match(css,/\.croqui-fallback-fullscreen/);
 assert.match(css,/@media print[\s\S]*croqui-fullscreen-controls/);
-assert.equal(JSON.parse(get('version.json')).version,'1.5.6');
-console.log('OK: nove vistas da fonte PDF, assets offline, fullscreen, fallback, swipe e impressão v1.5.6.');
+assert.equal(JSON.parse(get('version.json')).version,'1.5.7');
+console.log('OK: nove vistas da fonte PDF, assets offline, fullscreen, fallback, swipe e impressão v1.5.7.');

@@ -13,33 +13,35 @@ const ctx={console, document:{addEventListener(){},getElementById:get,createElem
 vm.createContext(ctx);
 vm.runInContext(app,ctx);
 const execute=code=>vm.runInContext(code,ctx);
-const colors=execute('Array.from({length:6},(_,i)=>getDamagePinColor(i).fill)');
-assert.equal(new Set(colors).size,6,'Primeiros seis marcadores precisam ter cores distintas');
-assert.equal(colors[0],'#be123c');
-assert.equal(colors[1],'#1d4ed8');
+const types=['Amassado','Risco','Quebrado','Faltando'];
+const colors=types.map(t=>execute(`getDamagePinColor('${t}').fill`));
+assert.equal(new Set(colors).size,4,'Cada tipo tem uma cor própria');
+assert.deepEqual(colors, ['#be123c','#1d4ed8','#c2410c','#7e22ce']);
 execute(`appState.pins=[
-{id:101,x:10,y:12,type:'Risco',desc:'primeiro',photo:null},
-{id:102,x:20,y:22,type:'Quebrado',desc:'segundo',photo:null},
-{id:103,x:30,y:32,type:'Amassado',desc:'terceiro',photo:null}]; renderDamagePins();`);
+{id:101,x:10,y:12,type:'Amassado',desc:'primeiro',photo:null},
+{id:102,x:20,y:22,type:'Amassado',desc:'segundo',photo:null},
+{id:103,x:30,y:32,type:'Risco',desc:'terceiro',photo:null},
+{id:104,x:40,y:42,type:'Quebrado',desc:'quarto',photo:null},
+{id:105,x:50,y:52,type:'Faltando',desc:'quinto',photo:null}]; renderDamagePins();`);
 let pins=get('pins-layer').children, list=get('damage-list').children;
-assert.equal(pins.length,3);
-assert.deepEqual([...pins.map(x=>x.style.backgroundColor)], [...colors.slice(0,3)]);
-for(let i=0;i<3;i++) {
- assert.ok(list[i].innerHTML.includes(`background-color:${colors[i]}`),'Número da lista e do croqui devem coincidir');
- assert.ok(list[i].innerHTML.includes(`color:${vm.runInContext(`getDamagePinColor(${i}).text`,ctx)}`),'Tipo da avaria deve ter sua cor');
- assert.equal(list[i].style.borderLeft,`4px solid ${colors[i]}`);
- assert.equal(list[i].style['--damage-pin-color'],colors[i]);
+assert.equal(pins.length,5);
+const expected=[colors[0],colors[0],colors[1],colors[2],colors[3]];
+assert.deepEqual(pins.map(x=>x.style.backgroundColor),expected,'Cores por tipo (não por número)');
+for(let i=0;i<5;i++) {
+ assert.ok(list[i].innerHTML.includes(`background-color:${expected[i]}`),'Número da lista e croqui coincidem');
+ assert.equal(list[i].style.borderLeft,`4px solid ${expected[i]}`);
+ assert.equal(list[i].style['--damage-pin-color'],expected[i]);
 }
-// Testa a renumeração sem apagar os dados restantes.
+// Remover item altera o número, mas nunca a cor definida pelo tipo.
 get('pins-layer').children=[];get('damage-list').children=[];
 execute('appState.pins.splice(1,1); renderDamagePins();');
 pins=get('pins-layer').children;
 list=get('damage-list').children;
-assert.equal(pins.length,2);
-assert.equal(pins[1].style.backgroundColor,colors[1]);
+assert.equal(pins.length,4);
+assert.deepEqual(pins.map(x=>x.style.backgroundColor), [colors[0],colors[1],colors[2],colors[3]]);
 assert.ok(list[1].innerHTML.includes('terceiro'));
 assert.equal(execute('appState.pins[1].id'),103);
 assert.ok(css.includes('print-color-adjust: exact'));
-assert.equal(JSON.parse(fs.readFileSync(new URL('../version.json',import.meta.url))).version,'1.5.6');
-assert.ok(fs.readFileSync(new URL('../service-worker.js',import.meta.url),'utf8').includes('shell-v1.5.6'));
-console.log('OK: cores individuais, associação croqui/lista, renumeração e impressão A4 v1.5.6.');
+assert.equal(JSON.parse(fs.readFileSync(new URL('../version.json',import.meta.url))).version,'1.5.7');
+assert.ok(fs.readFileSync(new URL('../service-worker.js',import.meta.url),'utf8').includes('shell-v1.5.7'));
+console.log('OK: cores por tipo, persistência após exclusão e impressão A4 v1.5.7.');
