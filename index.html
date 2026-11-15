@@ -452,50 +452,137 @@
                             <button type="button" data-damage-type="Quebrado" class="damage-type-btn touch-target-btn px-2 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Quebrado</button>
                             <button type="button" data-damage-type="Faltando" class="damage-type-btn touch-target-btn px-2 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Faltando</button>
                         </div>
+                        <p class="w-full text-[11px] text-slate-500 mb-3 no-print">Agora o croqui mostra o veículo em várias visões. Toque na área correspondente para registrar a avaria no local mais próximo.</p>
 
-                        <div id="car-diagram-container" role="button" tabindex="0" aria-label="Croqui do veículo: clique para marcar uma avaria; pressione Enter ou Espaço para inserir um ponto no centro" class="w-full max-w-[440px] bg-slate-50 border-2 border-dashed border-slate-300 rounded-2xl p-3 cursor-crosshair relative overflow-hidden">
-                            <svg id="car-svg" viewBox="0 0 500 260" class="w-full h-auto block pointer-events-none">
-                                <text x="20" y="135" fill="#94a3b8" font-size="11" font-weight="bold" text-anchor="middle" transform="rotate(-90 20 135)">FRENTE</text>
-                                <text x="480" y="135" fill="#94a3b8" font-size="11" font-weight="bold" text-anchor="middle" transform="rotate(90 480 135)">TRASEIRA</text>
-                                <text x="250" y="18" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">LADO ESQUERDO (MOTORISTA)</text>
-                                <text x="250" y="250" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">LADO DIREITO (PASSAGEIRO)</text>
+                        <div class="w-full croqui-views-grid grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="croqui-view-card sm:col-span-2 rounded-2xl border border-slate-200 bg-slate-50/70 p-2.5" data-view-card="top">
+                                <div class="flex items-center justify-between px-1 pb-2">
+                                    <div>
+                                        <span class="block text-[11px] font-bold uppercase tracking-wide text-slate-700">Visão superior</span>
+                                        <span class="block text-[10px] text-slate-500">Teto, capô, portas, para-choques e porta-malas</span>
+                                    </div>
+                                    <span id="croqui-count-top" class="text-[10px] font-bold px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600">0 ponto(s)</span>
+                                </div>
+                                <div id="car-diagram-container" data-croqui-view="top" role="button" tabindex="0" aria-label="Croqui do veículo em visão superior: clique para marcar uma avaria; pressione Enter ou Espaço para inserir um ponto no centro" class="croqui-surface w-full bg-white border-2 border-dashed border-slate-300 rounded-2xl p-3 cursor-crosshair relative overflow-hidden">
+                                    <svg id="car-svg" viewBox="0 0 500 260" class="w-full h-auto block pointer-events-none">
+                                        <text x="20" y="135" fill="#94a3b8" font-size="11" font-weight="bold" text-anchor="middle" transform="rotate(-90 20 135)">FRENTE</text>
+                                        <text x="480" y="135" fill="#94a3b8" font-size="11" font-weight="bold" text-anchor="middle" transform="rotate(90 480 135)">TRASEIRA</text>
+                                        <text x="250" y="18" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">LADO ESQUERDO (MOTORISTA)</text>
+                                        <text x="250" y="250" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">LADO DIREITO (PASSAGEIRO)</text>
+                                        <path d="M 55,65 Q 40,65 40,95 L 40,165 Q 40,195 55,195 L 440,195 Q 460,195 460,165 L 460,95 Q 460,65 440,65 Z" fill="#ffffff" stroke="#334155" stroke-width="3"/>
+                                        <path d="M 55,65 Q 38,68 38,95 L 38,165 Q 38,192 55,195" fill="none" stroke="#64748b" stroke-width="2"/>
+                                        <path d="M 43,72 L 56,76 L 52,88 L 41,84 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
+                                        <path d="M 43,188 L 56,184 L 52,172 L 41,176 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
+                                        <path d="M 457,72 L 444,76 L 448,88 L 459,84 Z" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+                                        <path d="M 457,188 L 444,184 L 448,172 L 459,176 Z" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+                                        <path d="M 65,75 L 140,78 L 140,182 L 65,185 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+                                        <path d="M 142,76 L 195,84 L 195,176 L 142,184 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+                                        <rect x="198" y="85" width="145" height="90" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+                                        <path d="M 346,84 L 392,77 L 392,183 L 346,176 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+                                        <path d="M 395,77 L 442,75 L 442,185 L 395,183 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+                                        <path d="M 155,65 L 165,48 L 176,50 L 170,65 Z" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+                                        <path d="M 155,195 L 165,212 L 176,210 L 170,195 Z" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+                                        <line x1="185" y1="65" x2="185" y2="84" stroke="#64748b" stroke-width="1.5"/>
+                                        <line x1="270" y1="65" x2="270" y2="85" stroke="#64748b" stroke-width="1.5"/>
+                                        <line x1="350" y1="65" x2="350" y2="84" stroke="#64748b" stroke-width="1.5"/>
+                                        <line x1="185" y1="195" x2="185" y2="176" stroke="#64748b" stroke-width="1.5"/>
+                                        <line x1="270" y1="195" x2="270" y2="175" stroke="#64748b" stroke-width="1.5"/>
+                                        <line x1="350" y1="195" x2="350" y2="176" stroke="#64748b" stroke-width="1.5"/>
+                                        <rect x="85" y="57" width="46" height="8" rx="3" fill="#1e293b"/>
+                                        <rect x="365" y="57" width="46" height="8" rx="3" fill="#1e293b"/>
+                                        <rect x="85" y="195" width="46" height="8" rx="3" fill="#1e293b"/>
+                                        <rect x="365" y="195" width="46" height="8" rx="3" fill="#1e293b"/>
+                                    </svg>
+                                    <div id="pins-layer" class="absolute inset-0 pointer-events-none"></div>
+                                </div>
+                            </div>
 
-                                <!-- Carroceria -->
-                                <path d="M 55,65 Q 40,65 40,95 L 40,165 Q 40,195 55,195 L 440,195 Q 460,195 460,165 L 460,95 Q 460,65 440,65 Z" fill="#ffffff" stroke="#334155" stroke-width="3"/>
-                                <path d="M 55,65 Q 38,68 38,95 L 38,165 Q 38,192 55,195" fill="none" stroke="#64748b" stroke-width="2"/>
-                                <!-- Faróis -->
-                                <path d="M 43,72 L 56,76 L 52,88 L 41,84 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
-                                <path d="M 43,188 L 56,184 L 52,172 L 41,176 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
-                                <!-- Lanternas -->
-                                <path d="M 457,72 L 444,76 L 448,88 L 459,84 Z" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
-                                <path d="M 457,188 L 444,184 L 448,172 L 459,176 Z" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
-                                <!-- Capô -->
-                                <path d="M 65,75 L 140,78 L 140,182 L 65,185 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
-                                <!-- Para-brisa -->
-                                <path d="M 142,76 L 195,84 L 195,176 L 142,184 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
-                                <!-- Teto -->
-                                <rect x="198" y="85" width="145" height="90" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
-                                <!-- Vidro Traseiro -->
-                                <path d="M 346,84 L 392,77 L 392,183 L 346,176 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
-                                <!-- Porta-malas -->
-                                <path d="M 395,77 L 442,75 L 442,185 L 395,183 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
-                                <!-- Retrovisores -->
-                                <path d="M 155,65 L 165,48 L 176,50 L 170,65 Z" fill="#ffffff" stroke="#334155" stroke-width="2"/>
-                                <path d="M 155,195 L 165,212 L 176,210 L 170,195 Z" fill="#ffffff" stroke="#334155" stroke-width="2"/>
-                                <!-- Portas -->
-                                <line x1="185" y1="65" x2="185" y2="84" stroke="#64748b" stroke-width="1.5"/>
-                                <line x1="270" y1="65" x2="270" y2="85" stroke="#64748b" stroke-width="1.5"/>
-                                <line x1="350" y1="65" x2="350" y2="84" stroke="#64748b" stroke-width="1.5"/>
-                                <line x1="185" y1="195" x2="185" y2="176" stroke="#64748b" stroke-width="1.5"/>
-                                <line x1="270" y1="195" x2="270" y2="175" stroke="#64748b" stroke-width="1.5"/>
-                                <line x1="350" y1="195" x2="350" y2="176" stroke="#64748b" stroke-width="1.5"/>
-                                <!-- Rodas -->
-                                <rect x="85" y="57" width="46" height="8" rx="3" fill="#1e293b"/>
-                                <rect x="365" y="57" width="46" height="8" rx="3" fill="#1e293b"/>
-                                <rect x="85" y="195" width="46" height="8" rx="3" fill="#1e293b"/>
-                                <rect x="365" y="195" width="46" height="8" rx="3" fill="#1e293b"/>
-                            </svg>
-                            <div id="pins-layer" class="absolute inset-0 pointer-events-none"></div>
+                            <div class="croqui-view-card rounded-2xl border border-slate-200 bg-slate-50/70 p-2.5" data-view-card="left">
+                                <div class="flex items-center justify-between px-1 pb-2">
+                                    <span class="text-[11px] font-bold uppercase tracking-wide text-slate-700">Lateral esquerda</span>
+                                    <span id="croqui-count-left" class="text-[10px] font-bold px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600">0</span>
+                                </div>
+                                <div id="croqui-view-left" data-croqui-view="left" role="button" tabindex="0" aria-label="Croqui do veículo em visão lateral esquerda" class="croqui-surface aspect-[16/7] bg-white border-2 border-dashed border-slate-300 rounded-2xl p-2 cursor-crosshair relative overflow-hidden">
+                                    <svg viewBox="0 0 320 140" class="w-full h-full block pointer-events-none">
+                                        <rect x="42" y="72" width="220" height="36" rx="12" fill="#ffffff" stroke="#334155" stroke-width="3"/>
+                                        <path d="M 80 72 L 112 43 Q 120 36 132 36 H 202 Q 216 36 226 48 L 248 72 Z" fill="#ffffff" stroke="#334155" stroke-width="3"/>
+                                        <path d="M 118 45 H 152 L 152 72 H 96 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+                                        <path d="M 158 45 H 208 Q 218 45 224 52 L 236 72 H 158 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+                                        <circle cx="95" cy="108" r="20" fill="#0f172a"/><circle cx="95" cy="108" r="9" fill="#cbd5e1"/>
+                                        <circle cx="220" cy="108" r="20" fill="#0f172a"/><circle cx="220" cy="108" r="9" fill="#cbd5e1"/>
+                                        <line x1="158" y1="48" x2="158" y2="104" stroke="#64748b" stroke-width="2"/>
+                                        <line x1="205" y1="48" x2="205" y2="104" stroke="#64748b" stroke-width="2"/>
+                                        <rect x="44" y="76" width="14" height="10" rx="2" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
+                                        <rect x="246" y="78" width="16" height="12" rx="2" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+                                        <text x="160" y="18" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">MOTORISTA</text>
+                                    </svg>
+                                    <div id="pins-layer-left" class="absolute inset-0 pointer-events-none"></div>
+                                </div>
+                            </div>
+
+                            <div class="croqui-view-card rounded-2xl border border-slate-200 bg-slate-50/70 p-2.5" data-view-card="right">
+                                <div class="flex items-center justify-between px-1 pb-2">
+                                    <span class="text-[11px] font-bold uppercase tracking-wide text-slate-700">Lateral direita</span>
+                                    <span id="croqui-count-right" class="text-[10px] font-bold px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600">0</span>
+                                </div>
+                                <div id="croqui-view-right" data-croqui-view="right" role="button" tabindex="0" aria-label="Croqui do veículo em visão lateral direita" class="croqui-surface aspect-[16/7] bg-white border-2 border-dashed border-slate-300 rounded-2xl p-2 cursor-crosshair relative overflow-hidden">
+                                    <svg viewBox="0 0 320 140" class="w-full h-full block pointer-events-none">
+                                        <rect x="58" y="72" width="220" height="36" rx="12" fill="#ffffff" stroke="#334155" stroke-width="3"/>
+                                        <path d="M 72 72 L 94 48 Q 104 36 118 36 H 188 Q 200 36 208 43 L 240 72 Z" fill="#ffffff" stroke="#334155" stroke-width="3"/>
+                                        <path d="M 84 72 H 162 V 45 H 116 Q 106 45 100 52 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+                                        <path d="M 168 72 H 224 L 212 48 Q 206 45 196 45 H 168 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+                                        <circle cx="100" cy="108" r="20" fill="#0f172a"/><circle cx="100" cy="108" r="9" fill="#cbd5e1"/>
+                                        <circle cx="225" cy="108" r="20" fill="#0f172a"/><circle cx="225" cy="108" r="9" fill="#cbd5e1"/>
+                                        <line x1="164" y1="48" x2="164" y2="104" stroke="#64748b" stroke-width="2"/>
+                                        <line x1="116" y1="48" x2="116" y2="104" stroke="#64748b" stroke-width="2"/>
+                                        <rect x="262" y="76" width="14" height="10" rx="2" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
+                                        <rect x="58" y="78" width="16" height="12" rx="2" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+                                        <text x="160" y="18" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">PASSAGEIRO</text>
+                                    </svg>
+                                    <div id="pins-layer-right" class="absolute inset-0 pointer-events-none"></div>
+                                </div>
+                            </div>
+
+                            <div class="croqui-view-card rounded-2xl border border-slate-200 bg-slate-50/70 p-2.5" data-view-card="front">
+                                <div class="flex items-center justify-between px-1 pb-2">
+                                    <span class="text-[11px] font-bold uppercase tracking-wide text-slate-700">Frontal</span>
+                                    <span id="croqui-count-front" class="text-[10px] font-bold px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600">0</span>
+                                </div>
+                                <div id="croqui-view-front" data-croqui-view="front" role="button" tabindex="0" aria-label="Croqui do veículo em visão frontal" class="croqui-surface aspect-[4/3] bg-white border-2 border-dashed border-slate-300 rounded-2xl p-2 cursor-crosshair relative overflow-hidden">
+                                    <svg viewBox="0 0 220 170" class="w-full h-full block pointer-events-none">
+                                        <rect x="44" y="58" width="132" height="72" rx="18" fill="#ffffff" stroke="#334155" stroke-width="3"/>
+                                        <path d="M 62 58 L 76 38 Q 82 28 94 28 H 126 Q 138 28 144 38 L 158 58 Z" fill="#ffffff" stroke="#334155" stroke-width="3"/>
+                                        <rect x="70" y="44" width="80" height="22" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+                                        <rect x="56" y="82" width="24" height="14" rx="4" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
+                                        <rect x="140" y="82" width="24" height="14" rx="4" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
+                                        <rect x="90" y="98" width="40" height="10" rx="4" fill="#cbd5e1" stroke="#64748b" stroke-width="1.2"/>
+                                        <circle cx="70" cy="132" r="14" fill="#0f172a"/><circle cx="70" cy="132" r="6" fill="#cbd5e1"/>
+                                        <circle cx="150" cy="132" r="14" fill="#0f172a"/><circle cx="150" cy="132" r="6" fill="#cbd5e1"/>
+                                        <text x="110" y="18" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">FRENTE</text>
+                                    </svg>
+                                    <div id="pins-layer-front" class="absolute inset-0 pointer-events-none"></div>
+                                </div>
+                            </div>
+
+                            <div class="croqui-view-card rounded-2xl border border-slate-200 bg-slate-50/70 p-2.5" data-view-card="rear">
+                                <div class="flex items-center justify-between px-1 pb-2">
+                                    <span class="text-[11px] font-bold uppercase tracking-wide text-slate-700">Traseira</span>
+                                    <span id="croqui-count-rear" class="text-[10px] font-bold px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600">0</span>
+                                </div>
+                                <div id="croqui-view-rear" data-croqui-view="rear" role="button" tabindex="0" aria-label="Croqui do veículo em visão traseira" class="croqui-surface aspect-[4/3] bg-white border-2 border-dashed border-slate-300 rounded-2xl p-2 cursor-crosshair relative overflow-hidden">
+                                    <svg viewBox="0 0 220 170" class="w-full h-full block pointer-events-none">
+                                        <rect x="44" y="52" width="132" height="78" rx="18" fill="#ffffff" stroke="#334155" stroke-width="3"/>
+                                        <rect x="70" y="36" width="80" height="30" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+                                        <rect x="56" y="80" width="20" height="16" rx="4" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+                                        <rect x="144" y="80" width="20" height="16" rx="4" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+                                        <rect x="84" y="100" width="52" height="12" rx="4" fill="#cbd5e1" stroke="#64748b" stroke-width="1.2"/>
+                                        <circle cx="70" cy="132" r="14" fill="#0f172a"/><circle cx="70" cy="132" r="6" fill="#cbd5e1"/>
+                                        <circle cx="150" cy="132" r="14" fill="#0f172a"/><circle cx="150" cy="132" r="6" fill="#cbd5e1"/>
+                                        <text x="110" y="18" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">TRASEIRA</text>
+                                    </svg>
+                                    <div id="pins-layer-rear" class="absolute inset-0 pointer-events-none"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -504,9 +591,9 @@
                         <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                             Pontos Registrados
                         </h3>
-                        <div id="damage-list" class="space-y-2 max-h-[260px] overflow-y-auto pr-1">
+                        <div id="damage-list" class="space-y-2 max-h-[420px] overflow-y-auto pr-1">
                             <div class="text-center py-7 px-4 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-xs">
-                                Nenhuma avaria marcada no desenho.<br>Toque no croqui para registrar.
+                                Nenhuma avaria marcada no desenho.<br>Toque em qualquer visão para registrar.
                             </div>
                         </div>
                     </div>

@@ -723,7 +723,7 @@
 
 body.export-open {overflow:hidden}
 
-/* v1.4.8 — numeração cromática consistente na tela e no PDF A4. */
+/* v1.4.9 — croqui com múltiplas visões e numeração cromática consistente na tela e no PDF A4. */
 .damage-pin, .damage-list-number, .damage-list-type, .damage-list-item {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -735,5 +735,56 @@ body.export-open {overflow:hidden}
     }
     #damage-list .damage-list-item {
         border-left: 4px solid var(--damage-pin-color) !important;
+    }
+}
+
+
+.croqui-view-card {
+    transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.croqui-surface {
+    position: relative;
+    min-height: 170px;
+    background-image: linear-gradient(to bottom, rgba(248,250,252,.65), rgba(255,255,255,.95));
+}
+.croqui-surface:focus-visible {
+    outline: 3px solid rgba(0,114,206,.28);
+    outline-offset: 2px;
+}
+[data-view-card="top"] .croqui-surface {
+    min-height: 260px;
+}
+
+@media print {
+    .croqui-views-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+        align-items: start !important;
+    }
+    .croqui-view-card {
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        padding: 4px !important;
+        border-radius: 6px !important;
+        box-shadow: none !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+    .croqui-view-card.sm\:col-span-2,
+    [data-view-card="top"] {
+        grid-column: 1 / -1 !important;
+    }
+    .croqui-surface,
+    #car-diagram-container {
+        border: 1px solid #cbd5e1 !important;
+        background: #ffffff !important;
+        border-radius: 6px !important;
+        padding: 3px !important;
+        min-height: 0 !important;
+    }
+    .croqui-view-card span[id^="croqui-count-"] {
+        border-color: #cbd5e1 !important;
+        color: #475569 !important;
     }
 }
