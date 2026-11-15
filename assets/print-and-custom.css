@@ -868,3 +868,29 @@ body.export-open {overflow:hidden}
         align-items: flex-start;
     }
 }
+
+/* v1.5.2 — visualizador de vista única, navegação responsiva e laudo completo. */
+@media screen {
+  .croqui-views-grid {display:block !important;min-width:0}
+  .croqui-views-grid > .croqui-view-card {display:none !important;width:100%;max-width:100%;min-width:0;animation:croqui-enter .24s ease-out}
+  .croqui-views-grid > .croqui-view-card.is-active-view {display:block !important}
+  .croqui-views-grid .croqui-surface {max-width:100%;margin:auto;touch-action:pan-y}
+  #croqui-360-console {min-width:0;overflow:hidden}
+  #croqui-360-console > div {flex-wrap:wrap;align-items:center;min-width:0}
+  #croqui-360-console > div > .flex.items-center.gap-2 {flex-shrink:0;min-width:0;max-width:100%;margin-left:auto}
+  #croqui-360-nav {display:flex;align-items:center;gap:10px;flex-wrap:nowrap;min-width:0}
+  .croqui-nav-dot {flex-shrink:0}
+  .croqui-view-card .croqui-surface svg {filter:drop-shadow(0 12px 14px rgba(23,42,62,.09))}
+  @keyframes croqui-enter {from{opacity:.45;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+}
+@media screen and (max-width:599px) {
+  #croqui-360-console > div {display:flex;flex-direction:column;align-items:stretch;gap:10px}
+  #croqui-360-console > div > .flex.items-center.gap-2 {margin:0;justify-content:center}
+  #croqui-360-nav {gap:14px}
+  .croqui-views-grid .croqui-surface {min-height:195px}
+}
+@media print {
+  .croqui-views-grid > .croqui-view-card {display:block !important;opacity:1 !important;transform:none !important}
+  .croqui-views-grid {display:grid !important}
+}
+@media (prefers-reduced-motion: reduce) { .croqui-views-grid > .croqui-view-card {animation:none !important} }

@@ -37,7 +37,7 @@
          * Atualizações PWA: somente versões publicadas no mesmo host, com confirmação.
          * A verificação não acessa nem altera IndexedDB/localStorage de vistorias.
          */
-        const APP_VERSION = '1.5.1';
+        const APP_VERSION = '1.5.2';
         let updateRegistration = null;
         let availableUpdateVersion = null;
         let updateCheckInProgress = false;
@@ -1216,6 +1216,9 @@
                 document.querySelectorAll('[data-view-card]').forEach(card => {
                     const isActive = card.dataset.viewCard === activeCroquiView;
                     card.classList.toggle('is-active-view', isActive);
+                    card.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+                    const surface = card.querySelector?.('[data-croqui-view]');
+                    if (surface) surface.tabIndex = isActive ? 0 : -1;
                     card.style.transform = isActive ? 'translateY(-1px)' : '';
                     card.style.borderColor = isActive ? '#60a5fa' : '';
                     if (isActive) {
@@ -1268,10 +1271,29 @@
                 const viewId = surface.dataset.croquiView || 'top';
                 surface.addEventListener('pointerenter', () => setActiveCroquiView(viewId));
                 surface.addEventListener('focus', () => setActiveCroquiView(viewId));
+                let swipeStart = null;
+                let swallowClick = false;
+                surface.addEventListener('touchstart', (event) => {
+                    const touch = event.changedTouches[0];
+                    if (touch) swipeStart = { x: touch.clientX, y: touch.clientY };
+                }, { passive: true });
+                surface.addEventListener('touchend', (event) => {
+                    if (!swipeStart) return;
+                    const touch = event.changedTouches[0];
+                    const dx = touch.clientX - swipeStart.x;
+                    const dy = touch.clientY - swipeStart.y;
+                    swipeStart = null;
+                    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.25) {
+                        swallowClick = true;
+                        stepCroquiView(dx < 0 ? 1 : -1);
+                    }
+                }, { passive: true });
                 surface.addEventListener('click', (e) => {
+                    if (swallowClick) { swallowClick = false; return; }
                     if (e.target.closest('.damage-pin')) return;
                     setActiveCroquiView(viewId);
-                    const rect = surface.getBoundingClientRect();
+                    const stage = surface.querySelector('.croqui-zoom-stage');
+                    const rect = (stage || surface).getBoundingClientRect();
                     const xPct = ((e.clientX - rect.left) / rect.width) * 100;
                     const yPct = ((e.clientY - rect.top) / rect.height) * 100;
                     addDamagePin(xPct, yPct, viewId);
