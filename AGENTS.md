@@ -1,3 +1,10 @@
+## Croqui v1.5.6 — gestos e impressão
+
+- Pinça com Pointer Events; zoom limitado a 100–300%, com pan limitado ao tamanho visível.
+- Arrastar em 100% troca vista; com zoom ativo reposiciona o desenho, não cria pontos.
+- Preservar coordenadas e imagens do croqui no armazenamento e renderização no PDF.
+- Resumo impresso usa só a quantidade numérica, sem pill.
+
 ## v1.5.5 — Imagens do PDF de referência e tela cheia
 
 - Substituídas as imagens das vistas por arquivos extraídos diretamente do PDF do usuário, sem os quadros e setas da prancha.

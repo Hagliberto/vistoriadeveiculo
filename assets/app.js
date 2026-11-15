@@ -37,7 +37,7 @@
          * Atualizações PWA: somente versões publicadas no mesmo host, com confirmação.
          * A verificação não acessa nem altera IndexedDB/localStorage de vistorias.
          */
-        const APP_VERSION = '1.5.5';
+        const APP_VERSION = '1.5.6';
         let updateRegistration = null;
         let availableUpdateVersion = null;
         let updateCheckInProgress = false;
@@ -422,6 +422,8 @@
         let selectedDamageType = 'Amassado';
         let activeCroquiView = 'front';
         let croquiZoom = 1;
+        let croquiPanX = 0;
+        let croquiPanY = 0;
         // Prancha de referência: sete ângulos ao redor do carro + vista superior.
         // Mantemos os IDs legados para preservar os pontos salvos nas versões anteriores.
         const CROQUI_VIEWS = Object.freeze([
@@ -1221,7 +1223,13 @@
         }
 
         function setActiveCroquiView(viewId = 'top') {
-            activeCroquiView = CROQUI_VIEW_IDS.has(viewId) ? viewId : 'top';
+            const nextView = CROQUI_VIEW_IDS.has(viewId) ? viewId : 'top';
+            if (activeCroquiView !== nextView) {
+                croquiPanX = 0;
+                croquiPanY = 0;
+            }
+            activeCroquiView = nextView;
+            if (typeof applyCroquiZoom === 'function') applyCroquiZoom();
             const meta = getCroquiViewMeta(activeCroquiView);
             const fullLabel = document.getElementById('croqui-fullscreen-label');
             if (fullLabel) fullLabel.textContent = meta.label;
@@ -1256,20 +1264,50 @@
             setActiveCroquiView(CROQUI_VIEWS[nextIndex].id);
         }
 
+        // The same transform is applied to every view to preserve the mapping
+        // between the image and its numbered damage pins.
+        function getCroquiPanLimits(surface, zoom = croquiZoom) {
+            if (!surface || zoom <= 1) return { x: 0, y: 0 };
+            // The drawing is centered. Restrict translation so the photo never
+            // moves completely outside the visible surface.
+            const rect = surface.getBoundingClientRect();
+            const width = surface.clientWidth || rect.width || 0;
+            const height = surface.clientHeight || rect.height || 0;
+            return { x: Math.max(0, (zoom - 1) * width / 2), y: Math.max(0, (zoom - 1) * height / 2) };
+        }
+
+        function clampCroquiPan() {
+            const surface = document.querySelector?.(`[data-croqui-view="${activeCroquiView}"]`);
+            const limits = getCroquiPanLimits(surface);
+            croquiPanX = Math.max(-limits.x, Math.min(limits.x, croquiPanX));
+            croquiPanY = Math.max(-limits.y, Math.min(limits.y, croquiPanY));
+            if (croquiZoom <= 1) { croquiPanX = 0; croquiPanY = 0; }
+        }
+
         function applyCroquiZoom() {
+            clampCroquiPan();
             const zoomLabel = document.getElementById('croqui-zoom-level');
             if (zoomLabel) zoomLabel.textContent = `${Math.round(croquiZoom * 100)}%`;
             if (document.querySelectorAll) {
                 document.querySelectorAll('.croqui-zoom-stage').forEach(stage => {
-                    stage.style.transform = `scale(${croquiZoom})`;
+                    stage.style.transform = `translate(${croquiPanX}px, ${croquiPanY}px) scale(${croquiZoom})`;
                     stage.style.transformOrigin = 'center center';
-                    stage.style.transition = 'transform .18s ease';
+                    stage.style.transition = 'none';
+                });
+                document.querySelectorAll('.croqui-surface').forEach(surface => {
+                    surface.classList.toggle('croqui-is-zoomed', croquiZoom > 1);
                 });
             }
         }
 
         function setCroquiZoom(nextZoom) {
-            croquiZoom = Math.max(1, Math.min(2.25, Math.round(nextZoom * 100) / 100));
+            const previousZoom = croquiZoom;
+            croquiZoom = Math.max(1, Math.min(3, Math.round(nextZoom * 100) / 100));
+            if (croquiZoom <= 1) { croquiPanX = 0; croquiPanY = 0; }
+            else if (previousZoom > 1) {
+                croquiPanX *= croquiZoom / previousZoom;
+                croquiPanY *= croquiZoom / previousZoom;
+            }
             applyCroquiZoom();
         }
 
@@ -1288,31 +1326,100 @@
                 const viewId = surface.dataset.croquiView || 'top';
                 surface.addEventListener('pointerenter', () => setActiveCroquiView(viewId));
                 surface.addEventListener('focus', () => setActiveCroquiView(viewId));
-                // Swipe: unificado com Pointer Events (mouse, toque e caneta).
-                let dragStart = null;
+                // Gestures: pinch with two pointers; pan with one pointer when
+                // zoomed; swipe to change view only at 100%. A gesture must
+                // never create a damage point as a side effect.
+                const touches = new Map();
+                let gesture = null;
                 let suppressClickUntil = 0;
+                const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+                const markGesture = () => {
+                    suppressClickUntil = Date.now() + 900;
+                };
                 surface.addEventListener('pointerdown', (event) => {
-                    if (event.target.closest('.damage-pin')) return;
                     if (event.button !== undefined && event.button !== 0) return;
-                    dragStart = { x:event.clientX, y:event.clientY, id:event.pointerId };
-                });
-                surface.addEventListener('pointerup', (event) => {
-                    if (!dragStart || dragStart.id !== event.pointerId) return;
-                    const dx = event.clientX - dragStart.x;
-                    const dy = event.clientY - dragStart.y;
-                    dragStart = null;
-                    if (Math.abs(dx) >= 48 && Math.abs(dx) > Math.abs(dy) * 1.25) {
-                        suppressClickUntil = Date.now() + 650;
-                        event.preventDefault();
-                        stepCroquiView(dx < 0 ? 1 : -1);
+                    const isPin = !!event.target.closest('.damage-pin');
+                    // Pin selection remains clickable, except during a pinch.
+                    if (isPin && touches.size === 0) return;
+                    touches.set(event.pointerId, { x: event.clientX, y: event.clientY });
+                    if (surface.setPointerCapture) {
+                        try { surface.setPointerCapture(event.pointerId); } catch (_) {}
+                    }
+                    if (touches.size === 1) {
+                        gesture = {
+                            kind: 'single', pointerId: event.pointerId,
+                            x: event.clientX, y: event.clientY,
+                            startPanX: croquiPanX, startPanY: croquiPanY,
+                            moved: false, zoomAtStart: croquiZoom
+                        };
+                    } else if (touches.size >= 2) {
+                        const [a, b] = [...touches.values()];
+                        gesture = {
+                            kind: 'pinch', startDistance: Math.max(1, distance(a, b)),
+                            startZoom: croquiZoom,
+                            startCenterX: (a.x + b.x) / 2,
+                            startCenterY: (a.y + b.y) / 2,
+                            startPanX: croquiPanX, startPanY: croquiPanY
+                        };
+                        markGesture();
                     }
                 });
-                surface.addEventListener('pointercancel', () => { dragStart = null; });
+                surface.addEventListener('pointermove', (event) => {
+                    if (!touches.has(event.pointerId)) return;
+                    touches.set(event.pointerId, { x: event.clientX, y: event.clientY });
+                    if (touches.size >= 2 && gesture?.kind === 'pinch') {
+                        const [a, b] = [...touches.values()];
+                        croquiZoom = Math.max(1, Math.min(3,
+                            Math.round(gesture.startZoom * distance(a, b) / gesture.startDistance * 100) / 100));
+                        croquiPanX = gesture.startPanX + (a.x + b.x) / 2 - gesture.startCenterX;
+                        croquiPanY = gesture.startPanY + (a.y + b.y) / 2 - gesture.startCenterY;
+                        applyCroquiZoom();
+                        markGesture();
+                        if (event.cancelable) event.preventDefault();
+                    } else if (touches.size === 1 && gesture?.kind === 'single') {
+                        const dx = event.clientX - gesture.x;
+                        const dy = event.clientY - gesture.y;
+                        if (Math.hypot(dx, dy) > 8) {
+                            gesture.moved = true;
+                            markGesture();
+                        }
+                        if (gesture.zoomAtStart > 1 && gesture.moved) {
+                            croquiPanX = gesture.startPanX + dx;
+                            croquiPanY = gesture.startPanY + dy;
+                            applyCroquiZoom();
+                            if (event.cancelable) event.preventDefault();
+                        }
+                    }
+                });
+                const finishPointer = (event, canceled) => {
+                    if (!touches.has(event.pointerId)) return;
+                    const started = gesture;
+                    touches.delete(event.pointerId);
+                    if (!canceled && touches.size === 0 && started?.kind === 'single' &&
+                        started.pointerId === event.pointerId && started.zoomAtStart <= 1) {
+                        const dx = event.clientX - started.x;
+                        const dy = event.clientY - started.y;
+                        if (Math.abs(dx) >= 48 && Math.abs(dx) > Math.abs(dy) * 1.25) {
+                            markGesture();
+                            stepCroquiView(dx < 0 ? 1 : -1);
+                        }
+                    }
+                    if (started?.kind === 'pinch' || started?.moved) markGesture();
+                    // Never promote the remaining finger to a tap or a swipe.
+                    if (touches.size === 0) gesture = null;
+                    else if (started?.kind === 'pinch') gesture = { kind: 'finishing-pinch' };
+                    if (surface.releasePointerCapture && surface.hasPointerCapture?.(event.pointerId)) {
+                        try { surface.releasePointerCapture(event.pointerId); } catch (_) {}
+                    }
+                };
+                surface.addEventListener('pointerup', event => finishPointer(event, false));
+                surface.addEventListener('pointercancel', event => finishPointer(event, true));
+                surface.addEventListener('lostpointercapture', event => finishPointer(event, true));
                 surface.addEventListener('dragstart', event => event.preventDefault());
                 surface.addEventListener('click', (e) => {
                     if (Date.now() < suppressClickUntil) return;
                     if (e.target.closest('.damage-pin')) return;
-                    if (activeCroquiView !== viewId) return; // não registrar em vista oculta
+                    if (activeCroquiView !== viewId) return;
                     const stage = surface.querySelector('.croqui-zoom-stage');
                     const rect = (stage || surface).getBoundingClientRect();
                     if (!rect.width || !rect.height) return;
@@ -1497,7 +1604,7 @@
                         <div class="print-croqui-mini-card border border-slate-300 rounded-lg p-2 bg-slate-50">
                             <div class="flex items-center justify-between mb-1">
                                 <strong class="text-[8pt] text-slate-900">${safeText(view.label)}</strong>
-                                <span class="text-[7pt] px-1.5 py-0.5 rounded-full border border-slate-300 bg-white text-slate-600">${grouped[view.id].length} ponto(s)</span>
+                                <span class="croqui-print-count text-[8pt] font-semibold text-slate-500 tabular-nums" aria-label="${grouped[view.id].length} avarias">${grouped[view.id].length}</span>
                             </div>
                             ${items ? `<ul class="text-[7pt] text-slate-700 pl-4 space-y-0.5">${items}</ul>` : `<div class="text-[7pt] text-slate-400">Sem registros nesta visão.</div>`}
                         </div>`;

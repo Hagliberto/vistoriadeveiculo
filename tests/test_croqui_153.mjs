@@ -18,6 +18,6 @@ for (const view of ['front','front-left','left','rear-left','rear','rear-right',
   const block=html.match(new RegExp(`data-view-card="${view}"[\\s\\S]*?assets/croqui/${view}\\.webp`));
   assert.ok(block,`vista ${view} deve conter recorte técnico da prancha`);
 }
-assert.equal(JSON.parse(r('version.json')).version,'1.5.5');
-assert.match(r('service-worker.js'),/shell-v1\.5\.5/);
-console.log('OK: interface mínima, nove vistas técnicas, navegabilidade e impressão v1.5.5.');
+assert.equal(JSON.parse(r('version.json')).version,'1.5.6');
+assert.match(r('service-worker.js'),/shell-v1\.5\.6/);
+console.log('OK: interface mínima, nove vistas técnicas, navegabilidade e impressão v1.5.6.');

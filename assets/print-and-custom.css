@@ -1027,3 +1027,27 @@ body.export-open {overflow:hidden}
   .croqui-fullscreen-controls {display:none !important}
   #croqui-fullscreen-stage {display:grid !important}
 }
+
+/* v1.5.6 — toque multiponto, pan da imagem ampliada e contagem limpa no PDF */
+@media screen {
+  .croqui-views-grid .croqui-surface {
+    touch-action:none !important;
+    overscroll-behavior:contain;
+  }
+  .croqui-views-grid .croqui-surface.croqui-is-zoomed {cursor:grab !important}
+  .croqui-views-grid .croqui-zoom-stage {will-change:transform}
+}
+@media print {
+  .croqui-zoom-stage {transform:none !important; transition:none !important}
+  .croqui-print-count {
+    padding:0 !important;
+    border:0 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    font-size:8pt !important;
+    font-weight:600 !important;
+    color:#64748b !important;
+    white-space:nowrap !important;
+  }
+}

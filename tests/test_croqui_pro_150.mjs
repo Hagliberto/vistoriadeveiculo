@@ -96,7 +96,7 @@ assert.equal(navDots.get('rear').attributes['aria-pressed'], 'true');
 
 run(`setCroquiZoom(1.45)`);
 assert.equal(get('croqui-zoom-level').textContent, '145%');
-assert.ok(stages.every(stage => stage.style.transform === 'scale(1.45)'));
+assert.ok(stages.every(stage => stage.style.transform === 'translate(0px, 0px) scale(1.45)'));
 
 run(`appState=createDefaultState(); appState.pins=[
   {id:201,x:12,y:16,view:'front',region:'Farol direito',type:'Quebrado',desc:'quebrado',photo:null},
@@ -110,6 +110,6 @@ assert.ok(get('damage-list').children[0].innerHTML.includes('Farol direito'));
 run(`updateAllBadgesAndStats = () => {}; updatePinRegion(201, 'Para-choque dianteiro')`);
 const updatedRegion = run(`appState.pins.find(p => p.id === 201).region`);
 assert.equal(updatedRegion, 'Para-choque dianteiro');
-assert.equal(JSON.parse(fs.readFileSync(new URL('../version.json', import.meta.url), 'utf8')).version, '1.5.5');
-assert.ok(fs.readFileSync(new URL('../service-worker.js', import.meta.url), 'utf8').includes('shell-v1.5.5'));
-console.log('OK: croqui 360° v1.5.5 com zoom discreto, detecção de região e resumo por visão.');
+assert.equal(JSON.parse(fs.readFileSync(new URL('../version.json', import.meta.url), 'utf8')).version, '1.5.6');
+assert.ok(fs.readFileSync(new URL('../service-worker.js', import.meta.url), 'utf8').includes('shell-v1.5.6'));
+console.log('OK: croqui 360° v1.5.6 com zoom discreto, detecção de região e resumo por visão.');
