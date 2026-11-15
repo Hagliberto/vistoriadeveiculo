@@ -37,7 +37,7 @@
          * Atualizações PWA: somente versões publicadas no mesmo host, com confirmação.
          * A verificação não acessa nem altera IndexedDB/localStorage de vistorias.
          */
-        const APP_VERSION = '1.5.4';
+        const APP_VERSION = '1.5.5';
         let updateRegistration = null;
         let availableUpdateVersion = null;
         let updateCheckInProgress = false;
@@ -430,6 +430,7 @@
             { id:'left', label:'Lateral esquerda (90°)', shortLabel:'Lateral esq.', description:'Portas, paralamas e rodas do motorista' },
             { id:'rear-left', label:'Traseira esquerda (135°)', shortLabel:'Traseira esq.', description:'Traseira e lateral esquerda' },
             { id:'rear', label:'Traseira (180°)', shortLabel:'Traseira', description:'Porta-malas, lanternas e para-choque' },
+            { id:'rear-right', label:'Traseira direita (225°)', shortLabel:'Traseira dir.', description:'Traseira e lateral direita' },
             { id:'right', label:'Lateral direita (270°)', shortLabel:'Lateral dir.', description:'Portas, paralamas e rodas do passageiro' },
             { id:'front-right', label:'Dianteira direita (315°)', shortLabel:'Dianteira dir.', description:'Frente e lateral do passageiro' },
             { id:'top', label:'Superior (zênite)', shortLabel:'Superior', description:'Teto, capô, vidros e porta-malas' }
@@ -440,6 +441,7 @@
             left: ['Paralama dianteiro esquerdo','Porta dianteira esquerda','Porta traseira esquerda','Caixa de ar esquerda','Retrovisor esquerdo','Roda dianteira esquerda','Roda traseira esquerda','Paralama traseiro esquerdo','Vidro dianteiro esquerdo','Vidro traseiro esquerdo'],
             'front-left': ['Paralama dianteiro esquerdo','Porta dianteira esquerda','Porta traseira esquerda','Caixa de ar esquerda','Retrovisor esquerdo','Roda dianteira esquerda','Roda traseira esquerda','Paralama traseiro esquerdo','Vidro dianteiro esquerdo','Vidro traseiro esquerdo','Farol esquerdo','Capô','Para-choque dianteiro','Para-brisa'],
             'rear-left': ['Paralama dianteiro esquerdo','Porta dianteira esquerda','Porta traseira esquerda','Caixa de ar esquerda','Retrovisor esquerdo','Roda dianteira esquerda','Roda traseira esquerda','Paralama traseiro esquerdo','Vidro dianteiro esquerdo','Vidro traseiro esquerdo','Lanterna esquerda','Porta-malas','Para-choque traseiro','Vidro traseiro'],
+            'rear-right': ['Paralama traseiro direito','Porta traseira direita','Porta dianteira direita','Roda traseira direita','Roda dianteira direita','Lanterna direita','Porta-malas','Para-choque traseiro','Vidro traseiro'],
             right: ['Paralama dianteiro direito','Porta dianteira direita','Porta traseira direita','Caixa de ar direita','Retrovisor direito','Roda dianteira direita','Roda traseira direita','Paralama traseiro direito','Vidro dianteiro direito','Vidro traseiro direito'],
             'front-right': ['Paralama dianteiro direito','Porta dianteira direita','Porta traseira direita','Caixa de ar direita','Retrovisor direito','Roda dianteira direita','Roda traseira direita','Paralama traseiro direito','Vidro dianteiro direito','Vidro traseiro direito','Farol direito','Capô','Para-choque dianteiro','Para-brisa'],
             front: ['Capô','Grade dianteira','Para-brisa','Farol esquerdo','Farol direito','Para-choque dianteiro','Placa dianteira'],
@@ -504,6 +506,7 @@
         // Para ângulos diagonais, as zonas usam aproximação da lateral correspondente.
         CROQUI_REGION_MAP['front-left'] = Object.freeze(CROQUI_REGION_MAP.left.map(area => ({...area, region: area.region})));
         CROQUI_REGION_MAP['rear-left'] = Object.freeze(CROQUI_REGION_MAP.left.map(area => ({...area, region: area.region})));
+        CROQUI_REGION_MAP['rear-right'] = Object.freeze(CROQUI_REGION_MAP.right.map(area => ({...area, region: area.region})));
         CROQUI_REGION_MAP['front-right'] = Object.freeze(CROQUI_REGION_MAP.right.map(area => ({...area, region: area.region})));
         const signaturePads = {};
         let pendingPhotoTarget = null; // { type: 'checklist' | 'pin', id: string | number }
@@ -1220,6 +1223,8 @@
         function setActiveCroquiView(viewId = 'top') {
             activeCroquiView = CROQUI_VIEW_IDS.has(viewId) ? viewId : 'top';
             const meta = getCroquiViewMeta(activeCroquiView);
+            const fullLabel = document.getElementById('croqui-fullscreen-label');
+            if (fullLabel) fullLabel.textContent = meta.label;
             const label = document.getElementById('croqui-active-view-label');
             const desc = document.getElementById('croqui-active-view-desc');
             if (label) label.textContent = meta.label;
@@ -1356,6 +1361,43 @@
             if (zoomOut) zoomOut.addEventListener('click', () => setCroquiZoom(croquiZoom - 0.15));
             if (zoomReset) zoomReset.addEventListener('click', () => setCroquiZoom(1));
 
+            const fullStage = document.getElementById('croqui-fullscreen-stage');
+            const fullOpen = document.getElementById('btn-croqui-fullscreen');
+            const fullClose = document.getElementById('btn-croqui-full-close');
+            const isFullMode = () => !!fullStage && (document.fullscreenElement === fullStage || fullStage.classList.contains('croqui-fallback-fullscreen'));
+            async function closeCroquiFullscreen() {
+                if (document.fullscreenElement === fullStage && document.exitFullscreen) {
+                    await document.exitFullscreen().catch(() => {});
+                }
+                fullStage?.classList.remove('croqui-fallback-fullscreen');
+                document.body.classList.remove('croqui-fullscreen-open');
+                if (fullOpen) fullOpen.focus();
+            }
+            if (fullOpen && fullStage) fullOpen.addEventListener('click', async () => {
+                try {
+                    if (!fullStage.requestFullscreen) throw new Error('fullscreen indisponível');
+                    await fullStage.requestFullscreen();
+                } catch (_) {
+                    fullStage.classList.add('croqui-fallback-fullscreen');
+                    document.body.classList.add('croqui-fullscreen-open');
+                }
+            });
+            if (fullClose) fullClose.addEventListener('click', (event) => { event.stopPropagation(); closeCroquiFullscreen(); });
+            document.getElementById('btn-croqui-full-prev')?.addEventListener('click', () => stepCroquiView(-1));
+            document.getElementById('btn-croqui-full-next')?.addEventListener('click', () => stepCroquiView(1));
+            document.getElementById('btn-croqui-full-zoom-in')?.addEventListener('click', () => setCroquiZoom(croquiZoom + .15));
+            document.getElementById('btn-croqui-full-zoom-out')?.addEventListener('click', () => setCroquiZoom(croquiZoom - .15));
+            document.addEventListener('keydown', event => {
+                if (!isFullMode()) return;
+                if (event.key === 'Escape' && fullStage.classList.contains('croqui-fallback-fullscreen')) closeCroquiFullscreen();
+                if (event.key === 'ArrowLeft') { event.preventDefault(); stepCroquiView(-1); }
+                if (event.key === 'ArrowRight') { event.preventDefault(); stepCroquiView(1); }
+            });
+            document.addEventListener('fullscreenchange', () => {
+                if (document.fullscreenElement !== fullStage) document.body.classList.remove('croqui-fullscreen-open');
+            });
+
+
             const prevView = document.getElementById('btn-croqui-prev-view');
             const nextView = document.getElementById('btn-croqui-next-view');
             if (prevView) prevView.addEventListener('click', () => stepCroquiView(-1));
@@ -1420,6 +1462,7 @@
                 rear: document.getElementById('pins-layer-rear'),
                 'front-left': document.getElementById('pins-layer-front-left'),
                 'rear-left': document.getElementById('pins-layer-rear-left'),
+                'rear-right': document.getElementById('pins-layer-rear-right'),
                 'front-right': document.getElementById('pins-layer-front-right')
             };
             for (const layer of Object.values(pinsLayers)) {

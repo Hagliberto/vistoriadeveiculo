@@ -1,3 +1,10 @@
+## v1.5.5 — Imagens do PDF de referência e tela cheia
+
+- Substituídas as imagens das vistas por arquivos extraídos diretamente do PDF do usuário, sem os quadros e setas da prancha.
+- Nove vistas: oito ângulos ao redor do veículo e vista superior (zênite).
+- Croqui em tela cheia com controles de navegação e zoom, marcação sobre a imagem e fallback para navegadores sem Fullscreen API.
+- Vistorias anteriores permanecem legíveis; verificar manualmente a posição de pontos antigos após troca das imagens.
+
 ## v1.5.4 — Croqui fiel à prancha original, oito vistas e arraste
 
 - Utilização dos **recortes da prancha fornecida pelo usuário**, mantendo o estilo técnico do veículo em cada uma das oito vistas.
