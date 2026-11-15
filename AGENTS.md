@@ -1,3 +1,10 @@
+## Croqui profissional v1.5.0
+
+- O croqui possui cinco visões (superior, lateral esquerda, lateral direita, frontal e traseira).
+- Cada ponto salvo deve persistir com `view`, `region`, `type`, `desc` e `photo`.
+- A seleção de `region` depende da visão ativa e pode ser editada depois na lista de avarias.
+- O PDF precisa manter o croqui multi-visão e um resumo agrupado por visão.
+
 # AGENTS.md — Especificação Técnica e Guia de Evolução: Vistoria Veicular PWA
 
 ## 1. Visão Geral e Arquitetura

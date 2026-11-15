@@ -454,6 +454,49 @@
                         </div>
                         <p class="w-full text-[11px] text-slate-500 mb-3 no-print">Agora o croqui mostra o veículo em várias visões. Toque na área correspondente para registrar a avaria no local mais próximo.</p>
 
+                        <div class="w-full grid grid-cols-1 xl:grid-cols-[1.2fr_.8fr] gap-3 mb-3 no-print">
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-3">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i class="ph-bold ph-map-pin-area text-sky-600 text-base"></i>
+                                    <span class="text-xs font-bold uppercase tracking-wide text-slate-700">Região / peça</span>
+                                </div>
+                                <label for="croqui-region-select" class="sr-only">Selecione a região do veículo</label>
+                                <select id="croqui-region-select" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-700 outline-none focus:border-[#0072ce]">
+                                    <option value="Capô">Capô</option>
+                                </select>
+                                <p id="croqui-region-hint" class="mt-2 text-[11px] text-slate-500">As opções mudam conforme a visão selecionada do veículo.</p>
+                            </div>
+                            <div class="grid grid-cols-1 gap-3">
+                                <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-3">
+                                    <div class="flex items-center justify-between gap-2 mb-2">
+                                        <div class="flex items-center gap-2">
+                                            <i class="ph-bold ph-magnifying-glass-plus text-emerald-600 text-base"></i>
+                                            <span class="text-xs font-bold uppercase tracking-wide text-slate-700">Zoom do croqui</span>
+                                        </div>
+                                        <span id="croqui-zoom-level" class="text-[11px] font-bold px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600">100%</span>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <button type="button" id="btn-croqui-zoom-out" class="rounded-xl border border-slate-300 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">- Zoom</button>
+                                        <button type="button" id="btn-croqui-zoom-reset" class="rounded-xl border border-slate-300 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">100%</button>
+                                        <button type="button" id="btn-croqui-zoom-in" class="rounded-xl border border-slate-300 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">+ Zoom</button>
+                                    </div>
+                                </div>
+                                <div id="croqui-view-legend" class="rounded-2xl border border-slate-200 bg-slate-50/80 p-3">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <i class="ph-bold ph-squares-four text-violet-600 text-base"></i>
+                                        <span class="text-xs font-bold uppercase tracking-wide text-slate-700">Legenda das visões</span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2 text-[11px]">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600"><span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>Superior</span>
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Lateral esquerda</span>
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Lateral direita</span>
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>Frontal</span>
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600"><span class="w-2.5 h-2.5 rounded-full bg-violet-500"></span>Traseira</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="w-full croqui-views-grid grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div class="croqui-view-card sm:col-span-2 rounded-2xl border border-slate-200 bg-slate-50/70 p-2.5" data-view-card="top">
                                 <div class="flex items-center justify-between px-1 pb-2">
@@ -464,6 +507,7 @@
                                     <span id="croqui-count-top" class="text-[10px] font-bold px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600">0 ponto(s)</span>
                                 </div>
                                 <div id="car-diagram-container" data-croqui-view="top" role="button" tabindex="0" aria-label="Croqui do veículo em visão superior: clique para marcar uma avaria; pressione Enter ou Espaço para inserir um ponto no centro" class="croqui-surface w-full bg-white border-2 border-dashed border-slate-300 rounded-2xl p-3 cursor-crosshair relative overflow-hidden">
+                                    <div class="croqui-zoom-stage relative w-full">
                                     <svg id="car-svg" viewBox="0 0 500 260" class="w-full h-auto block pointer-events-none">
                                         <text x="20" y="135" fill="#94a3b8" font-size="11" font-weight="bold" text-anchor="middle" transform="rotate(-90 20 135)">FRENTE</text>
                                         <text x="480" y="135" fill="#94a3b8" font-size="11" font-weight="bold" text-anchor="middle" transform="rotate(90 480 135)">TRASEIRA</text>
@@ -494,6 +538,7 @@
                                         <rect x="365" y="195" width="46" height="8" rx="3" fill="#1e293b"/>
                                     </svg>
                                     <div id="pins-layer" class="absolute inset-0 pointer-events-none"></div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -503,6 +548,7 @@
                                     <span id="croqui-count-left" class="text-[10px] font-bold px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600">0</span>
                                 </div>
                                 <div id="croqui-view-left" data-croqui-view="left" role="button" tabindex="0" aria-label="Croqui do veículo em visão lateral esquerda" class="croqui-surface aspect-[16/7] bg-white border-2 border-dashed border-slate-300 rounded-2xl p-2 cursor-crosshair relative overflow-hidden">
+                                    <div class="croqui-zoom-stage relative w-full h-full">
                                     <svg viewBox="0 0 320 140" class="w-full h-full block pointer-events-none">
                                         <rect x="42" y="72" width="220" height="36" rx="12" fill="#ffffff" stroke="#334155" stroke-width="3"/>
                                         <path d="M 80 72 L 112 43 Q 120 36 132 36 H 202 Q 216 36 226 48 L 248 72 Z" fill="#ffffff" stroke="#334155" stroke-width="3"/>
@@ -517,6 +563,7 @@
                                         <text x="160" y="18" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">MOTORISTA</text>
                                     </svg>
                                     <div id="pins-layer-left" class="absolute inset-0 pointer-events-none"></div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -526,6 +573,7 @@
                                     <span id="croqui-count-right" class="text-[10px] font-bold px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600">0</span>
                                 </div>
                                 <div id="croqui-view-right" data-croqui-view="right" role="button" tabindex="0" aria-label="Croqui do veículo em visão lateral direita" class="croqui-surface aspect-[16/7] bg-white border-2 border-dashed border-slate-300 rounded-2xl p-2 cursor-crosshair relative overflow-hidden">
+                                    <div class="croqui-zoom-stage relative w-full h-full">
                                     <svg viewBox="0 0 320 140" class="w-full h-full block pointer-events-none">
                                         <rect x="58" y="72" width="220" height="36" rx="12" fill="#ffffff" stroke="#334155" stroke-width="3"/>
                                         <path d="M 72 72 L 94 48 Q 104 36 118 36 H 188 Q 200 36 208 43 L 240 72 Z" fill="#ffffff" stroke="#334155" stroke-width="3"/>
@@ -540,6 +588,7 @@
                                         <text x="160" y="18" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">PASSAGEIRO</text>
                                     </svg>
                                     <div id="pins-layer-right" class="absolute inset-0 pointer-events-none"></div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -549,6 +598,7 @@
                                     <span id="croqui-count-front" class="text-[10px] font-bold px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600">0</span>
                                 </div>
                                 <div id="croqui-view-front" data-croqui-view="front" role="button" tabindex="0" aria-label="Croqui do veículo em visão frontal" class="croqui-surface aspect-[4/3] bg-white border-2 border-dashed border-slate-300 rounded-2xl p-2 cursor-crosshair relative overflow-hidden">
+                                    <div class="croqui-zoom-stage relative w-full h-full">
                                     <svg viewBox="0 0 220 170" class="w-full h-full block pointer-events-none">
                                         <rect x="44" y="58" width="132" height="72" rx="18" fill="#ffffff" stroke="#334155" stroke-width="3"/>
                                         <path d="M 62 58 L 76 38 Q 82 28 94 28 H 126 Q 138 28 144 38 L 158 58 Z" fill="#ffffff" stroke="#334155" stroke-width="3"/>
@@ -561,6 +611,7 @@
                                         <text x="110" y="18" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">FRENTE</text>
                                     </svg>
                                     <div id="pins-layer-front" class="absolute inset-0 pointer-events-none"></div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -570,6 +621,7 @@
                                     <span id="croqui-count-rear" class="text-[10px] font-bold px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600">0</span>
                                 </div>
                                 <div id="croqui-view-rear" data-croqui-view="rear" role="button" tabindex="0" aria-label="Croqui do veículo em visão traseira" class="croqui-surface aspect-[4/3] bg-white border-2 border-dashed border-slate-300 rounded-2xl p-2 cursor-crosshair relative overflow-hidden">
+                                    <div class="croqui-zoom-stage relative w-full h-full">
                                     <svg viewBox="0 0 220 170" class="w-full h-full block pointer-events-none">
                                         <rect x="44" y="52" width="132" height="78" rx="18" fill="#ffffff" stroke="#334155" stroke-width="3"/>
                                         <rect x="70" y="36" width="80" height="30" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
@@ -581,6 +633,7 @@
                                         <text x="110" y="18" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">TRASEIRA</text>
                                     </svg>
                                     <div id="pins-layer-rear" class="absolute inset-0 pointer-events-none"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -591,6 +644,10 @@
                         <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                             Pontos Registrados
                         </h3>
+                        <div id="print-croqui-miniatures" class="print-only mb-3">
+                            <div class="text-[8.5pt] font-bold uppercase tracking-wide text-slate-700 mb-1.5">Resumo do croqui por visão</div>
+                            <div id="print-croqui-miniatures-grid" class="grid grid-cols-2 gap-2"></div>
+                        </div>
                         <div id="damage-list" class="space-y-2 max-h-[420px] overflow-y-auto pr-1">
                             <div class="text-center py-7 px-4 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-xs">
                                 Nenhuma avaria marcada no desenho.<br>Toque em qualquer visão para registrar.

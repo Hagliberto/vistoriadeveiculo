@@ -1,3 +1,13 @@
+## v1.5.0 — Croqui profissional com região da peça, zoom e resumo por visão no PDF
+
+- Seleção guiada de **região / peça** conforme a visão ativa do veículo.
+- Novo **zoom do croqui** (ampliar, reduzir e resetar) para facilitar marcações mais precisas.
+- **Legenda das visões** diretamente na interface para leitura mais rápida.
+- Cada ponto agora pode guardar, além do tipo e descrição, a **região do veículo**.
+- Lista de avarias mostra **tipo + visão + região** e permite editar a região posteriormente.
+- PDF/impressão com **resumo do croqui por visão**, facilitando auditoria e conferência.
+- PWA atualizado para **v1.5.0** com teste específico do croqui profissional.
+
 ## v1.4.9 — Croqui em múltiplas visões e desenho aprimorado
 
 - Croqui redesenhado com cinco visões do veículo: **superior, lateral esquerda, lateral direita, frontal e traseira**.
