@@ -40,3 +40,12 @@ Faça a homologação preferencialmente em Chrome/Edge e Firefox, em desktop e c
 - [ ] Salvar como PDF: conferir layout A4 e possibilidade de anexar arquivo salvo no WhatsApp/e-mail.
 - [ ] Imprimir: confirmar a mesma composição e paginação.
 - [ ] Baixar PNG: conferir resolução e dados completos.
+
+
+## v1.4.8 — Croqui cromático
+1. Adicionar seis pontos; conferir cores vermelho, azul, verde, laranja, roxo e rosa, iguais na lista.
+2. Excluir o segundo ponto: conferir renumeração/cor do antigo terceiro para posição 2 (azul).
+3. Confirmar que as descrições e fotos dos pontos restantes não foram perdidas.
+4. Salvar, reabrir a vistoria e conferir a mesma sequência de cores.
+5. Pré-visualizar e salvar PDF A4: conferir que marcadores e números da lista mantêm as cores; testar fundos/gráficos habilitados no diálogo.
+6. Conferir responsividade mobile e contraste dos marcadores em tela.

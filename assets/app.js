@@ -37,7 +37,7 @@
          * Atualizações PWA: somente versões publicadas no mesmo host, com confirmação.
          * A verificação não acessa nem altera IndexedDB/localStorage de vistorias.
          */
-        const APP_VERSION = '1.4.7';
+        const APP_VERSION = '1.4.8';
         let updateRegistration = null;
         let availableUpdateVersion = null;
         let updateCheckInProgress = false;
@@ -1165,6 +1165,31 @@
             renderDamagePins();
         }
 
+        // As cores seguem a posição atual, não o ID persistido.
+        // Ao excluir uma marcação, os pontos remanescentes recebem a nova cor
+        // correspondente à numeração, na tela e no laudo impresso.
+        const DAMAGE_PIN_COLORS = Object.freeze([
+            { fill: '#be123c', text: '#9f1239' }, // 1 vermelho
+            { fill: '#1d4ed8', text: '#1d4ed8' }, // 2 azul
+            { fill: '#15803d', text: '#166534' }, // 3 verde
+            { fill: '#c2410c', text: '#9a3412' }, // 4 laranja
+            { fill: '#7e22ce', text: '#6b21a8' }, // 5 roxo
+            { fill: '#be185d', text: '#9d174d' }, // 6 rosa
+            { fill: '#0f766e', text: '#115e59' }, // 7 turquesa
+            { fill: '#a16207', text: '#854d0e' }, // 8 ocre
+            { fill: '#4338ca', text: '#3730a3' }, // 9 índigo
+            { fill: '#0369a1', text: '#075985' }, // 10 ciano escuro
+            { fill: '#4d7c0f', text: '#3f6212' }, // 11 oliva
+            { fill: '#b91c1c', text: '#991b1b' }  // 12 escarlate
+        ]);
+
+        function getDamagePinColor(index) {
+            if (index < DAMAGE_PIN_COLORS.length) return DAMAGE_PIN_COLORS[index];
+            // Até 300 pontos: espalhamento angular para ampliar a distinção.
+            const hue = Math.round((index * 137.508) % 360);
+            return { fill: `hsl(${hue} 72% 35%)`, text: `hsl(${hue} 72% 30%)` };
+        }
+
         function renderDamagePins() {
             const pinsLayer = document.getElementById('pins-layer');
             const listEl = document.getElementById('damage-list');
@@ -1182,9 +1207,13 @@
             listEl.innerHTML = '';
             appState.pins.forEach((pin, idx) => {
                 const num = idx + 1;
+                const color = getDamagePinColor(idx);
 
                 const pinEl = document.createElement('div');
-                pinEl.className = 'damage-pin absolute w-6 h-6 rounded-full bg-rose-600 text-white font-bold text-xs flex items-center justify-center shadow-md border-2 border-white pointer-events-auto cursor-pointer';
+                pinEl.className = 'damage-pin absolute w-6 h-6 rounded-full text-white font-bold text-xs flex items-center justify-center shadow-md border-2 border-white pointer-events-auto cursor-pointer';
+                pinEl.style.backgroundColor = color.fill;
+                pinEl.style.color = '#ffffff';
+                pinEl.title = `Ponto ${num} — ${pin.type}`;
                 pinEl.style.left = `${pin.x}%`;
                 pinEl.style.top = `${pin.y}%`;
                 pinEl.textContent = num;
@@ -1196,12 +1225,14 @@
                 pinsLayer.appendChild(pinEl);
 
                 const itemEl = document.createElement('div');
-                itemEl.className = 'bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-2';
+                itemEl.className = 'damage-list-item bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-2';
+                itemEl.style.borderLeft = `4px solid ${color.fill}`;
+                itemEl.style.setProperty('--damage-pin-color', color.fill);
                 itemEl.innerHTML = `
                     <div class="flex items-center gap-2">
-                        <span class="w-6 h-6 rounded-full bg-rose-600 text-white font-bold text-xs flex items-center justify-center shrink-0">${num}</span>
+                        <span class="damage-list-number w-6 h-6 rounded-full text-white font-bold text-xs flex items-center justify-center shrink-0" style="background-color:${color.fill};color:#fff">${num}</span>
                         <div class="flex-1 min-w-0">
-                            <span class="block text-[11px] font-bold text-rose-700 leading-tight">${safeText(pin.type)}</span>
+                            <span class="damage-list-type block text-[11px] font-bold leading-tight" style="color:${color.text}">${safeText(pin.type)}</span>
                             <input type="text" id="pin-desc-${pin.id}" value="${safeText(pin.desc)}" placeholder="Local / detalhe da avaria..."
                                 oninput="updatePinDesc(${pin.id}, this.value)"
                                 class="w-full text-xs bg-transparent border-b border-slate-300 focus:border-[#0072ce] outline-none py-1 text-slate-700">

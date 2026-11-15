@@ -136,3 +136,10 @@ O arquivo PDF oficial deve **sempre** ser derivado do laudo HTML/CSS `@media pri
 
 ## Central de exportação — v1.4.7
 Manter apenas **Salvar como PDF**, **Baixar em PNG** e **Imprimir**; não adicionar ação Compartilhar PDF que apenas repete a impressão nativa. O PDF permanece canônico via CSS `@media print`.
+
+
+## Croqui — regra cromática v1.4.8
+- `getDamagePinColor(index)` atribui cor pela posição visível do ponto na lista; não persistir `color` no estado.
+- A numeração e a cor devem coincidir no marcador, no item da lista e no documento impresso.
+- Reordenar/remover pontos recalcula suas cores, preservando ID, descrição e foto.
+- Manter contraste legível com números brancos, incluindo impressão A4; não alterar o leiaute canônico do PDF.

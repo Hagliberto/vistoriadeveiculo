@@ -159,3 +159,7 @@ A única fonte do layout PDF é `@media print`: os botões **Salvar como PDF**, 
 
 ### Central de exportação simplificada (v1.4.7)
 O menu oferece **Salvar como PDF**, **Baixar em PNG** e **Imprimir**. A antiga opção Compartilhar PDF oficial foi retirada porque apenas repetia a ação Salvar como PDF. O PDF A4 é salvo pelo diálogo nativo de impressão e pode ser anexado depois a WhatsApp/e-mail. Não é possível compartilhar diretamente o PDF emitido pelo diálogo do navegador por JavaScript.
+
+### Croqui multicolorido (v1.4.8)
+
+Os pontos usam cores por **posição atual** (1 vermelho, 2 azul, 3 verde, 4 laranja, 5 roxo, 6 rosa e assim por diante). A mesma cor aparece no ponto do carro, no número e no tipo da avaria na lista e no laudo impresso. A exclusão recalcula a numeração e as cores sem excluir fotos ou observações dos pontos restantes.

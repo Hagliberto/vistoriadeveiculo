@@ -1,3 +1,11 @@
+## v1.4.8 — Marcadores coloridos no croqui
+
+- Cada ponto usa uma cor distinta conforme sua posição na lista (12 tons contrastantes, com variação cromática para pontos adicionais).
+- Número no croqui, número e tipo da avaria na lista e borda lateral compartilham a mesma identidade cromática.
+- Ao excluir um ponto, os demais são renumerados e suas cores são recalculadas sem alterar descrições, fotos ou IDs persistidos.
+- Impressão A4 preserva as cores dos marcadores e da lista.
+- PWA atualizado para v1.4.8; teste de regressão específico para cores e renumeração.
+
 ## v1.4.7 — Simplificação da central de exportação
 
 - Removida a ação redundante **Compartilhar PDF oficial**, idêntica a **Salvar como PDF**.
