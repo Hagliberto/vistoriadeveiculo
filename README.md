@@ -129,7 +129,7 @@ No desktop, a navegação usa ícones coloridos. Em telas até 1023px, o botão 
 
 ## Atualizações (v1.4.0)
 Hospede os arquivos completos em HTTPS (GitHub Pages, Cloudflare Pages ou intranet HTTPS).
-Publique `version.json` com o número exato da nova versão (ex.: `1.5.0`), atualize `APP_VERSION` em `assets/app.js` e o nome `CACHE_NAME` no `service-worker.js` a cada release.
+Publique `version.json` com o número exato da nova versão (ex.: `1.5.1`), atualize `APP_VERSION` em `assets/app.js` e o nome `CACHE_NAME` no `service-worker.js` a cada release.
 **Importante:** todos os arquivos da nova versão devem estar publicados antes de atualizar `version.json`; recomenda-se publicar tudo na mesma implantação atômica.
 Ao abrir, voltar à aba ou retornar à conexão, o app verifica a versão. Quando houver uma versão mais nova, o botão **Atualizar** aparece acima da navbar.
 O botão salva o rascunho, ativa o service worker em espera e recarrega a página quando ele assumir o controle. Sem internet ou em `file://`, a verificação remota não funciona.
@@ -161,9 +161,13 @@ A única fonte do layout PDF é `@media print`: os botões **Salvar como PDF**, 
 O menu oferece **Salvar como PDF**, **Baixar em PNG** e **Imprimir**. A antiga opção Compartilhar PDF oficial foi retirada porque apenas repetia a ação Salvar como PDF. O PDF A4 é salvo pelo diálogo nativo de impressão e pode ser anexado depois a WhatsApp/e-mail. Não é possível compartilhar diretamente o PDF emitido pelo diálogo do navegador por JavaScript.
 
 
-### Croqui profissional (v1.5.0)
+### Croqui 360° (v1.5.1)
 
-A versão 1.5.0 adiciona melhorias operacionais ao croqui: **zoom**, seleção de **região/peça** por visão, legenda visual das faces do veículo e um **resumo por visão no PDF**. Isso torna o laudo mais claro tanto na tela quanto na impressão.
+A versão 1.5.1 evolui o croqui com **navegação 360°**, **zoom discreto por ícones**, detecção automática de **região/peça** conforme o ponto clicado e um desenho de veículo visualmente mais refinado.
+
+### Croqui profissional (v1.5.1)
+
+A versão 1.5.1 adiciona melhorias operacionais ao croqui: **zoom**, seleção de **região/peça** por visão, legenda visual das faces do veículo e um **resumo por visão no PDF**. Isso torna o laudo mais claro tanto na tela quanto na impressão.
 
 ### Croqui em várias visões (v1.4.9)
 

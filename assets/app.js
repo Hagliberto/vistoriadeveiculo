@@ -37,7 +37,7 @@
          * Atualizações PWA: somente versões publicadas no mesmo host, com confirmação.
          * A verificação não acessa nem altera IndexedDB/localStorage de vistorias.
          */
-        const APP_VERSION = '1.5.0';
+        const APP_VERSION = '1.5.1';
         let updateRegistration = null;
         let availableUpdateVersion = null;
         let updateCheckInProgress = false;
@@ -423,19 +423,75 @@
         let activeCroquiView = 'top';
         let croquiZoom = 1;
         const CROQUI_VIEWS = Object.freeze([
-            { id: 'top', label: 'Visão superior', shortLabel: 'Superior' },
-            { id: 'left', label: 'Lateral esquerda', shortLabel: 'Lat. esquerda' },
-            { id: 'right', label: 'Lateral direita', shortLabel: 'Lat. direita' },
-            { id: 'front', label: 'Frontal', shortLabel: 'Frente' },
-            { id: 'rear', label: 'Traseira', shortLabel: 'Traseira' }
+            { id: 'top', label: 'Visão superior', shortLabel: 'Superior', description: 'Visão ampla para teto, capô, para-brisa e porta-malas.' },
+            { id: 'left', label: 'Lateral esquerda', shortLabel: 'Lat. esquerda', description: 'Lado do motorista com portas, paralamas e rodas.' },
+            { id: 'front', label: 'Frontal', shortLabel: 'Frente', description: 'Frente do veículo com faróis, grade e para-choque.' },
+            { id: 'right', label: 'Lateral direita', shortLabel: 'Lat. direita', description: 'Lado do passageiro com portas, paralamas e rodas.' },
+            { id: 'rear', label: 'Traseira', shortLabel: 'Traseira', description: 'Parte traseira com tampa, lanternas e para-choque.' }
         ]);
         const CROQUI_VIEW_IDS = new Set(CROQUI_VIEWS.map(view => view.id));
         const CROQUI_REGIONS = Object.freeze({
-            top: ['Capô', 'Teto', 'Para-brisa', 'Vidro traseiro', 'Porta-malas', 'Para-choque dianteiro', 'Para-choque traseiro', 'Lateral esquerda', 'Lateral direita', 'Retrovisor esquerdo', 'Retrovisor direito'],
+            top: ['Capô', 'Para-brisa', 'Teto', 'Vidro traseiro', 'Porta-malas', 'Lateral esquerda', 'Lateral direita', 'Para-choque dianteiro', 'Para-choque traseiro', 'Retrovisor esquerdo', 'Retrovisor direito'],
             left: ['Paralama dianteiro esquerdo', 'Porta dianteira esquerda', 'Porta traseira esquerda', 'Caixa de ar esquerda', 'Retrovisor esquerdo', 'Roda dianteira esquerda', 'Roda traseira esquerda', 'Paralama traseiro esquerdo', 'Vidro dianteiro esquerdo', 'Vidro traseiro esquerdo'],
             right: ['Paralama dianteiro direito', 'Porta dianteira direita', 'Porta traseira direita', 'Caixa de ar direita', 'Retrovisor direito', 'Roda dianteira direita', 'Roda traseira direita', 'Paralama traseiro direito', 'Vidro dianteiro direito', 'Vidro traseiro direito'],
             front: ['Capô', 'Grade dianteira', 'Para-brisa', 'Farol esquerdo', 'Farol direito', 'Para-choque dianteiro', 'Placa dianteira'],
             rear: ['Porta-malas', 'Vidro traseiro', 'Lanterna esquerda', 'Lanterna direita', 'Para-choque traseiro', 'Placa traseira']
+        });
+        const CROQUI_REGION_MAP = Object.freeze({
+            top: [
+                { region: 'Para-choque dianteiro', x1: 2, y1: 32, x2: 11, y2: 68 },
+                { region: 'Capô', x1: 11, y1: 28, x2: 27, y2: 72 },
+                { region: 'Retrovisor esquerdo', x1: 21, y1: 8, x2: 32, y2: 23 },
+                { region: 'Retrovisor direito', x1: 21, y1: 77, x2: 32, y2: 92 },
+                { region: 'Para-brisa', x1: 26, y1: 27, x2: 38, y2: 72 },
+                { region: 'Teto', x1: 38, y1: 23, x2: 63, y2: 77 },
+                { region: 'Lateral esquerda', x1: 25, y1: 6, x2: 78, y2: 26 },
+                { region: 'Lateral direita', x1: 25, y1: 74, x2: 78, y2: 94 },
+                { region: 'Vidro traseiro', x1: 62, y1: 27, x2: 74, y2: 72 },
+                { region: 'Porta-malas', x1: 73, y1: 28, x2: 89, y2: 72 },
+                { region: 'Para-choque traseiro', x1: 89, y1: 32, x2: 98, y2: 68 }
+            ],
+            left: [
+                { region: 'Roda dianteira esquerda', x1: 9, y1: 71, x2: 29, y2: 98 },
+                { region: 'Paralama dianteiro esquerdo', x1: 7, y1: 42, x2: 24, y2: 73 },
+                { region: 'Retrovisor esquerdo', x1: 25, y1: 34, x2: 34, y2: 52 },
+                { region: 'Vidro dianteiro esquerdo', x1: 27, y1: 15, x2: 46, y2: 43 },
+                { region: 'Porta dianteira esquerda', x1: 30, y1: 42, x2: 54, y2: 76 },
+                { region: 'Vidro traseiro esquerdo', x1: 47, y1: 15, x2: 70, y2: 43 },
+                { region: 'Porta traseira esquerda', x1: 54, y1: 42, x2: 78, y2: 76 },
+                { region: 'Roda traseira esquerda', x1: 68, y1: 71, x2: 88, y2: 98 },
+                { region: 'Paralama traseiro esquerdo', x1: 74, y1: 42, x2: 92, y2: 73 },
+                { region: 'Caixa de ar esquerda', x1: 24, y1: 76, x2: 77, y2: 88 }
+            ],
+            right: [
+                { region: 'Roda dianteira direita', x1: 71, y1: 71, x2: 91, y2: 98 },
+                { region: 'Paralama dianteiro direito', x1: 76, y1: 42, x2: 93, y2: 73 },
+                { region: 'Retrovisor direito', x1: 66, y1: 34, x2: 75, y2: 52 },
+                { region: 'Vidro dianteiro direito', x1: 54, y1: 15, x2: 73, y2: 43 },
+                { region: 'Porta dianteira direita', x1: 46, y1: 42, x2: 70, y2: 76 },
+                { region: 'Vidro traseiro direito', x1: 30, y1: 15, x2: 53, y2: 43 },
+                { region: 'Porta traseira direita', x1: 22, y1: 42, x2: 46, y2: 76 },
+                { region: 'Roda traseira direita', x1: 12, y1: 71, x2: 32, y2: 98 },
+                { region: 'Paralama traseiro direito', x1: 8, y1: 42, x2: 26, y2: 73 },
+                { region: 'Caixa de ar direita', x1: 23, y1: 76, x2: 76, y2: 88 }
+            ],
+            front: [
+                { region: 'Para-brisa', x1: 30, y1: 8, x2: 71, y2: 33 },
+                { region: 'Capô', x1: 26, y1: 33, x2: 75, y2: 59 },
+                { region: 'Farol esquerdo', x1: 11, y1: 44, x2: 31, y2: 62 },
+                { region: 'Farol direito', x1: 69, y1: 44, x2: 89, y2: 62 },
+                { region: 'Grade dianteira', x1: 35, y1: 51, x2: 65, y2: 69 },
+                { region: 'Placa dianteira', x1: 40, y1: 63, x2: 60, y2: 74 },
+                { region: 'Para-choque dianteiro', x1: 18, y1: 69, x2: 83, y2: 90 }
+            ],
+            rear: [
+                { region: 'Vidro traseiro', x1: 30, y1: 8, x2: 71, y2: 33 },
+                { region: 'Porta-malas', x1: 24, y1: 33, x2: 76, y2: 59 },
+                { region: 'Lanterna esquerda', x1: 11, y1: 44, x2: 31, y2: 62 },
+                { region: 'Lanterna direita', x1: 69, y1: 44, x2: 89, y2: 62 },
+                { region: 'Placa traseira', x1: 40, y1: 63, x2: 60, y2: 74 },
+                { region: 'Para-choque traseiro', x1: 18, y1: 69, x2: 83, y2: 90 }
+            ]
         });
         const signaturePads = {};
         let pendingPhotoTarget = null; // { type: 'checklist' | 'pin', id: string | number }
@@ -1133,40 +1189,51 @@
             return CROQUI_REGIONS[CROQUI_VIEW_IDS.has(viewId) ? viewId : 'top'] || CROQUI_REGIONS.top;
         }
 
+        function getCroquiRegionsMap(viewId) {
+            return CROQUI_REGION_MAP[CROQUI_VIEW_IDS.has(viewId) ? viewId : 'top'] || CROQUI_REGION_MAP.top;
+        }
+
+        function detectCroquiRegion(viewId, xPct, yPct) {
+            const x = Math.max(0, Math.min(100, Number(xPct) || 0));
+            const y = Math.max(0, Math.min(100, Number(yPct) || 0));
+            const matched = getCroquiRegionsMap(viewId).find(area => x >= area.x1 && x <= area.x2 && y >= area.y1 && y <= area.y2);
+            return matched?.region || getCroquiRegions(viewId)[0];
+        }
+
         function buildCroquiRegionOptionsHtml(viewId, selectedValue) {
             const selected = getCroquiRegions(viewId).includes(selectedValue) ? selectedValue : getCroquiRegions(viewId)[0];
             return getCroquiRegions(viewId).map(region => `<option value="${safeText(region)}"${region === selected ? ' selected' : ''}>${safeText(region)}</option>`).join('');
         }
 
-        function populateCroquiRegionSelect(viewId = activeCroquiView, selectedValue = '') {
-            const select = document.getElementById('croqui-region-select');
-            if (!select) return;
-            const options = getCroquiRegions(viewId);
-            const selected = options.includes(selectedValue) ? selectedValue : options[0];
-            select.innerHTML = options.map(region => `<option value="${safeText(region)}">${safeText(region)}</option>`).join('');
-            select.value = selected;
-            const hint = document.getElementById('croqui-region-hint');
-            if (hint) hint.textContent = `Regiões sugeridas para ${getCroquiViewMeta(viewId).label.toLowerCase()}.`;
-        }
-
-        function setActiveCroquiView(viewId = 'top', preferredRegion = '') {
+        function setActiveCroquiView(viewId = 'top') {
             activeCroquiView = CROQUI_VIEW_IDS.has(viewId) ? viewId : 'top';
-            populateCroquiRegionSelect(activeCroquiView, preferredRegion);
+            const meta = getCroquiViewMeta(activeCroquiView);
+            const label = document.getElementById('croqui-active-view-label');
+            const desc = document.getElementById('croqui-active-view-desc');
+            if (label) label.textContent = meta.label;
+            if (desc) desc.textContent = meta.description || 'Clique na parte mais próxima da avaria para marcar.';
             if (document.querySelectorAll) {
                 document.querySelectorAll('[data-view-card]').forEach(card => {
                     const isActive = card.dataset.viewCard === activeCroquiView;
                     card.classList.toggle('is-active-view', isActive);
                     card.style.transform = isActive ? 'translateY(-1px)' : '';
                     card.style.borderColor = isActive ? '#60a5fa' : '';
-                    card.style.boxShadow = isActive ? '0 0 0 1px rgba(59,130,246,.18), 0 14px 24px rgba(15,23,42,.08)' : card.style.boxShadow;
+                    if (isActive) {
+                        card.style.boxShadow = '0 0 0 1px rgba(59,130,246,.18), 0 14px 24px rgba(15,23,42,.08)';
+                    }
+                });
+                document.querySelectorAll('[data-croqui-nav]').forEach(btn => {
+                    const isActive = btn.dataset.croquiNav === activeCroquiView;
+                    btn.classList.toggle('is-active', isActive);
+                    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
                 });
             }
         }
 
-        function getSelectedCroquiRegion(viewId = activeCroquiView) {
-            const select = document.getElementById('croqui-region-select');
-            const options = getCroquiRegions(viewId);
-            return options.includes(select?.value) ? select.value : options[0];
+        function stepCroquiView(direction = 1) {
+            const currentIndex = CROQUI_VIEWS.findIndex(view => view.id === activeCroquiView);
+            const nextIndex = (currentIndex + direction + CROQUI_VIEWS.length) % CROQUI_VIEWS.length;
+            setActiveCroquiView(CROQUI_VIEWS[nextIndex].id);
         }
 
         function applyCroquiZoom() {
@@ -1197,11 +1264,6 @@
                 });
             });
 
-            const regionSelect = document.getElementById('croqui-region-select');
-            if (regionSelect) {
-                regionSelect.addEventListener('focus', () => setActiveCroquiView(activeCroquiView, regionSelect.value));
-            }
-
             document.querySelectorAll('[data-croqui-view]').forEach(surface => {
                 const viewId = surface.dataset.croquiView || 'top';
                 surface.addEventListener('pointerenter', () => setActiveCroquiView(viewId));
@@ -1219,7 +1281,7 @@
                         e.preventDefault();
                         setActiveCroquiView(viewId);
                         addDamagePin(50, 50, viewId);
-                        showToast(`Ponto registrado no centro da ${getCroquiViewMeta(viewId).label.toLowerCase()}.`);
+                        showToast(`Ponto registrado na ${getCroquiViewMeta(viewId).label.toLowerCase()}.`);
                     }
                 });
             });
@@ -1230,7 +1292,7 @@
                     return;
                 }
                 const normalizedView = CROQUI_VIEW_IDS.has(viewId) ? viewId : 'top';
-                const region = getSelectedCroquiRegion(normalizedView);
+                const region = detectCroquiRegion(normalizedView, xPct, yPct);
                 appState.pins.push({
                     id: Date.now() * 1000 + Math.floor(Math.random() * 1000),
                     x: Math.max(4, Math.min(96, xPct)),
@@ -1245,6 +1307,7 @@
                 renderDamagePins();
                 updateAllBadgesAndStats();
                 saveToLocalStorage();
+                showToast(`${selectedDamageType} marcado em ${region}.`);
             }
 
             const zoomIn = document.getElementById('btn-croqui-zoom-in');
@@ -1253,6 +1316,14 @@
             if (zoomIn) zoomIn.addEventListener('click', () => setCroquiZoom(croquiZoom + 0.15));
             if (zoomOut) zoomOut.addEventListener('click', () => setCroquiZoom(croquiZoom - 0.15));
             if (zoomReset) zoomReset.addEventListener('click', () => setCroquiZoom(1));
+
+            const prevView = document.getElementById('btn-croqui-prev-view');
+            const nextView = document.getElementById('btn-croqui-next-view');
+            if (prevView) prevView.addEventListener('click', () => stepCroquiView(-1));
+            if (nextView) nextView.addEventListener('click', () => stepCroquiView(1));
+            document.querySelectorAll('[data-croqui-nav]').forEach(btn => {
+                btn.addEventListener('click', () => setActiveCroquiView(btn.dataset.croquiNav || 'top'));
+            });
 
             document.getElementById('btn-clear-pins').addEventListener('click', () => {
                 if (appState.pins.length === 0) return;
@@ -1376,7 +1447,7 @@
                 pinEl.textContent = num;
                 pinEl.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    setActiveCroquiView(pin.view, pin.region);
+                    setActiveCroquiView(pin.view);
                     const input = document.getElementById(`pin-desc-${pin.id}`);
                     if (input) input.focus();
                 });
@@ -1396,18 +1467,16 @@
                                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border border-slate-300 bg-white text-slate-600">${safeText(pin.region || getCroquiRegions(pin.view)[0])}</span>
                             </div>
                             <input type="text" id="pin-desc-${pin.id}" value="${safeText(pin.desc)}" placeholder="Local / detalhe da avaria..."
-                                onfocus="setActiveCroquiView('${pin.view}', '${safeText(pin.region || '')}')"
+                                onfocus="setActiveCroquiView('${pin.view}')"
                                 oninput="updatePinDesc(${pin.id}, this.value)"
                                 class="w-full text-xs bg-transparent border-b border-slate-300 focus:border-[#0072ce] outline-none py-1 text-slate-700">
-                            <div class="mt-2">
-                                <label class="block text-[10px] font-semibold uppercase tracking-wide text-slate-500 mb-1">Região / peça</label>
-                                <select onchange="updatePinRegion(${pin.id}, this.value)" class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-[11px] text-slate-700 focus:border-[#0072ce] outline-none">
-                                    ${buildCroquiRegionOptionsHtml(pin.view, pin.region)}
-                                </select>
+                            <div class="mt-2 inline-flex items-center gap-1.5 rounded-xl bg-white border border-slate-200 px-2.5 py-1.5 text-[11px] text-slate-600">
+                                <i class="ph-bold ph-map-pin-line text-sky-600"></i>
+                                <span><strong class="text-slate-700">Região:</strong> ${safeText(pin.region || getCroquiRegions(pin.view)[0])}</span>
                             </div>
                         </div>
                         <div class="flex flex-col gap-1 no-print">
-                            <button type="button" onclick="setActiveCroquiView('${pin.view}', '${safeText(pin.region || '')}');triggerPhotoCapture('pin', ${pin.id})" title="Anexar Foto"
+                            <button type="button" onclick="setActiveCroquiView('${pin.view}');triggerPhotoCapture('pin', ${pin.id})" title="Anexar Foto"
                                 class="p-2 ${pin.photo ? 'text-sky-600 bg-sky-100' : 'text-slate-500 hover:text-sky-600'} rounded-lg transition">
                                 <i class="ph-bold ph-camera text-base"></i>
                             </button>
@@ -1429,7 +1498,7 @@
                 `;
                 if (listEl) listEl.appendChild(itemEl);
             });
-            setActiveCroquiView(activeCroquiView, getSelectedCroquiRegion(activeCroquiView));
+            setActiveCroquiView(activeCroquiView);
         }
 
         function updatePinDesc(pinId, val) {
@@ -1443,8 +1512,7 @@
         function updatePinRegion(pinId, value) {
             const pin = appState.pins.find(p => p.id === pinId);
             if (!pin) return;
-            const regions = getCroquiRegions(pin.view);
-            pin.region = regions.includes(value) ? value : regions[0];
+            pin.region = getCroquiRegions(pin.view).includes(value) ? value : getCroquiRegions(pin.view)[0];
             renderDamagePins();
             updateAllBadgesAndStats();
             saveToLocalStorage();

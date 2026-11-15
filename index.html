@@ -455,30 +455,44 @@
                         <p class="w-full text-[11px] text-slate-500 mb-3 no-print">Agora o croqui mostra o veículo em várias visões. Toque na área correspondente para registrar a avaria no local mais próximo.</p>
 
                         <div class="w-full grid grid-cols-1 xl:grid-cols-[1.2fr_.8fr] gap-3 mb-3 no-print">
-                            <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-3">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <i class="ph-bold ph-map-pin-area text-sky-600 text-base"></i>
-                                    <span class="text-xs font-bold uppercase tracking-wide text-slate-700">Região / peça</span>
+                            <div id="croqui-360-console" class="rounded-2xl border border-slate-200 bg-slate-50/80 p-3">
+                                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-2 mb-1.5">
+                                            <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-sky-100 text-sky-600"><i class="ph-bold ph-arrow-arc-left-right text-lg"></i></span>
+                                            <div>
+                                                <span class="block text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Croqui 360°</span>
+                                                <strong id="croqui-active-view-label" class="block text-sm text-slate-800">Visão superior</strong>
+                                            </div>
+                                        </div>
+                                        <p id="croqui-active-view-desc" class="text-[11px] text-slate-500">Gire o veículo pelas setas ou pelos pontos de navegação e clique na área mais próxima da avaria.</p>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" id="btn-croqui-prev-view" class="croqui-icon-btn" title="Visão anterior" aria-label="Visão anterior"><i class="ph-bold ph-caret-left text-lg"></i></button>
+                                        <div id="croqui-360-nav" class="flex items-center gap-1.5">
+                                            <button type="button" class="croqui-nav-dot" data-croqui-nav="top" title="Visão superior" aria-label="Visão superior"><span class="sr-only">Visão superior</span></button>
+                                            <button type="button" class="croqui-nav-dot" data-croqui-nav="left" title="Lateral esquerda" aria-label="Lateral esquerda"><span class="sr-only">Lateral esquerda</span></button>
+                                            <button type="button" class="croqui-nav-dot" data-croqui-nav="front" title="Frontal" aria-label="Frontal"><span class="sr-only">Frontal</span></button>
+                                            <button type="button" class="croqui-nav-dot" data-croqui-nav="right" title="Lateral direita" aria-label="Lateral direita"><span class="sr-only">Lateral direita</span></button>
+                                            <button type="button" class="croqui-nav-dot" data-croqui-nav="rear" title="Traseira" aria-label="Traseira"><span class="sr-only">Traseira</span></button>
+                                        </div>
+                                        <button type="button" id="btn-croqui-next-view" class="croqui-icon-btn" title="Próxima visão" aria-label="Próxima visão"><i class="ph-bold ph-caret-right text-lg"></i></button>
+                                    </div>
                                 </div>
-                                <label for="croqui-region-select" class="sr-only">Selecione a região do veículo</label>
-                                <select id="croqui-region-select" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-700 outline-none focus:border-[#0072ce]">
-                                    <option value="Capô">Capô</option>
-                                </select>
-                                <p id="croqui-region-hint" class="mt-2 text-[11px] text-slate-500">As opções mudam conforme a visão selecionada do veículo.</p>
                             </div>
                             <div class="grid grid-cols-1 gap-3">
                                 <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-3">
-                                    <div class="flex items-center justify-between gap-2 mb-2">
+                                    <div class="flex items-center justify-between gap-2">
                                         <div class="flex items-center gap-2">
                                             <i class="ph-bold ph-magnifying-glass-plus text-emerald-600 text-base"></i>
                                             <span class="text-xs font-bold uppercase tracking-wide text-slate-700">Zoom do croqui</span>
                                         </div>
-                                        <span id="croqui-zoom-level" class="text-[11px] font-bold px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600">100%</span>
-                                    </div>
-                                    <div class="grid grid-cols-3 gap-2">
-                                        <button type="button" id="btn-croqui-zoom-out" class="rounded-xl border border-slate-300 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">- Zoom</button>
-                                        <button type="button" id="btn-croqui-zoom-reset" class="rounded-xl border border-slate-300 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">100%</button>
-                                        <button type="button" id="btn-croqui-zoom-in" class="rounded-xl border border-slate-300 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">+ Zoom</button>
+                                        <div id="croqui-zoom-toolbar" class="flex items-center gap-1.5">
+                                            <button type="button" id="btn-croqui-zoom-out" class="croqui-icon-btn" title="Reduzir zoom" aria-label="Reduzir zoom"><i class="ph-bold ph-minus text-base"></i></button>
+                                            <span id="croqui-zoom-level" class="text-[11px] font-bold px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600">100%</span>
+                                            <button type="button" id="btn-croqui-zoom-reset" class="croqui-icon-btn" title="Resetar zoom" aria-label="Resetar zoom"><i class="ph-bold ph-corners-out text-base"></i></button>
+                                            <button type="button" id="btn-croqui-zoom-in" class="croqui-icon-btn" title="Aumentar zoom" aria-label="Aumentar zoom"><i class="ph-bold ph-plus text-base"></i></button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div id="croqui-view-legend" class="rounded-2xl border border-slate-200 bg-slate-50/80 p-3">
