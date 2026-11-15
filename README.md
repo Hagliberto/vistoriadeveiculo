@@ -1,3 +1,11 @@
+## Orientação das vistas
+
+A nomenclatura dos ângulos mantém os IDs anteriores para não deslocar as avarias já salvas. Como as imagens são uma coleção de desenhos de referências variadas e não um modelo 3D único, **não é seguro inverter automaticamente esquerda/direita** sem confirmar as peças fotografadas. Antes de utilizar o laudo para uma vistoria oficial, confira o lado do veículo e os pontos antigos.
+
+## Exportação seletiva v1.5.8
+
+O modal **Exportar laudo** permite incluir croqui, checklist, evidências e assinaturas quando desejado. A identificação e as observações gerais são obrigatórias no relatório. Ao incluir checklist, selecione as categorias e se deseja imprimir somente itens verificados. O PDF oficial é produzido em **Imprimir > Salvar como PDF** e mantém o mesmo layout A4 da impressão; a opção PNG foi removida.
+
 ### Correções da versão 1.5.7
 
 Cores do croqui vinculadas ao **tipo de avaria**: Amassado vermelho, Risco azul, Quebrado laranja, Faltando roxo. Com zoom ativo, toque curto marca; arraste reposiciona e pinça amplia/reduz. A versão no rodapé e em Configurações deve corresponder ao `version.json`.

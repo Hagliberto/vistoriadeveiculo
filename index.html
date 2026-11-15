@@ -121,7 +121,7 @@
             <button type="button" class="sidebar-link" data-command="export" title="Exportar laudo" aria-label="Exportar laudo"><i class="ph-bold ph-export"></i><span class="sidebar-label">Exportar laudo<small>PDF, PNG e mais</small></span></button>
             <button type="button" class="sidebar-link" data-command="settings" title="Configurações e informações" aria-label="Configurações e informações"><i class="ph-bold ph-gear"></i><span class="sidebar-label">Configurações<small>Preferências e versão</small></span></button>
         </nav>
-        <div class="sidebar-footer" title="Vistoria Veicular v1.5.7"><span class="sidebar-version-mark">1.5</span><span class="sidebar-label">v1.5.7 • Offline</span></div>
+        <div class="sidebar-footer" title="Vistoria Veicular v1.5.8"><span class="sidebar-version-mark">1.5</span><span class="sidebar-label">v1.5.8 • Offline</span></div>
     </aside>
 
     <!-- Barra Superior Fixa Compacta Mobile-First -->
@@ -734,17 +734,32 @@
         </div>
     </div>
 
-    <!-- Central de exportação: PDF oficial, PNG ou impressão -->
+    <!-- Central de exportação seletiva: PDF oficial ou impressão -->
     <div id="export-modal" class="export-modal no-print" role="dialog" aria-modal="true" aria-labelledby="export-title" aria-describedby="export-description" hidden>
         <div class="export-panel" role="document">
             <div class="export-heading">
                 <div class="export-heading-brand"><span class="export-heading-icon"><i class="ph-bold ph-export"></i></span><div><span class="export-eyebrow">DOCUMENTOS DA VISTORIA</span><h2 id="export-title">Exportar laudo</h2></div></div>
                 <button id="btn-close-export" type="button" class="export-close" aria-label="Fechar opções de exportação" title="Fechar"><i class="ph-bold ph-x"></i></button>
             </div>
-            <p id="export-description" class="export-description">Escolha como deseja salvar ou imprimir o laudo da vistoria atual.</p>
+            <p id="export-description" class="export-description">Selecione os blocos necessários e salve como PDF ou imprima o laudo.</p>
+            <fieldset id="export-content-options" class="export-selective-options" aria-label="Conteúdo do laudo PDF">
+                <legend>Conteúdo do documento</legend>
+                <p class="export-fixed-note"><i class="ph-bold ph-check-circle"></i> Identificação do veículo e observações gerais serão sempre incluídas.</p>
+                <div class="export-selective-grid">
+                    <label><input type="checkbox" id="export-include-croqui" name="includeCroqui"><span>Croqui de avarias</span></label>
+                    <label><input type="checkbox" id="export-include-checklist" name="includeChecklist"><span>Checklist de inspeção</span></label>
+                    <label><input type="checkbox" id="export-include-photos" name="includePhotos"><span>Evidências fotográficas</span></label>
+                    <label><input type="checkbox" id="export-include-signatures" name="includeSignatures"><span>Assinaturas</span></label>
+                </div>
+                <div id="export-checklist-detail" hidden>
+                    <p class="export-detail-title">Categorias do checklist</p>
+                    <div id="export-checklist-categories" class="export-category-grid"></div>
+                    <label class="export-row-toggle"><input type="checkbox" id="export-only-checked" checked><span>Exibir somente itens verificados (Conforme, Avaria ou N/A)</span></label>
+                </div>
+                <p class="export-note">A seleção afeta apenas a impressão/PDF; nenhum dado da vistoria será apagado.</p>
+            </fieldset>
             <div class="export-options">
                 <button type="button" data-export-format="pdf" class="export-option"><span class="export-option-icon export-pdf"><i class="ph-bold ph-file-pdf"></i></span><span><strong>Salvar como PDF</strong><small>Mesmo laudo da impressão · salve e compartilhe o arquivo depois</small></span><i class="ph-bold ph-caret-right export-option-arrow"></i></button>
-                <button type="button" data-export-format="png" class="export-option"><span class="export-option-icon export-png"><i class="ph-bold ph-file-image"></i></span><span><strong>Baixar em PNG</strong><small>Imagem em alta resolução, com evidências</small></span><i class="ph-bold ph-caret-right export-option-arrow"></i></button>
                 
                 <button type="button" data-export-format="print" class="export-option"><span class="export-option-icon export-print"><i class="ph-bold ph-printer"></i></span><span><strong>Imprimir</strong><small>Laudo técnico formatado para papel A4</small></span><i class="ph-bold ph-caret-right export-option-arrow"></i></button>
             </div>
@@ -770,7 +785,7 @@
                 <div class="settings-choice-row"><div><strong>Atualização do aplicativo</strong><small id="app-update-settings-status" role="status" aria-live="polite">Verificação automática ao abrir o aplicativo.</small></div><button type="button" id="btn-check-updates" class="settings-choice-btn">Verificar agora</button></div>
             </div>
             <div class="settings-about">
-                <div class="settings-about-top"><span class="settings-about-icon"><i class="ph-bold ph-car-profile"></i></span><div><strong>Vistoria Veicular</strong><small>Checklist digital · PWA offline-first</small></div><span class="settings-version-pill">Versão 1.5.7</span></div>
+                <div class="settings-about-top"><span class="settings-about-icon"><i class="ph-bold ph-car-profile"></i></span><div><strong>Vistoria Veicular</strong><small>Checklist digital · PWA offline-first</small></div><span class="settings-version-pill">Versão 1.5.8</span></div>
                 <span class="settings-developer-label">DESENVOLVIDO POR</span>
                 <span class="settings-developer-pill"><i class="ph-bold ph-check-circle"></i> Hagliberto Alves de Oliveira</span>
                 <p>Os registros, fotografias e assinaturas são mantidos localmente, sem envio automático a servidores.</p>

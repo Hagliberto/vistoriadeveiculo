@@ -37,7 +37,7 @@
          * Atualizações PWA: somente versões publicadas no mesmo host, com confirmação.
          * A verificação não acessa nem altera IndexedDB/localStorage de vistorias.
          */
-        const APP_VERSION = '1.5.7';
+        const APP_VERSION = '1.5.8';
         function syncDisplayedAppVersion() {
             const footer = document.querySelector('.sidebar-footer');
             if (footer) {
@@ -1039,7 +1039,8 @@
             if (!appState.vehicle.km.toString().trim()) missing.push('Quilometragem (KM)');
             if (!appState.vehicle.vistoriador.trim()) missing.push('Vistoriador Responsável');
             if (!appState.vehicle.motorista.trim()) missing.push('Motorista / Condutor');
-            if (!appState.signatures['sig-vistoriador'] && !appState.signatures['sig-motorista']) {
+            if (!document.body.classList.contains('print-omit-signatures') &&
+                !appState.signatures['sig-vistoriador'] && !appState.signatures['sig-motorista']) {
                 missing.push('Pelo menos 1 assinatura digital');
             }
 

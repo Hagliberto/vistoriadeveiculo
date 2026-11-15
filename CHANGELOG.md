@@ -1,3 +1,13 @@
+## v1.5.8 — Exportação A4 seletiva e remoção do PNG
+
+- Removida a exportação PNG, que utilizava um desenho antigo de croqui.
+- PDF e impressão usam um único layout A4 profissional, com imagens originais das nove vistas.
+- Identificação do veículo e observações gerais sempre presentes.
+- Seletor de conteúdo para croqui, checklist, evidências fotográficas e assinaturas.
+- Seleção individual das seis categorias e filtragem de itens verificados.
+- As seleções afetam apenas o documento; não apagam registros da vistoria.
+- Versionamento atualizado para 1.5.8 e cache renovado.
+
 ## v1.5.7 — Cores por tipo, toque com zoom e versão sincronizada
 
 - Marcadores do croqui e itens da lista usam a mesma cor para cada **tipo de avaria**, independentemente do número: Amassado (vermelho), Risco (azul), Quebrado (laranja), Faltando (roxo).
