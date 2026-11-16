@@ -1,11 +1,11 @@
-/* Exportação seletiva usando exclusivamente o layout de impressão A4 · v1.5.8.
+/* Exportação seletiva usando exclusivamente o layout de impressão A4 · v1.5.9.
    O HTML de impressão é a única fonte do PDF. Sem canvas, sem PNG ou CDNs. */
 (() => {
   'use strict';
   const modal = document.getElementById('export-modal');
   if (!modal) return;
   const feedback = document.getElementById('export-feedback');
-  const buttons = [...modal.querySelectorAll('[data-export-format]')];
+  const exportButton = modal.querySelector('[data-export-format="pdf"]');
   const closeButton = document.getElementById('btn-close-export');
   const checklistToggle = document.getElementById('export-include-checklist');
   const detail = document.getElementById('export-checklist-detail');
@@ -42,7 +42,7 @@
     const mobile = document.getElementById('mobile-actions-sheet');
     if (mobile && !mobile.hidden) document.getElementById('btn-close-actions')?.click();
     previousFocus = document.activeElement;
-    feedback.textContent = 'O PDF utiliza o mesmo layout A4 da impressão. Selecione apenas as seções necessárias.';
+    feedback.textContent = 'Selecione as seções e use Gerar PDF / Imprimir. O destino é escolhido na janela do navegador.';
     modal.hidden = false;
     document.body.classList.add('export-open');
     closeButton.focus();
@@ -101,5 +101,5 @@
     }
     validateAndPrint();
   }
-  buttons.forEach(button => button.addEventListener('click', execute));
+  exportButton?.addEventListener('click', execute);
 })();

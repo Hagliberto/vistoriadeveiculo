@@ -2,9 +2,9 @@
 
 A nomenclatura dos ângulos mantém os IDs anteriores para não deslocar as avarias já salvas. Como as imagens são uma coleção de desenhos de referências variadas e não um modelo 3D único, **não é seguro inverter automaticamente esquerda/direita** sem confirmar as peças fotografadas. Antes de utilizar o laudo para uma vistoria oficial, confira o lado do veículo e os pontos antigos.
 
-## Exportação seletiva v1.5.8
+## Exportação seletiva v1.5.9
 
-O modal **Exportar laudo** permite incluir croqui, checklist, evidências e assinaturas quando desejado. A identificação e as observações gerais são obrigatórias no relatório. Ao incluir checklist, selecione as categorias e se deseja imprimir somente itens verificados. O PDF oficial é produzido em **Imprimir > Salvar como PDF** e mantém o mesmo layout A4 da impressão; a opção PNG foi removida.
+O modal **Exportar laudo** permite incluir croqui, checklist, evidências e assinaturas quando desejado. A identificação e as observações gerais são obrigatórias no relatório. Ao incluir checklist, selecione as categorias e se deseja imprimir somente itens verificados. Existe uma única ação **Gerar PDF / Imprimir**: ela abre o diálogo nativo do navegador, no qual você escolhe **Salvar como PDF** ou a impressora, sempre com o layout A4. A opção PNG permanece removida.
 
 ### Correções da versão 1.5.7
 

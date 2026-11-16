@@ -1,3 +1,10 @@
+## v1.5.9 — Exportação unificada
+
+- Removido o botão duplicado **Imprimir** do modal de exportação.
+- Ação única **Gerar PDF / Imprimir**: seleciona conteúdo e abre a impressão nativa A4.
+- O destino (Salvar como PDF ou impressora) é escolhido no navegador.
+- Atualização da versão exibida na interface e do cache PWA, preservando os controles seletivos da v1.5.8.
+
 ## v1.5.8 — Exportação A4 seletiva e remoção do PNG
 
 - Removida a exportação PNG, que utilizava um desenho antigo de croqui.
