@@ -1,219 +1,89 @@
-### Layout responsivo mobile (v1.5.10)
-
-Os títulos das seções de identificação, croqui, checklist e assinaturas são exibidos integralmente no celular. Os contadores ficam em uma segunda linha quando necessário. A barra superior exibe nome, estado de salvamento e três métricas legíveis em linhas distintas, sem abreviar informações importantes. O PDF mantém o estilo A4 original.
-
-## Orientação das vistas
-
-A nomenclatura dos ângulos mantém os IDs anteriores para não deslocar as avarias já salvas. Como as imagens são uma coleção de desenhos de referências variadas e não um modelo 3D único, **não é seguro inverter automaticamente esquerda/direita** sem confirmar as peças fotografadas. Antes de utilizar o laudo para uma vistoria oficial, confira o lado do veículo e os pontos antigos.
-
-## Exportação seletiva v1.5.9
-
-O modal **Exportar laudo** permite incluir croqui, checklist, evidências e assinaturas quando desejado. A identificação e as observações gerais são obrigatórias no relatório. Ao incluir checklist, selecione as categorias e se deseja imprimir somente itens verificados. Existe uma única ação **Gerar PDF / Imprimir**: ela abre o diálogo nativo do navegador, no qual você escolhe **Salvar como PDF** ou a impressora, sempre com o layout A4. A opção PNG permanece removida.
-
-### Correções da versão 1.5.7
-
-Cores do croqui vinculadas ao **tipo de avaria**: Amassado vermelho, Risco azul, Quebrado laranja, Faltando roxo. Com zoom ativo, toque curto marca; arraste reposiciona e pinça amplia/reduz. A versão no rodapé e em Configurações deve corresponder ao `version.json`.
-
-### Gestos do croqui (v1.5.6)
-
-Pinça com dois dedos para ampliar/reduzir. Com zoom maior que 100%, arraste com um dedo para reposicionar a imagem; em 100%, arraste na horizontal para trocar de vista. O PDF oficial não herda o zoom, e mostra uma contagem discreta por vista.
-
-## v1.5.5 — Imagens do PDF de referência e tela cheia
-
-- Substituídas as imagens das vistas por arquivos extraídos diretamente do PDF do usuário, sem os quadros e setas da prancha.
-- Nove vistas: oito ângulos ao redor do veículo e vista superior (zênite).
-- Croqui em tela cheia com controles de navegação e zoom, marcação sobre a imagem e fallback para navegadores sem Fullscreen API.
-- Vistorias anteriores permanecem legíveis; verificar manualmente a posição de pontos antigos após troca das imagens.
-
-## Croqui com oito vistas — v1.5.4
-
-O veículo é exibido usando **imagens recortadas da prancha de referência enviada pelo usuário**: frontal 0°, dianteira esquerda 45°, lateral esquerda 90°, traseira esquerda 135°, traseira 180°, lateral direita 270°, dianteira direita 315° e superior (zênite). No desktop, clique e arraste horizontalmente; no celular, deslize lateralmente. As setas também trocam a vista. Ao tocar sem arrastar, uma avaria é registrada. O PDF mostra as oito vistas e suas marcações.
-
-O material é uma prancha de imagens técnicas, não um objeto 3D livremente rotacionável. As vistorias antigas continuam compatíveis.
-
-### Croqui técnico v1.5.3
-
-Cinco vistas em desenho vetorial preto e branco inspirado em croqui de vistoria: controles integrados, sem cartões de zoom ou legenda. Os pontos permanecem associados à vista e preservados na impressão. Não se trata de 3D com rotação contínua.
-
-## v1.5.2 — Croqui com vistas alternáveis
-
-Use as setas, indicadores ou deslize horizontalmente sobre o croqui para alternar as cinco vistas. A tela mostra uma vista por vez; o PDF inclui todas. O veículo é um desenho vetorial estilizado, não um modelo 3D contínuo.
-
 # Vistoria Veicular — Checklist Digital
 
-> **Versão profissional 1.4.5 (14/11/2026)** · HTML + CSS + JavaScript puro · offline-first · sem servidor de dados
+[![Versão](https://img.shields.io/badge/vers%C3%A3o-1.5.10-00549a)](CHANGELOG.md) [![PWA](https://img.shields.io/badge/PWA-offline--first-148566)](docs/instalacao.md) [![Tecnologia](https://img.shields.io/badge/stack-HTML%20%7C%20CSS%20%7C%20JavaScript-334155)](docs/arquitetura.md) [![Licença](https://img.shields.io/badge/licen%C3%A7a-n%C3%A3o%20declarada-64748b)](#licenciamento)
 
-Aplicação de inspeção de veículos com **47 verificações distribuídas em 6 categorias**, identificação, controle do nível de combustível, croqui interativo, registros fotográficos, assinaturas digitais e geração de laudo técnico em papel A4/PDF.
+**Aplicativo de vistoria veicular para desktop e celular**, com checklist, registro de avarias em nove vistas, fotografias, assinaturas, histórico local, backups e laudo A4 configurável.
 
-## Como usar
+**[Abrir aplicativo](https://vistoriadeveiculo.pages.dev/)** · **[Guia de uso](docs/guia-de-uso.md)** · **[Instalação](docs/instalacao.md)** · **[Documentação completa](docs/README.md)** · **[Histórico de versões](CHANGELOG.md)**
 
-**Uso local no Windows (sem instalação e sem internet):** descompacte a pasta inteira e abra `index.html` no Chrome, Edge ou Firefox. Não separe o HTML dos diretórios `assets/` e `icons/`. Todas as folhas de estilo e ícones já estão incluídos; não é necessário ter conexão com uma CDN.
+> **Versão estável documentada:** `v1.5.10` · **Plataforma:** aplicação web estática / PWA · **Desenvolvimento:** Hagliberto Alves de Oliveira. O armazenamento é local ao navegador; o aplicativo não é um sistema de sincronização em nuvem.
 
-**Instalação como aplicativo PWA:** publique a pasta em um endereço **HTTPS**, ou use `localhost` durante desenvolvimento. Ao acessar, o navegador compatível poderá oferecer **Instalar App**. Depois de uma primeira visita carregada por completo, o service worker mantém a interface disponível quando a internet não estiver acessível. Em `file://` o checklist também funciona, mas a instalação PWA e o service worker **não** estão disponíveis (restrição dos navegadores).
+## Visão geral
 
-**Hospedagem no GitHub Pages:** coloque todos os arquivos desta versão na raiz de seu repositório estático. Em *Settings → Pages*, publique a branch `main` usando a pasta `/ (root)`. O app não exige Cloudflare Workers, D1 ou outra API. O armazenamento permanece **local ao navegador/dispositivo** e não sincroniza automaticamente entre dispositivos.
+| Recurso | Descrição |
+| --- | --- |
+| Identificação | Dados do veículo, vistoriador, motorista, tipo e data da inspeção |
+| Checklist | **47 verificações em 6 categorias**; Conforme, Avaria e N/A; comentários e evidências |
+| Croqui | **9 vistas** técnicas, avarias por tipo com cores próprias, zoom, pinça, arraste e tela cheia |
+| Assinaturas | Registro de assinatura de vistoriador e motorista |
+| Histórico e backups | Arquivamento de vistorias e importação/exportação de JSON |
+| Laudo | **Gerar PDF / Imprimir**, usando impressão nativa A4 e inclusão seletiva de seções |
+| PWA | Interface utilizável offline após pré-carregamento em HTTPS/localhost |
 
-## Interface profissional no desktop e no celular
+## Comece em poucos passos
 
-- **Área de trabalho WIDE:** duas colunas de expanders a partir de 1280 px, com opção **Lista** para quem preferir blocos na largura total. A preferência fica salva no navegador.
-- **Appbar:** os seis ícones de ação ficam na barra superior, sem o antigo minicard. Ações: expandir/recolher, histórico, marcar tudo Conforme, limpar e imprimir.
-- **Navbar inferior:** atalhos para dados, croqui, checklist, assinaturas, histórico, impressão e configurações.
-- **Sidebar recolhida por padrão:** pode ser expandida no desktop ou aberta como menu sobreposto no celular.
-- **Configurações:** engrenagem no dock inferior e na sidebar, mostrando versão e pill **Hagliberto Alves de Oliveira**.
-- **Ação por categoria:** cada uma das seis categorias tem um ícone **Tudo conforme**. Caso exista uma avaria ou N/A, um diálogo solicita confirmação. A alteração nunca atinge outras categorias e preserva comentários e fotos.
+1. Acesse **[vistoriadeveiculo.pages.dev](https://vistoriadeveiculo.pages.dev/)** ou [execute o projeto localmente](docs/instalacao.md).
+2. Abra **Dados** e identifique o veículo; preencha o **Checklist** com os resultados da inspeção.
+3. No **Croqui**, escolha um tipo de avaria, selecione a vista e toque no local. Anexe fotos, detalhes e assinaturas quando necessário.
+4. Arquive a vistoria no **Histórico** e, para cópia externa, exporte seu **JSON**.
+5. Use **Exportar → Gerar PDF / Imprimir**. Identificação e observações são obrigatórias; croqui, checklist, fotos e assinaturas podem ser selecionados.
 
-## Correção do histórico
+> **Atenção à privacidade:** fotos, dados pessoais, assinaturas e histórico ficam no perfil do navegador. Faça backups externos protegidos. O PDF é um documento de vistoria, não um certificado de assinatura digital ICP-Brasil.
 
-**Salvar Vistoria Atual no Histórico** cria uma **nova versão arquivada a cada salvamento**, mesmo quando o número de protocolo é igual. Cada arquivo recebe um identificador exclusivo e a data/hora do registro; o protocolo da vistoria é mantido. É possível guardar três, quatro, cinco ou mais versões, respeitando o espaço disponível no navegador. Ao apagar uma versão, as demais permanecem. O histórico antigo continua legível.
-
-Uma versão arquivada **não significa sincronização com a nuvem**. Para cópia de segurança externa, exporte o JSON e guarde-o em local seguro. Em dispositivos sem IndexedDB, o armazenamento reduzido do navegador pode restringir o número de arquivos com fotos.
-
-## Funcionalidades
-
-- **Identificação:** data/tipo, vistoriador, motorista, placa, modelo, ano, cor, quilometragem e combustível.
-- **Checklist:** 47 itens em seis grupos, com Conforme, Avaria e N/A, observações e foto por item. Todas as nove seções iniciam fechadas.
-- **Croqui:** posição percentual de avarias, tipo, descrição e evidência fotográfica. Acesso por teclado: `Tab` para focar o croqui e `Enter` ou `Espaço` para inserir um ponto central.
-- **Assinaturas:** campos de assinatura para vistoriador e motorista; assinaturas restauradas quando se abre uma vistoria salva.
-- **Histórico:** salvar laudos, abrir, excluir ou criar uma vistoria de **Saída** a partir de uma de **Entrada**. Ao duplicar como Saída, é gerado novo protocolo e as assinaturas anteriores são removidas.
-- **Backup:** exportação e importação de vistoria em JSON (incluindo fotos e assinaturas). Um JSON representa o estado completo da vistoria atual; o histórico inteiro não é exportado em lote.
-- **Laudo A4:** quadro estático de identificação, contadores, status escolhido, observações efetivamente preenchidas, croqui, assinaturas convertidas em imagem e anexo fotográfico quando houver evidências. O comando **Imprimir/PDF** abre a janela de impressão do navegador.
-- **Privacidade:** não há envio automático de dados, fotos, GPS ou assinaturas a servidores. A localização só é solicitada quando o usuário aciona o comando específico e permite o acesso.
-
-## Armazenamento e compatibilidade
-
-A aplicação usa **IndexedDB** quando disponível para guardar o rascunho completo e o histórico, inclusive fotografias. Usa também `localStorage` para recuperação e compatibilidade com as versões antigas (`vistoria_veicular_pwa_v2`, `vistoria_veicular_pwa_v3` e `vistoria_veicular_history_v1`). Caso IndexedDB esteja indisponível, o navegador tenta guardar localmente os dados; neste caso, o limite de espaço pode impedir vistorias com muitas fotos.
-
-**Atenção:** os dados são mantidos no perfil do navegador e podem ser perdidos ao limpar dados do site, usar navegação anônima, trocar de dispositivo ou alterar a origem (por exemplo, de `file://` para uma URL de produção). Para preservar vistorias, **exporte o JSON de cada laudo importante** e mantenha backups externos. O JSON contém informações pessoais, fotos e assinaturas; guarde-o em local protegido.
-
-A troca de origem (`file://`, `localhost`, domínio GitHub Pages) não migra automaticamente os dados, pois cada origem tem um armazenamento isolado.
-
-## Impressão e PDF
-
-1. Preencha a vistoria e toque no botão de gerar laudo (ícone de impressora). Se houver campos importantes faltando, o sistema oferece confirmar ou voltar para completar.
-2. No diálogo do navegador, escolha **Salvar como PDF** ou sua impressora.
-3. Se necessário, ajuste para **A4 / Retrato / Escala 100%**. Recomenda-se habilitar *Gráficos de plano de fundo* para fidelidade das cores.
-4. Confira no pré-visualizador a divisão entre páginas, especialmente em vistorias com muitas fotos ou textos longos. A paginação final depende do motor de impressão e das fontes do navegador.
-
-O projeto prepara o relatório **sem depender de serviços externos de PDF**. Os espaços de assinatura são convertidos em imagens antes de imprimir, e as linhas de checklist usam proteção contra corte.
-
-## Estrutura do projeto
+## Como funciona
 
 ```text
-index.html                  Interface da vistoria
-assets/app.css              CSS de utilitários compilado (Tailwind empacotado)
-assets/print-and-custom.css Estilos da interface, impressão A4, acessibilidade
-assets/app.js               Lógica e armazenamento client-side
-assets/icons.js             Ícones SVG locais
-icons/icon-192.png          Ícone instalável
-icons/icon-512.png          Ícone instalável de alta resolução
-manifest.webmanifest        Metadados PWA
-service-worker.js           Cache offline da interface
-AGENTS.md                   Regras técnicas e padrões de evolução
-CHANGELOG.md                Histórico desta consolidação
-README.md                   Documentação de uso e publicação
-tests/test_state.mjs        Testes do estado e máscaras (Node.js)
-tests/test_static.py        Auditoria estrutural (Python 3)
+index.html ── Interface
+assets/app.js ── Estado, checklist, croqui, histórico e persistência
+assets/export.js ── Seleção das seções a imprimir
+assets/app.css + assets/print-and-custom.css ── Layout e A4
+assets/croqui/*.webp ── Nove imagens do veículo
+service-worker.js + manifest.webmanifest + version.json ── PWA
 ```
 
-## Verificações técnicas
+Sem backend obrigatório, build ou dependências externas em tempo de execução. A persistência usa **IndexedDB**, com apoio de **localStorage**. O Service Worker não substitui backup de dados.
 
-O projeto não requer dependências para funcionar. Para executar os **testes opcionais** no terminal (caso tenha Node.js e Python instalados):
+## Documentação
 
-```powershell
-node .\tests\test_state.mjs
-python .\tests\test_static.py
-node --check .\assets\app.js
-node --check .\assets\icons.js
-node --check .\service-worker.js
-```
+| Documento | Conteúdo |
+| --- | --- |
+| [Índice da documentação](docs/README.md) | Navegação central e perfis de leitura |
+| [Guia de uso](docs/guia-de-uso.md) | Fluxos de inspeção e navegação |
+| [Instalação e publicação](docs/instalacao.md) | Execução local, PWA e Cloudflare Pages |
+| [Croqui e avarias](docs/croqui.md) | Nove vistas, marcações, gestos e orientações |
+| [PDF e impressão](docs/pdf-e-impressao.md) | Exportação seletiva e conferência do laudo |
+| [Dados, backups e privacidade](docs/dados-e-privacidade.md) | Armazenamento, histórico, segurança e migração |
+| [Arquitetura](docs/arquitetura.md) | Organização técnica, dependências e regras críticas |
+| [Testes e homologação](docs/testes.md) | Testes automatizados e cenários manuais |
+| [Contribuição e releases](docs/contribuicao.md) | Padrão Git, versionamento e critérios de entrega |
+| [Solução de problemas](docs/solucao-de-problemas.md) | Cache, PDF, dados e erros frequentes |
+| [Histórico de versões](CHANGELOG.md) | Evolução por release |
+| [AGENTS.md](AGENTS.md) | Instruções para agentes e mantenedores |
 
-Testes estruturais e unitários não substituem uma vistoria completa em um aparelho real e o exame de PDFs longos. Para homologação, teste em Chrome/Edge e ao menos um navegador móvel: editar/restaurar, tirar fotos, desenhar as duas assinaturas, salvar/abrir histórico, exportar/importar JSON e imprimir documentos com várias páginas.
+## Testar
 
-## Como aplicar no repositório existente
-
-Antes de substituir arquivos, confirme que alterações suas foram salvas no Git ou copiadas para um backup. Extraia o conteúdo do ZIP na raiz do seu repositório `vistoriadeveiculo`, **sem apagar a pasta `.git`**. Os dois arquivos `index.html` fornecidos foram comparados; a versão com histórico, fotos e melhorias de PDF serviu de base, complementada pelas regras do `AGENTS.md`.
-
-Depois execute no terminal PowerShell, na pasta do repositório:
-
-```powershell
-git status
-git diff --check
-git add index.html assets icons manifest.webmanifest service-worker.js AGENTS.md README.md CHANGELOG.md tests .gitignore
-git commit -m "feat: consolidar vistoria veicular profissional offline-first"
-git push origin main
-```
-
-Se preferir revisar antes de publicar, permaneça na branch existente `feature/vistoria-profissional-v1.0.0` (ou crie uma branch específica `feature/vistoria-profissional-v1.3.0`) e abra um pull request após testar. O projeto foi entregue **sem executar commit ou push** no seu computador ou remoto.
-
-## Limitações assumidas
-
-- A interface é 100% local e funciona sem rede; a instalação PWA depende de HTTPS ou localhost.
-- GPS depende de permissão e disponibilidade do dispositivo; em `file://` pode ser bloqueado pelo navegador.
-- Arquivos JSON não são criptografados. Mantenha backups protegidos.
-- Assinaturas desenhadas na tela não constituem, por si só, assinatura digital com certificado ICP-Brasil.
-- O histórico é local, sem sincronização na nuvem nem controle multiusuário.
-
-## Testes de regressão (Node.js e Python)
+Requisitos opcionais: **Node.js** (arquivos `.mjs`) e **Python 3**.
 
 ```powershell
+node --check assets/app.js
+node --check assets/export.js
+node --check service-worker.js
 node tests/test_state.mjs
 node tests/test_history.mjs
-node tests/test_modals.mjs
+node tests/test_mobile_layout_1510.mjs
+node tests/test_updates.mjs
 python tests/test_static.py
 ```
 
-Veja [tests/QA_MANUAL.md](tests/QA_MANUAL.md) para a conferência visual de desktop, mobile, histórico, confirmações e impressão.
+Veja [testes e homologação](docs/testes.md) para executar a suíte completa. Testes unitários não substituem a validação no navegador, principalmente impressão A4 e gestos móveis.
 
-### Atualizações da versão 1.3.0
-No desktop, a navegação usa ícones coloridos. Em telas até 1023px, o botão **Ações** da navegação inferior exibe os comandos de inspeção sem criar uma segunda linha no cabeçalho. O botão **Tudo conforme** de cada categoria alterna entre selecionar e desmarcar apenas os itens daquela categoria. Somente uma seção pode permanecer aberta.
+## Limitações e uso responsável
 
+- Não há sincronização automática entre computadores ou entre `file://`, `localhost` e o domínio publicado.
+- O acesso offline depende do pré-carregamento e das políticas do navegador.
+- A correspondência entre nomes de algumas vistas do croqui e o lado físico do veículo exige **conferência humana** antes do uso oficial; não renomeie IDs de vistas sem migração e validação dos pontos existentes.
+- O histórico e JSON exportado podem conter informações pessoais, fotos e assinaturas: trate-os como arquivos sensíveis.
 
-## Atualizações (v1.4.0)
-Hospede os arquivos completos em HTTPS (GitHub Pages, Cloudflare Pages ou intranet HTTPS).
-Publique `version.json` com o número exato da nova versão (ex.: `1.5.1`), atualize `APP_VERSION` em `assets/app.js` e o nome `CACHE_NAME` no `service-worker.js` a cada release.
-**Importante:** todos os arquivos da nova versão devem estar publicados antes de atualizar `version.json`; recomenda-se publicar tudo na mesma implantação atômica.
-Ao abrir, voltar à aba ou retornar à conexão, o app verifica a versão. Quando houver uma versão mais nova, o botão **Atualizar** aparece acima da navbar.
-O botão salva o rascunho, ativa o service worker em espera e recarrega a página quando ele assumir o controle. Sem internet ou em `file://`, a verificação remota não funciona.
-Durante a primeira migração da versão 1.3.0, o service worker antigo pode ativar a v1.4.0 automaticamente; o novo fluxo de confirmação vale para as versões seguintes.
+## Licenciamento
 
-## Ajustes visuais v1.4.1
-No celular (até 599px), o card de apresentação da área de trabalho é ocultado. A identificação do desenvolvedor aparece somente em Configurações, acessível pela engrenagem.
-
-## Navegação v1.4.3
-A ordem das etapas na tela, na barra inferior e na sidebar é **Dados → Croqui → Checklist → Assinaturas**. A sidebar recolhida apresenta os ícones com cores de cada etapa; ao expandir, aparecem descrições curtas. A seção ativa acompanha o expander aberto.
-
-### Exportar e compartilhar (v1.4.4)
-A opção **Exportar** abre um modal de quatro escolhas: **Salvar como PDF** (abre o mesmo laudo A4 da impressão; selecione “Salvar como PDF” no diálogo do navegador), **Baixar PNG** (imagem 2x do relatório com croqui, fotos e assinaturas, ajustada ao limite do navegador), **Compartilhar** (prioriza PDF pela Web Share API e usa PNG apenas se o PDF não for aceito) e **Imprimir** (impressão A4). O PDF direto é gerado integralmente no navegador, sem bibliotecas de terceiros ou conexão externa. A opção Imprimir continua abrindo o diálogo nativo com o CSS A4 existente. Compartilhar depende do navegador e de contexto HTTPS; quando indisponível, o aplicativo oferece download do arquivo local, sem enviar dados a servidor.
-
-
-### Qualidade de exportação (v1.4.4)
-PDF direto com páginas A4 em JPEG de aproximadamente 200 dpi, gerado offline. O texto do PDF compartilhável é rasterizado; para imprimir com texto selecionável e layout CSS, use **Imprimir → Salvar como PDF**. Documentos muito grandes dependem dos limites de memória do navegador. Faça homologação com fotos e assinaturas em celular.
-
-### Fidelidade do PDF à impressão (v1.4.5)
-A opção **Salvar como PDF** usa o mesmo `validateAndPrint()` e `prepareAndPrint()` da impressão. Selecione **Destino → Salvar como PDF**, papel **A4**, escala **100%/padrão** e, se necessário, **Gráficos de fundo**. O arquivo PDF de **Compartilhar** continua sendo gerado como raster para a Web Share API e pode ter aparência diferente; os navegadores não expõem o PDF do diálogo de impressão ao JavaScript.
-
-
-### PDF oficial (v1.4.6)
-
-A única fonte do layout PDF é `@media print`: os botões **Salvar como PDF**, **Imprimir** e **Compartilhar PDF oficial** usam `validateAndPrint()` e `prepareAndPrint()`. Na janela de impressão do Chrome/Edge escolha **Salvar como PDF**, A4, 1 página por folha, gráficos de segundo plano ativados e cabeçalhos/rodapés desativados. Para compartilhar, anexe o PDF salvo no aplicativo de destino. A Web Share API não oferece acesso ao arquivo PDF gerado pelo diálogo nativo, portanto não há envio automático do PDF oficial.
-
-
-### Central de exportação simplificada (v1.4.7)
-O menu oferece **Salvar como PDF**, **Baixar em PNG** e **Imprimir**. A antiga opção Compartilhar PDF oficial foi retirada porque apenas repetia a ação Salvar como PDF. O PDF A4 é salvo pelo diálogo nativo de impressão e pode ser anexado depois a WhatsApp/e-mail. Não é possível compartilhar diretamente o PDF emitido pelo diálogo do navegador por JavaScript.
-
-
-### Croqui 360° (v1.5.1)
-
-A versão 1.5.1 evolui o croqui com **navegação 360°**, **zoom discreto por ícones**, detecção automática de **região/peça** conforme o ponto clicado e um desenho de veículo visualmente mais refinado.
-
-### Croqui profissional (v1.5.1)
-
-A versão 1.5.1 adiciona melhorias operacionais ao croqui: **zoom**, seleção de **região/peça** por visão, legenda visual das faces do veículo e um **resumo por visão no PDF**. Isso torna o laudo mais claro tanto na tela quanto na impressão.
-
-### Croqui em várias visões (v1.4.9)
-
-O croqui agora exibe o veículo em **cinco ângulos**: visão superior, lateral esquerda, lateral direita, frontal e traseira. Cada ponto é salvo com a visão correspondente, e a lista de avarias indica em qual face do veículo o dano foi registrado. Isso melhora bastante a leitura do laudo quando há muitos danos espalhados.
-
-### Croqui multicolorido (v1.4.9)
-
-Os pontos usam cores por **posição atual** (1 vermelho, 2 azul, 3 verde, 4 laranja, 5 roxo, 6 rosa e assim por diante). A mesma cor aparece no ponto do carro, no número e no tipo da avaria na lista e no laudo impresso. A exclusão recalcula a numeração e as cores sem excluir fotos ou observações dos pontos restantes.
+**Nenhuma licença de software foi declarada nos arquivos desta entrega.** A publicação do código no GitHub, por si só, não concede uma licença de reutilização. O responsável pelo repositório pode adicionar um arquivo `LICENSE` quando definir os termos.

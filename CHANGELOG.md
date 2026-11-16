@@ -1,3 +1,15 @@
+# Histórico de alterações
+
+As versões estão organizadas da mais recente para a mais antiga. Este arquivo registra a evolução; as funcionalidades vigentes estão no [README](README.md) e em [docs/](docs/README.md).
+
+## Não publicado — organização da documentação
+
+- README reestruturado como apresentação principal do projeto.
+- Criada pasta `docs/` com guias de uso, instalação, croqui, laudo, dados, arquitetura, testes, contribuição e solução de problemas.
+- `AGENTS.md` consolidado, removendo instruções contraditórias de versões antigas.
+- Manual de homologação centralizado em `docs/testes.md`.
+- Nenhuma mudança de versão ou de lógica do aplicativo nesta revisão documental.
+
 ## v1.5.10 — Cabeçalhos mobile sem cortes
 
 - Cabeçalhos dos nove expanders reorganizados no celular: títulos e descrições quebram linha naturalmente, com contadores em faixa própria e setas acessíveis.
