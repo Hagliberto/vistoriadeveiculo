@@ -7,5 +7,5 @@ assert.ok(exp.includes('validateAndPrint()'));
 assert.ok(!exp.includes('generatePNG()'));
 assert.ok(!html.includes('Compartilhar PDF oficial'));
 assert.ok(app.includes('window.print()'));
-assert.equal(JSON.parse(r('version.json')).version,'1.5.9');
+assert.equal(JSON.parse(r('version.json')).version,'1.5.10');
 console.log('OK: exportação A4 com seleção de conteúdo, sem PNG.');

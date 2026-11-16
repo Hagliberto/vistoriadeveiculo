@@ -1,4 +1,4 @@
-/* Exportação seletiva usando exclusivamente o layout de impressão A4 · v1.5.9.
+/* Exportação seletiva usando exclusivamente o layout de impressão A4 · v1.5.10.
    O HTML de impressão é a única fonte do PDF. Sem canvas, sem PNG ou CDNs. */
 (() => {
   'use strict';

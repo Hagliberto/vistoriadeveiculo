@@ -1,3 +1,7 @@
+### Layout responsivo mobile (v1.5.10)
+
+Os títulos das seções de identificação, croqui, checklist e assinaturas são exibidos integralmente no celular. Os contadores ficam em uma segunda linha quando necessário. A barra superior exibe nome, estado de salvamento e três métricas legíveis em linhas distintas, sem abreviar informações importantes. O PDF mantém o estilo A4 original.
+
 ## Orientação das vistas
 
 A nomenclatura dos ângulos mantém os IDs anteriores para não deslocar as avarias já salvas. Como as imagens são uma coleção de desenhos de referências variadas e não um modelo 3D único, **não é seguro inverter automaticamente esquerda/direita** sem confirmar as peças fotografadas. Antes de utilizar o laudo para uma vistoria oficial, confira o lado do veículo e os pontos antigos.

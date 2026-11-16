@@ -14,5 +14,5 @@ assert.match(js, /surface\.addEventListener\('pointerup'/);
 assert.match(js, /const stage = surface\.querySelector\('\.croqui-zoom-stage'\)/);
 assert.match(html, /name="mobile-web-app-capable"/);
 assert.ok((html.match(/class="croqui-drawing/g)||[]).length === 9, 'nove vistas da prancha de referência');
-assert.equal(JSON.parse(read('version.json')).version,'1.5.9');
+assert.equal(JSON.parse(read('version.json')).version,'1.5.10');
 console.log('OK: uma vista por vez, navegação gestual, nove vistas da prancha e todas as vistas no PDF.');

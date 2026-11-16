@@ -1,3 +1,10 @@
+## Ergonomia móvel v1.5.10
+
+- Nunca usar `truncate` efetivo em títulos, descrições ou badges dos expanders no mobile: usar `white-space: normal`, `overflow-wrap` e layout de duas linhas.
+- Separar o título e o estado do app dos indicadores da appbar em larguras pequenas. As métricas devem ficar totalmente legíveis.
+- O botão Tudo conforme deve ocupar sua própria coluna sem forçar abreviação do cabeçalho.
+- Manter as regras de impressão A4 independentes desses estilos em `@media screen`.
+
 ## Exportação sem ações duplicadas — v1.5.9
 
 - Mostrar **uma única ação** `Gerar PDF / Imprimir` no modal de exportação.

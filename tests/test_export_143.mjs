@@ -10,5 +10,5 @@ assert.ok(exp.includes('applyPrintSelection()') && exp.includes('validateAndPrin
 assert.ok(app.includes('async function prepareAndPrint()'));
 assert.ok(css.includes('body.print-selective.print-omit-checklist'));
 assert.ok(r('service-worker.js').includes("'./assets/export.js'"));
-assert.equal(JSON.parse(r('version.json')).version,'1.5.9');
-console.log('OK: exportação seletiva, sem PNG, laudo A4 único v1.5.9.');
+assert.equal(JSON.parse(r('version.json')).version,'1.5.10');
+console.log('OK: exportação seletiva, sem PNG, laudo A4 único v1.5.10.');

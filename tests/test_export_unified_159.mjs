@@ -14,5 +14,5 @@ assert.ok(exp.includes('exportButton?.addEventListener'));
 for (const id of ['export-include-croqui', 'export-include-checklist', 'export-include-photos', 'export-include-signatures', 'export-only-checked']) {
   assert.ok(html.includes(`id="${id}"`), id);
 }
-assert.equal(JSON.parse(read('version.json')).version, '1.5.9');
-console.log('OK: botão único de PDF/impressão, seleções preservadas e versão v1.5.9.');
+assert.equal(JSON.parse(read('version.json')).version, '1.5.10');
+console.log('OK: botão único de PDF/impressão, seleções preservadas e versão v1.5.10.');
