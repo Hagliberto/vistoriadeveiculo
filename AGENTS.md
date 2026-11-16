@@ -1,213 +1,46 @@
-## Ergonomia móvel v1.5.10
+# AGENTS.md — Orientações de manutenção
 
-- Nunca usar `truncate` efetivo em títulos, descrições ou badges dos expanders no mobile: usar `white-space: normal`, `overflow-wrap` e layout de duas linhas.
-- Separar o título e o estado do app dos indicadores da appbar em larguras pequenas. As métricas devem ficar totalmente legíveis.
-- O botão Tudo conforme deve ocupar sua própria coluna sem forçar abreviação do cabeçalho.
-- Manter as regras de impressão A4 independentes desses estilos em `@media screen`.
+> Referência para agentes de código e contribuidores. **Versão documentada: 1.5.10.** Para a explicação completa, consulte [docs/arquitetura.md](docs/arquitetura.md), [docs/testes.md](docs/testes.md) e [docs/contribuicao.md](docs/contribuicao.md).
 
-## Exportação sem ações duplicadas — v1.5.9
+## Princípios inegociáveis
 
-- Mostrar **uma única ação** `Gerar PDF / Imprimir` no modal de exportação.
-- A ação reutiliza `validateAndPrint()` e `prepareAndPrint()`; o usuário escolhe destino no diálogo nativo do navegador.
-- Não manter botões separados para PDF e impressão, nem reintroduzir PNG ou compartilhamento redundante.
-- As opções de inclusão seletiva da v1.5.8 são preservadas.
+1. **Preservar dados existentes.** Não romper as chaves de `localStorage`/IndexedDB, `meta.id`, `meta.archiveId`, `pins`, `checklist`, assinaturas, fotos e protocolos. Qualquer migração deve ter testes.
+2. **Manter HTML, CSS e JavaScript executáveis estaticamente.** Não introduzir serviços externos obrigatórios, build remoto ou CDN necessária à operação. Todas as nove imagens do croqui devem permanecer locais.
+3. **Um único PDF oficial.** A ação **Gerar PDF / Imprimir** deve usar a composição A4 do navegador. Não voltar a oferecer PNG, compartilhamento PDF duplicado ou gerador rasterizado diferente da impressão.
+4. **Exportação seletiva sem mutação do estado.** Identificação e observações gerais sempre incluídas; croqui, checklist, fotos e assinaturas opcionais; categorias e itens verificados filtráveis.
+5. **Avarias:** as cores representam **tipo**, não posição: Amassado (vermelho), Risco (azul), Quebrado (laranja), Faltando (roxo). Manter ID e tipo estáveis ao excluir/renumerar.
+6. **Gestos do croqui:** toque breve marca mesmo ampliado; arraste/pinça não marca; com zoom ativo, arraste reposiciona; em 100%, arraste horizontal troca a vista. Manter modo tela cheia, nove vistas e imagem original em WebP.
+7. **Não alterar a orientação das vistas por suposição.** Confirmar perspectiva física de cada imagem antes de renomear ou trocar os recursos. IDs persistidos precisam de migração explícita e testes.
+8. **Responsividade e acessibilidade:** expanders no celular não podem truncar títulos/descrições; pills e ações devem ter espaço. Controles com ícones devem ter `aria-label`; alvos de toque adequados e foco perceptível.
+9. **Histórico e diálogos:** salvamentos repetidos com mesmo protocolo geram `archiveId` diferente; exclusões exigem confirmação; o modal superior deve receber o foco e ficar acima do anterior.
+10. **Atualização PWA sob demanda:** sincronizar `APP_VERSION`, `version.json`, `CACHE_NAME`, interface e documentação; só ativar atualização após ação confirmada e estado salvo.
 
-## Exportação v1.5.8
+## Arquivos a observar
 
-- PDF e impressão usam somente o HTML/CSS nativo em A4; não implementar um PDF raster separado.
-- Identificação e observações são sempre impressas.
-- Croqui, checklist, fotos e assinaturas são opcionais no modal; checklist pode filtrar categorias e itens verificados.
-- Alterações de impressão não modificam `appState` nem o histórico.
-- PNG não deve ser reintroduzido.
+- `index.html`: composição semântica da interface e relatório.
+- `assets/app.js`: `CHECKLIST_SCHEMA`, `appState`, dados, histórico, marcações e gestos.
+- `assets/export.js`: seleção do conteúdo impresso.
+- `assets/print-and-custom.css`: mídia `screen` e regras `@media print` A4 (separar cuidadosamente).
+- `service-worker.js`, `manifest.webmanifest`, `version.json`: instalação, cache e atualização.
+- `tests/`: regressões JavaScript e auditoria Python.
+- `docs/`: guias atuais; `CHANGELOG.md`: histórico de alterações.
 
-## Regras da versão 1.5.7
+## Processo obrigatório de mudança
 
-- Cor do croqui é função do tipo, nunca da posição sequencial ou ID do ponto.
-- Toque sem movimento deve marcar mesmo ampliado; arraste/pinça não podem marcar.
-- Exibir a versão instalada correta na sidebar e em Configurações, sincronizada ao metadado/versionamento do PWA.
+1. Ler documentação pertinente e inspecionar os módulos afetados.
+2. Criar branch (`feature/`, `fix/` ou `docs/`) com a `main` atualizada e árvore limpa.
+3. Implementar mudança mínima sem alterar dados armazenados nem PDF fora do escopo.
+4. Rodar `git diff --check`, `node --check` nos scripts tocados, testes da área e `python tests/test_static.py`.
+5. Homologar manualmente desktop, mobile, offline, histórico, croqui e impressão quando houver mudança de interface ou estado.
+6. Atualizar README, `docs/`, `CHANGELOG.md` e versão **somente se houver release nova**; mudança apenas documental pode permanecer na versão estável atual.
+7. Publicar branch e realizar merge/tag somente após revisão e homologação — não afirmar que houve deploy sem evidência.
 
-## Croqui v1.5.6 — gestos e impressão
+## Regras específicas de impressão
 
-- Pinça com Pointer Events; zoom limitado a 100–300%, com pan limitado ao tamanho visível.
-- Arrastar em 100% troca vista; com zoom ativo reposiciona o desenho, não cria pontos.
-- Preservar coordenadas e imagens do croqui no armazenamento e renderização no PDF.
-- Resumo impresso usa só a quantidade numérica, sem pill.
+- A4 retrato, sem elementos da UI e com separação cuidadosa de páginas.
+- Evitar títulos órfãos, seções extensas inquebráveis e corte de assinaturas, imagens ou itens.
+- Resumo das vistas: contagens numéricas discretas, não pills com `ponto(s)`.
+- Garantir conversão/renderização de assinaturas antes de `window.print()`.
+- O zoom na tela **não** deve alterar escala e posição do laudo.
 
-## v1.5.5 — Imagens do PDF de referência e tela cheia
-
-- Substituídas as imagens das vistas por arquivos extraídos diretamente do PDF do usuário, sem os quadros e setas da prancha.
-- Nove vistas: oito ângulos ao redor do veículo e vista superior (zênite).
-- Croqui em tela cheia com controles de navegação e zoom, marcação sobre a imagem e fallback para navegadores sem Fullscreen API.
-- Vistorias anteriores permanecem legíveis; verificar manualmente a posição de pontos antigos após troca das imagens.
-
-## Croqui 8 vistas — v1.5.4
-
-- Croqui derivado de oito recortes WebP locais em `assets/croqui/`, retirados da imagem de referência enviada pelo usuário.
-- IDs: `front`, `front-left`, `left`, `rear-left`, `rear`, `right`, `front-right`, `top`.
-- A navegação por Pointer Events deve distinguir arraste horizontal de clique para marcação; deve funcionar em mouse e toque.
-- Todas as oito vistas devem aparecer no PDF oficial; somente uma fica visível no aplicativo.
-- Pontos existentes com IDs antigos `top`, `left`, `right`, `front`, `rear` não devem ser migrados para outras vistas.
-
-## Interface de croqui v1.5.3
-
-Manter barra de navegação enxuta e sem rótulos sobrepostos. Desenhos SVG são traços técnicos; preservar camadas de avarias, vistas e impressão A4. Não anunciar rotação 3D onde há somente cinco vistas.
-
-## Croqui 360° v1.5.1
-
-- O croqui agora possui navegação por visões usando um seletor 360° discreto.
-- A região da avaria é inferida automaticamente a partir das coordenadas do clique na visão ativa.
-- O zoom deve permanecer compacto, com controles por ícones.
-- O laudo impresso/PDF continua exigindo resumo agrupado por visão.
-
-## Croqui profissional v1.5.1
-
-- O croqui possui cinco visões (superior, lateral esquerda, lateral direita, frontal e traseira).
-- Cada ponto salvo deve persistir com `view`, `region`, `type`, `desc` e `photo`.
-- A seleção de `region` depende da visão ativa e pode ser editada depois na lista de avarias.
-- O PDF precisa manter o croqui multi-visão e um resumo agrupado por visão.
-
-# AGENTS.md — Especificação Técnica e Guia de Evolução: Vistoria Veicular PWA
-
-## 1. Visão Geral e Arquitetura
-- **Projeto:** Checklist Digital de Vistoria Veicular (PWA Mobile-First & Offline-First).
-- **Stack:** HTML5 semântico, Tailwind CSS (via CDN), JavaScript Vanilla (ES6+), Phosphor Icons, SVG inline.
-- **Restrição Arquitetural:** Aplicação **100% client-side** (zero backend obrigatório). Deve funcionar perfeitamente aberta localmente ou hospedada em ambientes estáticos (GitHub Pages / Intranet corporativa).
-- **Persistência:** `localStorage` (chave `vistoria_veicular_pwa_v2` ou superior com migração retrocompatível) ou `IndexedDB` quando houver armazenamento de imagens.
-
----
-
-## 2. Identidade Visual e Padrões de UI/UX
-- **Paleta Corporativa Principal:**
-  - Azul Escuro Institucional: `#004b93` (`corp.dark`)
-  - Azul Principal / Ação: `#0072ce` (`corp.main`)
-  - Azul Superfície / Destaque suave: `#f0f7ff` (`corp.surface`) e `#e6f2fc` (`corp.light`)
-  - Fundo da aplicação: `#f4f7fa`
-- **Sistema de Expanders (Acordeões):**
-  - Todos os 9 blocos principais (`Identificação`, `6 categorias de checklist`, `Croqui Visual`, `Observações e Assinaturas`) iniciam **fechados por padrão** (`.expander-card` sem classe `.is-open`).
-  - Cada expander mantém borda esquerda de `5px` (`border-l-[5px]`) e fundo de cabeçalho suave com cor temática distinta (`accentColor` e `bgColor` definidos em `CHECKLIST_SCHEMA`).
-  - Badges dinâmicos (`0/6 preenchidos`, `0/8 verificados`, `0 avarias`, `Pendente`) devem ser atualizados em tempo real a cada interação.
-- **Barra de Controle Global:**
-  - Botões compactos apenas com ícones SVG (`w-10 h-10`, atributos `title` e `aria-label` obrigatórios para acessibilidade).
-- **Ergonomia Mobile:**
-  - Alvos de toque com altura mínima de `42px` (`.touch-target-btn`).
-  - Modais de confirmação customizados (nunca usar `window.confirm()` ou `window.alert()` nativos).
-
----
-
-## 3. Regras Críticas de Geração de PDF e Impressão (`@media print`)
-Qualquer atualização neste projeto **DEVE** preservar e aprimorar a qualidade do laudo técnico impresso em papel **A4 Retrato** (`@page { size: A4 portrait; margin: 10mm 11mm; }`), obedecendo às seguintes regras:
-
-1. **Zero Cortes e Proteção de Quebra:**
-   - Nunca permitir que um título de seção fique órfão no final de uma página: aplicar `break-after: avoid; page-break-after: avoid;` em `.expander-header`.
-   - Aplicar `break-inside: avoid; page-break-inside: avoid;` em linhas individuais (`[id^="row-"]`), no cabeçalho oficial (`#print-official-header`), no bloco do croqui (`#exp-croqui`) e no bloco de assinaturas (`#exp-assinaturas`).
-   - Seções longas de checklist **não** devem ter `break-inside: avoid` no contêiner pai `.expander-card`, para não gerar grandes espaços em branco; a quebra deve ocorrer apenas entre linhas `[id^="row-"]`.
-2. **Renderização Segura de Assinaturas:**
-   - Na função `prepareAndPrint()`, converter os dados dos `<canvas>` (`appState.signatures`) para elementos `<img class="print-only">` renderizados dentro dos boxes de assinatura, garantindo nitidez vetorial/raster sem cortes ou canvases em branco no PDF.
-3. **Ocultação de Elementos de UI:**
-   - Todo botão de ação, barra de ferramentas, barra de progresso, ícones decorativos de cabeçalho e inputs vazios devem receber `.no-print` ou serem ocultados via CSS `@media print`.
-4. **Exibição Condicional de Status e Observações:**
-   - Na impressão, ocultar botões não selecionados e exibir apenas o selo correspondente ao status escolhido (`Conforme`, `Avaria`, `N/A`) ou `"Não verificado"`.
-   - Campos de observação individual (`.obs-container`) só devem aparecer no PDF se contiverem texto (`.has-content`).
-5. **Sincronização Pré-Impressão:**
-   - `prepareAndPrint()` deve preencher data/hora exata de emissão, atualizar todos os contadores do cabeçalho `#print-official-header`, sincronizar imagens de assinatura e aguardar renderização antes de invocar `window.print()`.
-
----
-
-## 4. Estrutura de Estado (`appState`)
-Manter compatibilidade com a estrutura de dados central:
-```javascript
-{
-  meta: {
-    id: "UUID ou timestamp",
-    updatedAt: "ISOString",
-    gps: { lat: null, lng: null } // opcional
-  },
-  vehicle: {
-    data: "YYYY-MM-DD",
-    tipo: "Entrada | Saída | Periódica | Transferência",
-    vistoriador: "",
-    motorista: "",
-    placa: "",
-    modelo: "",
-    ano: "",
-    cor: "",
-    km: "",
-    combustivel: "Reserva | 1/4 | 1/2 | 3/4 | Cheio",
-    obsGerais: ""
-  },
-  checklist: {
-    "[section_id]_[index]": {
-      status: "ok | nok | na | null",
-      obs: "",
-      photo: null // Base64 comprimido opcional
-    }
-  },
-  pins: [
-    {
-      id: 1700000000000,
-      x: 50.0, // percentual 4..96
-      y: 50.0, // percentual 6..94
-      type: "Amassado | Risco | Quebrado | Faltando",
-      desc: "",
-      photo: null // Base64 comprimido opcional
-    }
-  ],
-  signatures: {
-    "sig-vistoriador": "data:image/png;base64,...",
-    "sig-motorista": "data:image/png;base64,..."
-  }
-}
----
-
-## 11. Regras de Interface e Histórico — v1.3.0
-
-- **Desktop:** checklist em duas colunas a partir de 1280 px (com opção de lista), navbar inferior de ícones e barra lateral recolhida ao iniciar. A barra superior concentra as ações globais, sem minicard redundante.
-- **Ações individuais de categoria:** as seis categorias oferecem um controle independente **Tudo conforme**; nunca modificar os itens de outras categorias. Antes de sobrescrever uma classificação `nok` (avaria) ou `na`, exigir confirmação customizada. Preservar observações e fotos existentes.
-- **Histórico de versões arquivadas:** cada clique em **Salvar Vistoria Atual no Histórico** cria um registro com `meta.archiveId` exclusivo e `meta.savedAt`, ainda que `meta.id` (protocolo original) se repita. Nunca substituir silenciosamente um arquivo anterior pelo mesmo protocolo. Migração de históricos antigos sem `archiveId` é obrigatória.
-- **Operações concorrentes:** gravar inclusões/exclusões do histórico em fila para impedir perdas em cliques consecutivos. Excluir pelo identificador exclusivo do arquivo, não por índice que possa mudar durante uma gravação assíncrona.
-- **Modal sobre modal:** `confirm-modal` deve ficar acima dos demais, o modal anterior fica `inert` durante a confirmação, e o foco retorna ao controle de origem após cancelar ou confirmar. `Escape` deve operar apenas sobre o modal superior.
-- **Recursos locais:** todos os ícones utilizados devem existir no pacote `assets/icons.js`; manter o funcionamento offline após a primeira carga do PWA. A mídia `print` deve ocultar todas as ações novas.
-
-
-## Atualização sob demanda — v1.4.0
-- Requer `version.json` acessível na origem da aplicação, sem cache, para detectar versão mais recente.
-- `APP_VERSION` em `assets/app.js` deve coincidir com `version.json` e `CACHE_NAME` do service worker.
-- Não ativar automaticamente novas versões no evento `install`; apenas após clique do usuário e salvamento completo.
-- Preservar a compatibilidade de armazenamento local/IndexedDB e o funcionamento offline.
-
-## Ajustes de interface — v1.4.1
-- O crédito nominal do desenvolvedor deve aparecer somente no painel de Configurações, não na navbar inferior.
-- O card `#workspace-heading` deve permanecer visível em desktop e oculto em telas de até 599px.
-- Atualizar simultaneamente `version.json`, `APP_VERSION`, `service-worker.js` e rótulos de versão em novas releases.
-
-## Navegação v1.4.3
-- Ordem de inspeção: Dados, Croqui, checklist (seis categorias) e Assinaturas.
-- Sidebar recolhida por padrão no desktop, gaveta sobreposta no mobile, rótulos descritivos na expansão e seção ativa sincronizada.
-- Preservar o fluxo de impressão e a compatibilidade de dados existentes.
-
-
-## Exportação v1.4.4
-- Compartilhar prioriza arquivo PDF A4 real. PNG só é utilizado se o dispositivo não puder compartilhar PDF.
-- PDF e PNG são gerados no dispositivo, sem CDN e sem backend, com limites explícitos de memória/páginas.
-- O diálogo de impressão existente permanece disponível.
-
-## Fidelidade do PDF — v1.4.5
-- A ação Salvar como PDF deve invocar `validateAndPrint()` (mesmo pipeline da impressão), não `generatePDF()` rasterizado.
-- O diálogo nativo exige que o usuário escolha Salvar como PDF; não afirmar download direto.
-- Compartilhamento de arquivos continua separado: o PDF compatível com Web Share é rasterizado e pode ter visual distinto.
-
-
-## PDF canônico — v1.4.6
-
-O arquivo PDF oficial deve **sempre** ser derivado do laudo HTML/CSS `@media print`, por `validateAndPrint()`/`prepareAndPrint()`. Não introduzir outro gerador PDF em canvas como alternativa para o usuário, pois altera a composição, os detalhes do croqui e a paginação. Compartilhar PDF oficial pode abrir o diálogo de impressão e orientar o envio manual do arquivo gerado. PNG é formato independente, não representa o PDF canônico.
-
-
-## Central de exportação — v1.4.7
-Manter apenas **Salvar como PDF**, **Baixar em PNG** e **Imprimir**; não adicionar ação Compartilhar PDF que apenas repete a impressão nativa. O PDF permanece canônico via CSS `@media print`.
-
-
-## Croqui — regra cromática v1.4.9
-- `getDamagePinColor(index)` atribui cor pela posição visível do ponto na lista; não persistir `color` no estado.
-- A numeração e a cor devem coincidir no marcador, no item da lista e no documento impresso.
-- Reordenar/remover pontos recalcula suas cores, preservando ID, descrição e foto.
-- Manter contraste legível com números brancos, incluindo impressão A4; não alterar o leiaute canônico do PDF.
+**Não copie regras antigas de versão do README histórico:** recursos retirados (PNG, múltiplos botões de PDF e cores por índice) não fazem parte do contrato atual.
