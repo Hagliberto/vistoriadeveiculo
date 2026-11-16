@@ -49,3 +49,12 @@ Faça a homologação preferencialmente em Chrome/Edge e Firefox, em desktop e c
 4. Salvar, reabrir a vistoria e conferir a mesma sequência de cores.
 5. Pré-visualizar e salvar PDF A4: conferir que marcadores e números da lista mantêm as cores; testar fundos/gráficos habilitados no diálogo.
 6. Conferir responsividade mobile e contraste dos marcadores em tela.
+
+### Homologação mobile v1.5.10
+
+- [ ] Larguras 320, 360, 390 e 430 px: título Vistoria Veicular e mensagem de salvamento completos na primeira linha do cabeçalho; OK, Avaria e Geral completos na segunda.
+- [ ] Expanders de Identificação, Croqui, seis categorias e Observações/Assinaturas: nenhum título ou subtítulo cortado; texto pode ocupar mais de uma linha.
+- [ ] Pills mostram contagens legíveis; botão Tudo conforme permanece acessível sem comprimir títulos.
+- [ ] Expansão/recolhimento individual funciona sem acionar Tudo conforme acidentalmente.
+- [ ] Dock inferior mantém funcionamento; nenhum scroll horizontal indesejado na página.
+- [ ] Laudo em A4 preserva o layout anterior à v1.5.10.

@@ -1,3 +1,11 @@
+## v1.5.10 — Cabeçalhos mobile sem cortes
+
+- Cabeçalhos dos nove expanders reorganizados no celular: títulos e descrições quebram linha naturalmente, com contadores em faixa própria e setas acessíveis.
+- Botão Tudo conforme mantém espaço próprio à direita sem comprimir os nomes das seis categorias.
+- Appbar mobile em dois níveis: identificação/estado de salvamento acima e três indicadores de vistoria distribuídos abaixo, sem abreviações cortadas.
+- Ajustes somente de tela; laudo A4, histórico e dados da vistoria não sofrem alterações.
+- Teste de regressão mobile para títulos, badges e appbar sem overflow horizontal.
+
 ## v1.5.9 — Exportação unificada
 
 - Removido o botão duplicado **Imprimir** do modal de exportação.

@@ -6,5 +6,5 @@ assert.deepEqual([...html.matchAll(/data-export-format="([^"]+)"/g)].map(m=>m[1]
 assert.ok(!html.includes('Compartilhar PDF oficial'));
 assert.ok(!exp.includes('generatePNG'));
 assert.ok(exp.includes('validateAndPrint()'));
-assert.equal(JSON.parse(read('version.json')).version,'1.5.9');
+assert.equal(JSON.parse(read('version.json')).version,'1.5.10');
 console.log('OK: uma ação para PDF ou impressão sem PNG.');

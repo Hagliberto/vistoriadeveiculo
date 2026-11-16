@@ -37,7 +37,7 @@
          * Atualizações PWA: somente versões publicadas no mesmo host, com confirmação.
          * A verificação não acessa nem altera IndexedDB/localStorage de vistorias.
          */
-        const APP_VERSION = '1.5.9';
+        const APP_VERSION = '1.5.10';
         function syncDisplayedAppVersion() {
             const footer = document.querySelector('.sidebar-footer');
             if (footer) {
