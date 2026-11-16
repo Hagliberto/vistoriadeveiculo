@@ -14,5 +14,5 @@ for(const section of ['croqui','checklist','signatures','photos']) {
 for(const token of ['print-exclude-category','print-exclude-row','exp-sec-','row-','onlyChecked','[\'ok\',\'nok\',\'na\']']) assert.ok(js.includes(token),`falta ${token}`);
 assert.ok(!js.includes('appState.checklist[') || !/appState\.checklist\[[^\]]+\]\s*=/.test(js));
 assert.match(css,/#content-exp-assinaturas > \.grid/);
-assert.equal(JSON.parse(r('version.json')).version,'1.5.8');
+assert.equal(JSON.parse(r('version.json')).version,'1.5.9');
 console.log('OK: seções opcionais, observações obrigatórias, checklist individual, sem PNG.');

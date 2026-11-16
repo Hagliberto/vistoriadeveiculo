@@ -42,6 +42,6 @@ assert.deepEqual(pins.map(x=>x.style.backgroundColor), [colors[0],colors[1],colo
 assert.ok(list[1].innerHTML.includes('terceiro'));
 assert.equal(execute('appState.pins[1].id'),103);
 assert.ok(css.includes('print-color-adjust: exact'));
-assert.equal(JSON.parse(fs.readFileSync(new URL('../version.json',import.meta.url))).version,'1.5.8');
-assert.ok(fs.readFileSync(new URL('../service-worker.js',import.meta.url),'utf8').includes('shell-v1.5.8'));
-console.log('OK: cores por tipo, persistência após exclusão e impressão A4 v1.5.8.');
+assert.equal(JSON.parse(fs.readFileSync(new URL('../version.json',import.meta.url))).version,'1.5.9');
+assert.ok(fs.readFileSync(new URL('../service-worker.js',import.meta.url),'utf8').includes('shell-v1.5.9'));
+console.log('OK: cores por tipo, persistência após exclusão e impressão A4 v1.5.9.');

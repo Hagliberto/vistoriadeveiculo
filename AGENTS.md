@@ -1,3 +1,10 @@
+## Exportação sem ações duplicadas — v1.5.9
+
+- Mostrar **uma única ação** `Gerar PDF / Imprimir` no modal de exportação.
+- A ação reutiliza `validateAndPrint()` e `prepareAndPrint()`; o usuário escolhe destino no diálogo nativo do navegador.
+- Não manter botões separados para PDF e impressão, nem reintroduzir PNG ou compartilhamento redundante.
+- As opções de inclusão seletiva da v1.5.8 são preservadas.
+
 ## Exportação v1.5.8
 
 - PDF e impressão usam somente o HTML/CSS nativo em A4; não implementar um PDF raster separado.
